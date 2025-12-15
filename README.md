@@ -1,3 +1,3 @@
-# Tarea2_Alba
+# Tarea3_Alba
 
-Proyecto número dos de la asignatura de Acceso a Datos.
+Proyecto número tres de la asignatura de Acceso a Datos. Se continúa la tarea dos, pero implementa Spring Boot.
