@@ -5,18 +5,50 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "espectaculos")
 public class Espectaculo implements Serializable{
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_espectaculo")
 	private long id;
+	
+	@Column(name = "nombre", nullable = false, length = 25)
 	private String nombre;
+	
+	@Column(name = "fecha_inicio")
 	private LocalDate fechaini;
+	
+	@Column(name = "fecha_fin")
 	private LocalDate fechafin;
+	
+	@OneToMany(mappedBy = "espectaculo", cascade = CascadeType.ALL)
 	private Set <Numero> numeros;
+	
+	@ManyToOne
+	@JoinColumn(name = "id_coordinador", referencedColumnName = "id_coordinador", nullable = false)
 	private Coordinador encargadoCoor;
 	
+	
+	
+	public Espectaculo() {
+		super();
+	}
+
 	public Espectaculo(long id, String nombre, LocalDate fechaini, LocalDate fechafin, Coordinador coordinador) {
 		super();
 		this.id = id;

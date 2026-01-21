@@ -3,18 +3,50 @@ package entidades;
 import java.io.Serializable;
 import java.util.Set;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "numeros")
 public class Numero implements Serializable{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+	
+	/*
+	 * no lo defino con JPA porque no se va a usar
+	 */
 	private int orden;
+	
+	@Column(name = "nombre", nullable = false, length = 25)
 	private String nombre;
+	
+	@Column(name = "duracion", nullable = false, length = 2)
 	private int duracion;
+	
+	@ManyToOne
+	@JoinColumn(name = "id_espectaculo", referencedColumnName = "id_espectaculo", nullable = false)
 	private Espectaculo espectaculo;
+	
+	@ManyToMany(mappedBy = "numeros")
 	private Set <Artista> artistas;
 	
+	public Numero() {
+		super();
+	}
+
+
+
 	public Numero(long id, int orden, String nombre, int duracion, Espectaculo espectaculo, Set<Artista> artistas) {
 		this.id = id;
 		this.orden = orden;

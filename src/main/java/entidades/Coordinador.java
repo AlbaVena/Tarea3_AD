@@ -4,27 +4,40 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
+
+
 
 @Entity
 @Table(name = "coordinadores")
 	@PrimaryKeyJoinColumn(name = "id_persona") //hereda el id_persona (buscame en el origen de id_persona)
 public class Coordinador extends Persona implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	@Column(name = "id_coordinador", insertable = false, updatable = false)
 	private long idCoord;
+	
+	@Column(name = "senior", nullable = false)
 	private boolean senior = false;
+	
+	@Column(name = "fechasenior")
 	private LocalDate fechasenior = null;
+	
+	@OneToMany(mappedBy = "coordinador", cascade = CascadeType.ALL)
 	private Set <Espectaculo> espectaculos;
 	
+	
+	
+	public Coordinador() {
+		super();
+	}
+
 	public Coordinador (String linea) {
 		super();
 		String[] propiedades = linea.split("\\|");
