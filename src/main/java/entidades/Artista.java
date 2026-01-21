@@ -3,15 +3,50 @@ package entidades;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.annotation.Generated;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "artistas")
+	@PrimaryKeyJoinColumn(name = "id_persona") //hereda el id_persona (buscame en el origen de id_persona)
 public class Artista extends Persona {
+	
+	
 	private static final long serialVersionUID = 1L;
+
+	@Column(name = "id_artista", insertable = false, updatable = false)
 	private long idArt;
+	
+	@Column(name = "apodo", length = 25)
 	private String apodo = null;
+	
+	@ManyToMany
+	@JoinTable(name = "artita_especialidad",
+		joinColumns = @JoinColumn(name = "id_artista", referencedColumnName = "id_artista"), //une la tabla con id_ARTISTA, a la tabla con id_especialidad
+		inverseJoinColumns = @JoinColumn(name = "id_especialidad"))
 	private Set<Especialidad> especialidades;
+	
+	@ManyToMany
+	@JoinTable(name = "artistas_numeros",
+	joinColumns = @JoinColumn(name = "id_artista", referencedColumnName = "id_artista"),
+	inverseJoinColumns = @JoinColumn(name = "id_numero"))
 	private List<Numero> numeros;
+	
+	
+
+	
+	public Artista() {
+
+	}
 
 	public Artista(long id, String email, String nombre, String nacionalidad,
 			Credenciales credenciales) {

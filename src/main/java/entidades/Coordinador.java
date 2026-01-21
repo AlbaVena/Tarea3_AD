@@ -4,12 +4,22 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "coordinadores")
+	@PrimaryKeyJoinColumn(name = "id_persona") //hereda el id_persona (buscame en el origen de id_persona)
 public class Coordinador extends Persona implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	@Column(name = "id_coordinador", insertable = false, updatable = false)
 	private long idCoord;
 	private boolean senior = false;
 	private LocalDate fechasenior = null;

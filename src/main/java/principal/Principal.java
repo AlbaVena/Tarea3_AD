@@ -136,7 +136,7 @@ public class Principal {
 						+ " Por favor intentalo de nuevo.");
 
 			}
-		} while (opcion != 4);
+		} while (opcion != 3);
 
 	}
 

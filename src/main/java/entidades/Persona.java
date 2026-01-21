@@ -2,16 +2,47 @@ package entidades;
 
 import java.io.Serializable;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "personas", uniqueConstraints = 
+		@UniqueConstraint(name = "email", columnNames = "email"))
 public class Persona implements Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	protected static long id;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_persona")
+	protected long id;
+	
+	@Column(name = "email", nullable = false, length = 50)
 	protected String email;
+	
+	@Column(name = "nombre", nullable = false, length = 25)
 	protected String nombre;
+	
+	@Column(name = "nacionalidad", nullable = false, length = 30)
 	protected String nacionalidad;
+	
+	
+	// mappedBy indica que el dueño de la relación es el campo "persona" en la clase Credenciales
+	@OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
 	protected Credenciales credenciales;
+	
+	@Enumerated(EnumType.STRING)
 	public Perfil perfil;
 	
 	public Persona() {
@@ -67,8 +98,9 @@ public class Persona implements Serializable {
 		}
 
 	}
+	
 
-	public static long getId() {
+	public long getId() {
 		return id;
 	}
 
