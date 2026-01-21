@@ -1,6 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>TAREA1_albavena_</groupId>
-  <artifactId>TAREA1_albavena</artifactId>
+  <groupId>com.albavena_</groupId>
+  <artifactId>TAREA3_alba</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+	  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+    <version>4.0.1</version>
+    <scope>compile</scope>
+</dependency>
+
+  </dependencies>
 </project>

@@ -3,6 +3,9 @@ package entidades;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.Entity;
+
+@Entity
 public class Artista extends Persona {
 	private static final long serialVersionUID = 1L;
 	private long idArt;

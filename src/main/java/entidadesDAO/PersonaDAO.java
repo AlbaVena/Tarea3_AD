@@ -17,7 +17,6 @@ import entidades.Credenciales;
 import entidades.Especialidad;
 import entidades.Perfil;
 import entidades.Persona;
-import entidades.Valoracion;
 import factorias.DAOFactoryJDBC;
 
 public class PersonaDAO {
@@ -32,8 +31,6 @@ public class PersonaDAO {
 	private final String INSERTARCOORDINADORPS = "INSERT INTO coordinadores (senior, fechasenior, id_persona) VALUES (?, ?, ?)";
 	private final String INSERTARCREDENCIALESPS = "INSERT INTO credenciales (nombre, password, perfil, id_persona) VALUES (?, ?, ?, ?)";
 	private final String INSERTARARTISTAESPECIALIDADPS = "INSERT INTO artista_especialidad (id_artista, id_especialidad) VALUES (?, ?)";
-	private final String INSERTARSOCIOPS = "INSERT INTO socios (idSocio, fecha_inscripcion, id_persona) VALUES (?, ?, ?)";
-	private final String INSTERTARVALORACIONPS = "INSERT INTO valoraciones (idEspectaculo,puntuacion, comentario, fecha) VALUES (?,?,?,?)";
 
 	/**
 	 * SELECT
@@ -545,11 +542,7 @@ public class PersonaDAO {
 				Coordinador paraInsertar = (Coordinador) persona;
 				insertarCoordinadorBase(con, paraInsertar);
 				
-			}else if (persona instanceof Persona ){
-				Persona paraInsertar = persona;
-				insertarSocioBase(con, persona);
-			
-			} else {
+			}else {
 				throw new SQLException(
 						"No pudo crearse porque no era del tipo adecuado");
 			}
@@ -921,106 +914,8 @@ public class PersonaDAO {
 		return resultado;
 	}
 
-	public long insertarSocioBase(Connection con, Persona persona) throws SQLException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		long resultado = -1;
+	
 
-		long idPersonaGenerado = Persona.getId();
-
-		if (idPersonaGenerado <= 0) {
-			System.err.println("Fallo al obtener el id_persona");
-			return -1;
-		}
-
-		try {
-			ps = DAOF.getConexion().prepareStatement(INSERTARSOCIOPS,
-					Statement.RETURN_GENERATED_KEYS);
-
-			ps.setLong(1, idPersonaGenerado);
-			Date sqlDate =  Date.valueOf(LocalDate.now());
-			ps.setDate(2, sqlDate);
-			ps.setLong(3, idPersonaGenerado);
-
-			int filas = ps.executeUpdate();
-
-			if (filas == 0) {
-				throw new SQLException("No se inserto nada");
-
-			}
-
-
-		} catch (SQLException e) {
-			throw new SQLException("No se pudo insertar el artista");
-
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					throw new SQLException("Error al cerrar la consulta");
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					throw new SQLException("Error al cerrar la conexion");
-				}
-			}
-		}
-
-		return resultado;
-
-	}
-
-	public void insertarValoracion(Valoracion valoracion) throws SQLException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-
-
-
-		try {
-			ps = DAOF.getConexion().prepareStatement(INSTERTARVALORACIONPS,
-					Statement.RETURN_GENERATED_KEYS);
-		//	INSERT INTO valoraciones (idEspectaculo,puntuacion, comentario, fecha) VALUES (?,?,?,?)";
-
-
-			ps.setLong(1, valoracion.getId());
-			ps.setFloat(2, valoracion.getPuntuacion());
-			ps.setString(3, valoracion.getComentario());
-			Date sqlDate =  Date.valueOf(valoracion.getFechahora());
-			ps.setDate(4, sqlDate);
-
-			int filas = ps.executeUpdate();
-
-			if (filas == 0) {
-				throw new SQLException("No se inserto nada");
-
-			}
-
-
-		} catch (SQLException e) {
-			throw new SQLException("No se pudo insertar el artista");
-
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					throw new SQLException("Error al cerrar la consulta");
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					throw new SQLException("Error al cerrar la conexion");
-				}
-			}
-		}
-
-		
-	}
+	
 
 }

@@ -1,7 +1,5 @@
 /META-INF/
-/controlador/
 /entidades/
-/entidadesDAO/
-/factorias/
 /principal/
-/utils/
+/controlador/
+/entidadesDAO/

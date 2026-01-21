@@ -11,7 +11,6 @@ import entidades.Coordinador;
 import entidades.Persona;
 import entidades.ProgramProperties;
 import entidades.Sesion;
-import entidades.Valoracion;
 import entidadesDAO.PersonaDAO;
 
 public class UsuariosService {
@@ -99,18 +98,7 @@ public class UsuariosService {
 		}
 		**/
 	}
-	public void realizarValoracion(long EspId, float puntuacion, String comentario) {
-		//crear PS para valoracion, crear la tabla. \idEsp\puntuacion\comentario
-		Valoracion valoracion = new Valoracion(EspId, puntuacion, comentario, LocalDate.now());
-		try {
-			PDAO.insertarValoracion(valoracion);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-	}
+	
 
 	public void persistirCredenciales() {
 		try {

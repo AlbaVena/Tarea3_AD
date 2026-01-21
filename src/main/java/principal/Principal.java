@@ -36,7 +36,6 @@ import entidades.Numero;
 import entidades.Perfil;
 import entidades.Persona;
 import entidades.ProgramProperties;
-import entidades.Socio;
 import entidadesDAO.PersonaDAO;
 
 public class Principal {
@@ -72,7 +71,7 @@ public class Principal {
 			System.out.println("Menu Invitado");
 			System.out
 					.println("Elige una opcion: \n\t1. Ver espectaculos\n\t2. "
-							+ "Log IN\n\t3.Registrarse como socio\n\t4. Salir");
+							+ "Log IN\n\t3. Salir");
 
 			do {
 				try {
@@ -119,8 +118,6 @@ public class Principal {
 					case ADMIN:
 						menuAdmin();
 						break;
-					case SOCIO:
-						menuSocio();
 					default:
 						System.out.println("Perfil no reconocido");
 					}
@@ -130,11 +127,7 @@ public class Principal {
 				}
 
 				break;
-			case 3:
-				// TODO
-				System.out.println(registrarSocio());
-				break;
-			case 4:
+			case 3:				
 				System.out.println(
 						"Cerrando el programa...\nPrograma terminado.");
 				break;
@@ -577,55 +570,7 @@ public class Principal {
 		} while (opcion != 3);
 	}
 
-	public static void menuSocio() {
-		boolean valido = false;
-		int opcion = -1;
-		do {
-			System.out
-			.println("Elige una opcion: \n\t1. Realizar valoracion\n\t2. Ver "
-					+ "espectaculos\n\t3. Log OUT");
-			do {
-				try {
-					opcion = leer.nextInt();
-					leer.nextLine();
-					valido = true;
-				} catch (Exception e) {
-					System.out.println("debes introducir un numero");
-					leer.nextLine();
-				}
-			} while (!valido);
-			switch (opcion) {
-			case 1:
-				//TODO realizar valoracion
-				int idEsp = -1;
-				ArrayList<Espectaculo> espectaculos = espectaculosService.getEspectaculos();
-				System.out.println("Elige el id del espectaculo que vas a valorar.");
-				idEsp = leer.nextInt();
-				leer.nextLine();
-				for (Espectaculo e : espectaculos) {
-					if (e.getId() == idEsp) {
-						System.out.println("introduce una valoracion en formato X.X (1.0/1.5)");
-						float puntuacion = leer.nextFloat();
-						leer.nextLine();
-						System.out.println("Escribe tu comentario (ENTER para enviar)");
-						String comentario = leer.nextLine();						
-						usuariosService.realizarValoracion(idEsp,puntuacion, comentario);
-						
-					}
-				}
 
-				break;
-			case 2: 
-				espectaculosService.getEspectaculos();
-				break;
-			case 3:
-				usuariosService.logOut();
-				break;
-			}
-			
-		}
-		while (opcion != 3);
-	}
 
 	// MENU ADMIN
 	/**
@@ -766,74 +711,7 @@ public class Principal {
 		} while (opcion2 != 4);
 	}
 
-	public static Persona registrarSocio() {
-		Socio socio = null;
-		String email = "", nombre = "", nacionalidad = "";
-		String nombreUsuario = "", passUsuario = "";
 
-		System.out.println("introduce un email");
-		email = leer.nextLine();
-		if (!usuariosService.comprobarEmail(email)) {
-			System.out.println("Ese email ya esta registrado");
-			return null;
-		}
-		System.out.println("introduce el nombre completo de la persona");
-		nombre = leer.nextLine();
-
-		boolean nac = false;
-		do {
-			System.out.println("introduce el id del pais elegido");
-			for (Entry<String, String> entrada : paises.entrySet()) {
-				System.out.println(entrada);
-			}
-			nacionalidad = leer.nextLine().toUpperCase();
-			if (paises.containsKey(nacionalidad)) {
-				nacionalidad = paises.get(nacionalidad);
-				nac = true;
-			} else {
-				System.out.println("Ese pais no se encuentra");
-			}
-
-		} while (!nac);
-
-		do {
-			System.out.println(
-					"introduce un nombre de usuario (ten en cuenta que "
-							+ "no admitira letras con tildes o dieresis, numeros, ni espacios en blanco)");
-			String cadena = leer.nextLine().trim();
-
-			if (cadena.matches("^[a-zA-Z_-]{3,}$")) {
-				nombreUsuario = cadena.toLowerCase();
-				if (cadena.equals("admin")) {
-					System.out.println("Ese nombre de usuario está reservado.");
-					nombreUsuario = null;
-				}
-			} else {
-				System.out.println("Ese nombre de usuario no es valido");
-			}
-		} while (nombreUsuario == null);
-
-		do {
-			System.out
-					.println("por ultimo introduce una contraseña valida (debe"
-							+ " tener mas de 2 caracteres, y ningun espacio en blanco");
-			String pass = leer.nextLine();
-			if (pass.matches("^[^|\\s]{3,}$")) {
-				passUsuario = pass;
-			} else {
-				System.out.println("contraseña no valida");
-			}
-		} while (passUsuario == null);
-
-		socio = new Socio(email, nombreUsuario, nacionalidad,
-				new Credenciales(nombreUsuario, passUsuario, Perfil.SOCIO),
-				LocalDate.now());
-
-		System.out.println(usuariosService.insertarSocio(socio));
-		;
-
-		return socio;
-	}
 
 	// ESTE METODO QUEDA EN VISTA PORQUE ESTA COMPUESTO POR system.out.println
 	// PRINCIPALMENTE
