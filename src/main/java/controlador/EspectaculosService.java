@@ -30,5 +30,7 @@ public class EspectaculosService {
 	public void guardarEspectaculo(Espectaculo aGuardar) {
 		espectaculoRepository.save(aGuardar);
 	}
+	
+	
 
 }
