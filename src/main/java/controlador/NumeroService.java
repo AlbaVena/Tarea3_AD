@@ -1,33 +1,31 @@
 package controlador;
 
-import java.util.ArrayList;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import entidades.Numero;
-import entidadesDAO.NumeroDAO;
-import entidadesDAO.PersonaDAO;
+import jakarta.transaction.Transactional;
+import repository.NumeroRepository;
 
+
+@Service
 public class NumeroService {
-	
-	private NumeroDAO NDAO = null;
-	private PersonaDAO PDAO= null;
 
-	private ArrayList<Numero> numeros = null;
+	@Autowired
+	private NumeroRepository numeroRepository;
 	
-	public NumeroService() {
-
-		NDAO = new NumeroDAO();
-        PDAO = new PersonaDAO();
+	
+	 @Transactional
+	public List<Numero> getNumeros() {		
+		return  numeroRepository.findAll() ;
 	}
 	
-	public ArrayList<Numero> getNumeros() {
-		ArrayList<Numero> result = null;
-		result = NDAO.getNumeros();
-
-		return result;
-	}
-	
+	 @Transactional
 	public void guardarNumero(Numero nuevo) {
-		NDAO.insertarNumero(nuevo);
+		numeroRepository.save(nuevo);
 	}
 	
 	

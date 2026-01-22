@@ -1,10 +1,5 @@
 package controlador;
 
-import java.io.FileWriter;
-import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +13,6 @@ import entidades.Numero;
 import entidades.Persona;
 import entidades.ProgramProperties;
 import entidades.Sesion;
-import entidadesDAO.PersonaDAO;
 import jakarta.transaction.Transactional;
 import repository.ArtistaRepository;
 import repository.CoordinadorRepository;

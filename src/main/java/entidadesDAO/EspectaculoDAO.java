@@ -13,17 +13,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.mysql.jdbc.Statement;
 
-import entidades.Artista;
 import entidades.Coordinador;
-import entidades.Credenciales;
 import entidades.Espectaculo;
-import entidades.Numero;
-import entidades.Perfil;
 import entidades.Persona;
 import factorias.DAOFactoryJDBC;
 

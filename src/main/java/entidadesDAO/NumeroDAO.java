@@ -5,14 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import entidades.Artista;
 import entidades.Coordinador;
-import entidades.Espectaculo;
 import entidades.Numero;
 import entidades.Persona;
 import factorias.DAOFactoryJDBC;
