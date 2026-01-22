@@ -30,9 +30,10 @@ public class Artista extends Persona {
 	private String apodo = null;
 	
 	@ManyToMany
-	@JoinTable(name = "artita_especialidad",
-		joinColumns = @JoinColumn(name = "id_artista", referencedColumnName = "id_artista"), //une la tabla con id_ARTISTA, a la tabla con id_especialidad
-		inverseJoinColumns = @JoinColumn(name = "id_especialidad"))
+	@JoinTable(
+	    name = "artista_especialidad", 
+	    joinColumns = @JoinColumn(name = "id_artista", referencedColumnName = "id_artista"),
+	    inverseJoinColumns = @JoinColumn(name = "id_especialidad"))
 	private Set<Especialidad> especialidades;
 	
 	@ManyToMany

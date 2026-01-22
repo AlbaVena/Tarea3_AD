@@ -42,7 +42,7 @@ public class Numero implements Serializable{
 	private Set <Artista> artistas;
 	
 	public Numero() {
-		super();
+		
 	}
 
 
