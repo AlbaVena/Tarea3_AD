@@ -37,16 +37,13 @@ public class PersonaDAO {
 	 */
 	private final String SELECTPERSONASsql = "SELECT "
 			+ " p.id_persona, p.nombre AS nombre_persona, p.email, p.nacionalidad, "
-			+ " c.nombre AS nombre_usuario, c.password, c.perfil, "
-			+ " a.id_artista, a.apodo, "
-			+ " co.id_coordinador, co.senior, co.fechasenior "
-			+ "FROM personas p "
+			+ " c.nombre AS nombre_usuario, c.password, c.perfil, " + " a.id_artista, a.apodo, "
+			+ " co.id_coordinador, co.senior, co.fechasenior " + "FROM personas p "
 			+ "LEFT JOIN credenciales c ON p.id_persona = c.id_persona "
 			+ "LEFT JOIN artistas a ON p.id_persona = a.id_persona "
 			+ "LEFT JOIN coordinadores co ON p.id_persona = co.id_persona";
 
-	private final String SELECTPERSONA_ID = SELECTPERSONASsql
-			+ " WHERE p.id_persona = ?";
+	private final String SELECTPERSONA_ID = SELECTPERSONASsql + " WHERE p.id_persona = ?";
 	private final String SELECTESPECIALIDAD_ID = "SELECT id_especialidad FROM especialidades WHERE nombre = ?";
 
 	/**
@@ -154,13 +151,11 @@ public class PersonaDAO {
 					int idEspecialidad = (int) getEspecialidadesID(e.name());
 
 					if (idEspecialidad == -1) {
-						throw new SQLException(
-								"Especialidad no encontrada. Se cancela la transacción.");
+						throw new SQLException("Especialidad no encontrada. Se cancela la transacción.");
 					}
 
 					// insertar nueva relacion
-					psInserEspec = conexion
-							.prepareStatement(INSERTARARTISTAESPECIALIDADPS);
+					psInserEspec = conexion.prepareStatement(INSERTARARTISTAESPECIALIDADPS);
 					psInserEspec.setLong(1, artista.getIdArt());
 					psInserEspec.setInt(2, idEspecialidad);
 
@@ -180,8 +175,7 @@ public class PersonaDAO {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				System.err
-						.println("No se ha podido modificar apodo de artista");
+				System.err.println("No se ha podido modificar apodo de artista");
 				try {
 					if (conexion != null) {
 						conexion.rollback();
@@ -247,8 +241,7 @@ public class PersonaDAO {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				System.err
-						.println("No se ha podido modificar apodo de artista");
+				System.err.println("No se ha podido modificar apodo de artista");
 				try {
 					if (conexion != null) {
 						conexion.rollback();
@@ -308,8 +301,7 @@ public class PersonaDAO {
 	}
 
 	/**
-	 * devuelve todas las filas, y contruye un artista o coordinador segun su
-	 * perfil
+	 * devuelve todas las filas, y contruye un artista o coordinador segun su perfil
 	 *
 	 * @return arraylist de personas completas
 	 */
@@ -332,22 +324,18 @@ public class PersonaDAO {
 				// de credenciales
 				String perfil = rs.getString("perfil");
 				if (perfil != null) {
-					Credenciales credenciales = new Credenciales(
-							rs.getString("nombre_usuario"),
-							rs.getString("password"),
-							Perfil.valueOf(perfil.toUpperCase()));
+					Credenciales credenciales = new Credenciales(rs.getString("nombre_usuario"),
+							rs.getString("password"), Perfil.valueOf(perfil.toUpperCase()));
 
 					if (credenciales.getPerfil() == Perfil.ARTISTA) {
 						long idArtista = rs.getLong("id_artista");
 						String apodo = rs.getString("apodo");
 
-						Artista nuevoArtista = new Artista(idPersona, email,
-								nombre, nacionalidad, credenciales, idArtista,
-								apodo, null, null);
+						Artista nuevoArtista = new Artista(idPersona, email, nombre, nacionalidad, credenciales,
+								idArtista, apodo, null, null);
 						personas.add(nuevoArtista);
 
-					} else if (credenciales
-							.getPerfil() == Perfil.COORDINACION) {
+					} else if (credenciales.getPerfil() == Perfil.COORDINACION) {
 						long idCoordinador = rs.getLong("id_coordinador");
 						boolean senior = rs.getBoolean("senior");
 						java.sql.Date fecha = rs.getDate("fechasenior");
@@ -357,16 +345,13 @@ public class PersonaDAO {
 							fechaLocal = fecha.toLocalDate();
 						}
 
-						Coordinador nuevoCoordinador = new Coordinador(
-								idPersona, email, nombre, nacionalidad,
-								credenciales, idCoordinador, senior, fechaLocal,
-								null);
+						Coordinador nuevoCoordinador = new Coordinador(idPersona, email, nombre, nacionalidad,
+								credenciales, idCoordinador, senior, fechaLocal, null);
 
 						personas.add(nuevoCoordinador);
 					}
 				} else {
-					throw new SQLException(
-							"El usuario no tiene perfil, por lo que no puede devolverse");
+					throw new SQLException("El usuario no tiene perfil, por lo que no puede devolverse");
 				}
 			}
 
@@ -394,8 +379,8 @@ public class PersonaDAO {
 	}
 
 	/**
-	 * busca una persona por su id_persona construye un artista o coordinador
-	 * segun su perfil
+	 * busca una persona por su id_persona construye un artista o coordinador segun
+	 * su perfil
 	 *
 	 * @param idPersona
 	 * @return persona tipo Artista o Coordinador
@@ -426,16 +411,13 @@ public class PersonaDAO {
 									+ idPersona);
 				}
 
-				Credenciales credenciales = new Credenciales(
-						rs.getString("nombre_usuario"),
-						rs.getString("password"),
+				Credenciales credenciales = new Credenciales(rs.getString("nombre_usuario"), rs.getString("password"),
 						Perfil.valueOf(perfilString.toUpperCase()));
 
 				if (credenciales.getPerfil() == Perfil.ARTISTA) {
 					long idArtista = rs.getLong("id_artista");
 					String apodo = rs.getString("apodo");
-					persona = new Artista(idPersona, email, nombre,
-							nacionalidad, credenciales, idArtista, apodo, null,
+					persona = new Artista(idPersona, email, nombre, nacionalidad, credenciales, idArtista, apodo, null,
 							null);
 				} else if (credenciales.getPerfil() == Perfil.COORDINACION) {
 					long idCoordinador = rs.getLong("id_coordinador");
@@ -448,9 +430,8 @@ public class PersonaDAO {
 					}
 
 					// TODO cuando tenga los espectaculos tendran que ir aqui
-					persona = new Coordinador(idPersona, email, nombre,
-							nacionalidad, credenciales, idCoordinador, senior,
-							fechaLocal, null);
+					persona = new Coordinador(idPersona, email, nombre, nacionalidad, credenciales, idCoordinador,
+							senior, fechaLocal, null);
 				}
 			}
 		} catch (SQLException e) {
@@ -537,14 +518,13 @@ public class PersonaDAO {
 				Artista paraInsertar = (Artista) persona;
 				insertarArtistaBase(con, paraInsertar);
 				insertarEspecialidadBase(con, paraInsertar);
-				
+
 			} else if (persona instanceof Coordinador) {
 				Coordinador paraInsertar = (Coordinador) persona;
 				insertarCoordinadorBase(con, paraInsertar);
-				
-			}else {
-				throw new SQLException(
-						"No pudo crearse porque no era del tipo adecuado");
+
+			} else {
+				throw new SQLException("No pudo crearse porque no era del tipo adecuado");
 			}
 			insertarCredencialesBase(con, persona);
 
@@ -595,8 +575,7 @@ public class PersonaDAO {
 				Coordinador paraInsertar = (Coordinador) persona;
 				insertarCoordinadorBase(con, paraInsertar);
 			} else {
-				throw new SQLException(
-						"No pudo crearse porque no era del tipo adecuado");
+				throw new SQLException("No pudo crearse porque no era del tipo adecuado");
 			}
 			insertarCredencialesBase(con, persona);
 
@@ -625,8 +604,7 @@ public class PersonaDAO {
 	 * @return
 	 * @throws SQLException
 	 */
-	public Persona insertarPersonaBase(Connection con, Persona persona)
-			throws SQLException {
+	public Persona insertarPersonaBase(Connection con, Persona persona) throws SQLException {
 		Persona result = null;
 
 		PreparedStatement ps = null;
@@ -634,8 +612,7 @@ public class PersonaDAO {
 
 		try {
 			// ***** Obtener la conexion ( y de paso los ID)****
-			ps = con.prepareStatement(INSERTARUSUARIOPS,
-					Statement.RETURN_GENERATED_KEYS);
+			ps = con.prepareStatement(INSERTARUSUARIOPS, Statement.RETURN_GENERATED_KEYS);
 
 			// añadir los campos en el mismo orden
 			ps.setString(1, persona.getEmail());
@@ -681,8 +658,7 @@ public class PersonaDAO {
 		return result;
 	}
 
-	public long insertarArtistaBase(Connection con, Artista artista)
-			throws SQLException {
+	public long insertarArtistaBase(Connection con, Artista artista) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		long resultado = -1;
@@ -695,8 +671,7 @@ public class PersonaDAO {
 		}
 
 		try {
-			ps = DAOF.getConexion().prepareStatement(INSERTARARTISTAPS,
-					Statement.RETURN_GENERATED_KEYS);
+			ps = DAOF.getConexion().prepareStatement(INSERTARARTISTAPS, Statement.RETURN_GENERATED_KEYS);
 
 			ps.setString(1, artista.getApodo());
 			ps.setLong(2, idPersonaGenerado);
@@ -738,8 +713,7 @@ public class PersonaDAO {
 		return resultado;
 	}
 
-	public long insertarEspecialidadBase(Connection con, Artista artista)
-			throws SQLException {
+	public long insertarEspecialidadBase(Connection con, Artista artista) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		long resultado = -1;
@@ -752,8 +726,7 @@ public class PersonaDAO {
 		}
 
 		try {
-			ps = con.prepareStatement(INSERTARARTISTAESPECIALIDADPS,
-					Statement.RETURN_GENERATED_KEYS);
+			ps = con.prepareStatement(INSERTARARTISTAESPECIALIDADPS, Statement.RETURN_GENERATED_KEYS);
 
 			for (Especialidad e : artista.getEspecialidades()) {
 
@@ -761,8 +734,7 @@ public class PersonaDAO {
 				int idEspecialidad = (int) getEspecialidadesID(e.name());
 
 				if (idEspecialidad == -1) {
-					throw new SQLException(
-							"Especialidad no encontrada. Se cancela la transacción.");
+					throw new SQLException("Especialidad no encontrada. Se cancela la transacción.");
 				}
 
 				// insertar nueva relacion
@@ -800,8 +772,7 @@ public class PersonaDAO {
 		return resultado;
 	}
 
-	public long insertarCoordinadorBase(Connection con, Coordinador coordinador)
-			throws SQLException {
+	public long insertarCoordinadorBase(Connection con, Coordinador coordinador) throws SQLException {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -815,20 +786,21 @@ public class PersonaDAO {
 		}
 
 		try {
-			ps = con.prepareStatement(INSERTARCOORDINADORPS,
-					Statement.RETURN_GENERATED_KEYS);
+			ps = con.prepareStatement(INSERTARCOORDINADORPS, Statement.RETURN_GENERATED_KEYS);
 
 			ps.setBoolean(1, coordinador.isSenior());
 
-			Date sqlDate = coordinador.getFechasenior() == null ? null
-					: Date.valueOf(coordinador.getFechasenior()); // Obtenemos
-																	// fecha,
-																	// pero si
-																	// es nulo
-																	// no
-																	// rompemos
-																	// con el
-																	// valueof
+			Date sqlDate = coordinador.getFechasenior() == null ? null : Date.valueOf(coordinador.getFechasenior()); // Obtenemos
+																														// fecha,
+																														// pero
+																														// si
+																														// es
+																														// nulo
+																														// no
+																														// rompemos
+																														// con
+																														// el
+																														// valueof
 
 			ps.setDate(2, sqlDate);
 			ps.setLong(3, idPersonaGenerado);
@@ -862,8 +834,7 @@ public class PersonaDAO {
 		return resultado;
 	}
 
-	public long insertarCredencialesBase(Connection con, Persona persona)
-			throws SQLException {
+	public long insertarCredencialesBase(Connection con, Persona persona) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		long resultado = -1;
@@ -913,9 +884,5 @@ public class PersonaDAO {
 
 		return resultado;
 	}
-
-	
-
-	
 
 }

@@ -2,27 +2,46 @@ package controlador;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.time.LocalDate;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import entidades.Artista;
 import entidades.Coordinador;
+import entidades.Credenciales;
+import entidades.Especialidad;
+import entidades.Numero;
 import entidades.Persona;
 import entidades.ProgramProperties;
 import entidades.Sesion;
 import entidadesDAO.PersonaDAO;
+import jakarta.transaction.Transactional;
+import repository.ArtistaRepository;
+import repository.CoordinadorRepository;
+import repository.CredencialesRepository;
+import repository.PersonaRepository;
 
+@Service
 public class UsuariosService {
+
+	@Autowired
+	private PersonaRepository personaRepositoy;
+
+	@Autowired
+	private ArtistaRepository artistaRepository;
+
+	@Autowired
+	private CoordinadorRepository coordinadorRepository;
+
+	@Autowired
+	private CredencialesRepository credencialesRepository;
 
 	Sesion actual = new Sesion();
 
-	static PersonaDAO PDAO = null;
-
-	/**
-	 * 
-	 * @return
-	 */
 	public Sesion getSesion() {
 		return actual;
 	}
@@ -31,128 +50,98 @@ public class UsuariosService {
 		this.actual = actual;
 	}
 
-	public ArrayList<Persona> getCredencialesSistema() {
-		return PDAO.getPersonas();
-	}
-
-	/*
-	 * constructor
-	 */
-	public UsuariosService() {
-		PDAO = new PersonaDAO();
-	}
-
 	public Persona login(String nombreUsuario, String password) {
-		Persona usuarioLogueado = null;
-
+		// Admin
 		if (nombreUsuario.equals(ProgramProperties.usuarioAdmin) && password.equals(ProgramProperties.passwordAdmin)) {
-			usuarioLogueado = new Persona(ProgramProperties.usuarioAdmin, ProgramProperties.passwordAdmin);
-		} else {
-			for (Persona p : getCredencialesSistema()) {
-				if (p.getCredenciales().getNombre().equals(nombreUsuario)
-						&& p.getCredenciales().getPassword().equals(password)) {
-					usuarioLogueado = p;
-				}
-			}
+			Persona admin = new Persona(ProgramProperties.usuarioAdmin, ProgramProperties.passwordAdmin);
+			actual = new Sesion(admin);
+			return admin;
 		}
-		if (usuarioLogueado != null) {
-			actual = new Sesion(usuarioLogueado);
+		Optional<Credenciales> cred = credencialesRepository.findByNombreAndPassword(nombreUsuario, password);
+
+		if (cred.isPresent()) {
+			Persona p = cred.get().getPersona(); // recoger la persona vinculada
+			actual = new Sesion(p);
+			return p;
 		}
-		return usuarioLogueado;
+		return null;
 	}
 
+	@Transactional
 	public Persona getPersona(Long id) {
-		return PDAO.getPersonaId(id);
+		return personaRepositoy.findById(id).orElse(null);
 	}
 
 	public void logOut() {
-		actual.setUsuActual(new Persona());
+		actual.setUsuActual(null);
 	}
 
-	public String mostrarFicha() {
-		String ficha = "--Ficha del artista--\nNombre: " + actual.getUsuActual().getNombre() + "\nID: "
-				+ actual.getUsuActual().getId();
-		return ficha;
+	@Transactional()
+	public void mostrarFicha() {
+		Persona usuario = actual.getUsuActual();
+		/**
+		 * vamos a recordar que actualmente hay un artista usando esyte metodo, ya
+		 * tenemos su id en memoriA
+		 */
+
+		System.out.println("----FICHA PERSONAL----\n" + "Nombre: " + usuario.getNombre());
+		if (usuario instanceof Artista) { // si es instancia, lo transforma
+			Artista artista = (Artista) usuario;
+			System.out.println("Más conocido como... " + artista.getApodo());
+			System.out.println("Especializado en: ");
+			if (artista.getEspecialidades() != null) {
+				for (Especialidad esp : artista.getEspecialidades()) {
+					System.out.print(esp.getNombre() + " ");
+				}
+			}
+			if (!artista.getNumeros().isEmpty()) {
+				for (Numero num : artista.getNumeros()) {
+					System.out.println("- " + num.getNombre());
+				}
+			} else {
+				System.out.println("El artista no participa en ningun numero aun.");
+			}
+
+		}
+
 	}
 
+	@Transactional
 	public void crearPersona(Persona nueva) {
 
-		PersonaDAO pdao = new PersonaDAO();
-		pdao.insertarPersonaConRollback(nueva);
+		personaRepositoy.save(nueva);
 
-		/**
-		long idUsuario = pdao.insertarUsuario(nueva);
-
-		if (idUsuario > -1) {
-			nueva.setId(idUsuario);
-			
-			if (nueva instanceof Artista) {
-				Artista artista = (Artista) nueva;
-				System.out.println(pdao.insertarArtista(artista)); // FUNCIONA
-																	// TODO lo mismo para coordinador,
-																	// y luego para credenciales
-			} else if (nueva instanceof Coordinador) {
-				Coordinador coordinador = (Coordinador) nueva;
-				System.out.println(pdao.insertarCoordinador(coordinador));
-			}
-		}
-		**/
-	}
-	
-
-	public void persistirCredenciales() {
-		try {
-			FileWriter writer = new FileWriter(ProgramProperties.credenciales);
-			String contenido = "";
-			for (Persona p : getCredencialesSistema()) {
-				contenido += p.toFicheroCredenciales() + "\n";
-			}
-			writer.write(contenido);
-			writer.close();
-		} catch (IOException e) {
-			System.err.println("Error al escribir el archivo");
+		if (nueva.getCredenciales() != null) {
+			Credenciales cred = nueva.getCredenciales();
+			cred.setPersona(nueva);
+			credencialesRepository.save(cred);
 		}
 	}
 
+	@Transactional
 	public Boolean comprobarEmail(String email) {
-		Boolean valido = true;
-		for (Persona p : getCredencialesSistema()) {
-			if (p.getEmail() == email) {
-				System.out.println("Ese email ya está registrado en el sistema");
-				return false;
-			}
-		}
-		return valido;
+		return personaRepositoy.existsByEmail(email);
 	}
 
+	@Transactional
 	public void modificarArtista(Artista artista) {
-		PDAO.modificarArtista(artista);
+		artistaRepository.save(artista);
+		System.out.println("Artista modificado con exito.");
 	}
 
-	public void modificarCoordinador(Coordinador coordinador){
-		PDAO.modificarCoordinador(coordinador);
+	@Transactional
+	public void modificarCoordinador(Coordinador coordinador) {
+		coordinadorRepository.save(coordinador);
 	}
 
+	@Transactional // creo que sobra porque solo lee los datos
 	public Boolean comprobarNombreUsuario(String nombreUsuario) {
 		Boolean valido = true;
-		for (Persona p : getCredencialesSistema()) {
-			if (p.getCredenciales().getNombre() == nombreUsuario) {
-				System.out.println("Ese nombre ya existe");
-				return false;
-			}
+		if (credencialesRepository.existsByNombre(nombreUsuario)) {
+			System.out.println("Ese nombre de usuario ya existe, elige otro.");
+			return false;
 		}
-		// Si no hemos fallado en ningún validador, construimos la Persona
-		// resultadoLogin = new Persona(..);
 		return valido;
 	}
-	
-	public String insertarSocio(Persona persona) {
-		Persona nueva = PDAO.insertarSocioConRollback(persona);
-		if (nueva != null) {
-			return "Socio añadido al sistema.";
-		}
-		return "No se ha podido añadir al socio.";
-	}
-
 
 }

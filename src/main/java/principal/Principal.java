@@ -18,6 +18,8 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -38,15 +40,17 @@ import entidades.Persona;
 import entidades.ProgramProperties;
 import entidadesDAO.PersonaDAO;
 
+@SpringBootApplication 
+@ComponentScan(basePackages = {"controlador", "entidades", "principal", "repository", "factorias"}) 
 public class Principal {
 
 	static Scanner leer = new Scanner(System.in);
 
 	// TODO eliminar usuariosservice
-	static UsuariosService usuariosService = null;
-	static EspectaculosService espectaculosService = null;
-	static PropertiesService propertiesService = null;
-	static NumeroService numerosService = null;
+	static UsuariosService usuariosService;
+	static EspectaculosService espectaculosService;
+	static PropertiesService propertiesService;
+	static NumeroService numerosService;
 
 	static Map<String, String> paises = null;
 
@@ -59,7 +63,7 @@ public class Principal {
 		paises = cargarPaises();
 		numerosService = new NumeroService();
 
-		System.out.println("**Bienvenido al Circo**");
+		System.out.println("**** Bienvenido al Circo ****");
 
 		// MENU INVITADO
 		/**
