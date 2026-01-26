@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import controlador.UsuariosService;
 import entidades.Artista;
 import entidades.Coordinador;
 import entidades.Credenciales;
+import entidades.Especialidad;
 import entidades.Espectaculo;
 import entidades.Numero;
 import entidades.Perfil;
@@ -39,7 +41,7 @@ public class Menu {
 		System.out.println("--MENU INVITADO--");
 
 		do {
-			System.out.println("Elige una opcion: \n\t1. Ver espectaculos" + "\n\t2. Log OUT\\n\\t3. Salir");
+			System.out.println("Elige una opcion: \n\t1. Ver espectaculos" + "\n\t2. Log IN\n\t3. Salir");
 			opcion = leer.nextInt();
 			leer.nextLine();
 
@@ -467,17 +469,20 @@ public class Menu {
 		System.out.println("Numero guardado con éxito.");
 
 	}
-	
+
 	public void gestionarPersonas() {
 		int opcion4 = -1;
-		
+
 		do {
 			System.out.println("--Gestion de personas--");
 			System.out.println("Qué deseas hacer?");
 			System.out.println("\t1. Registrar una persona nueva");
 			System.out.println("\t2. Gestionar datos de Artista o Coordinador");
 			System.out.println("\t3. Atrás");
-			
+
+			opcion4 = leer.nextInt();
+			leer.nextLine();
+
 			switch (opcion4) {
 			case 1:
 				registrarPersonaNueva();
@@ -487,47 +492,186 @@ public class Menu {
 				break;
 			case 3:
 				break;
-				default: 
-					System.out.println("Opcion invalida, prueba de nuevo");
+			default:
+				System.out.println("Opcion invalida, prueba de nuevo");
 			}
-			
+
 		} while (opcion4 != 3);
 	}
-	
+
 	public void registrarPersonaNueva() {
 		Persona p = null;
 		System.out.println("--Nuevo usuario--");
-		
+
 		System.out.println("El nuevo usuario es.. 1-Artista o 2-Coordinador?");
 		int perfil = leer.nextInt();
 		leer.nextLine();
 		if (perfil == 1) {
 			p = new Artista();
 			p.setPerfil(Perfil.ARTISTA);
-			
+			System.out.println("Introduce su apodo");
+			Artista art = (Artista) p;
+
+			Set<Especialidad> nuevasEspec = new HashSet<>();
+
+			System.out.println("Especialidades disponibles:");
+			List<Especialidad> especialidades = usuariosService.getEspecialidades();
+			for (Especialidad e : especialidades) {
+				System.out.println(e.getId() + " - " + e.getNombre());
+			}
+
+			System.out.println("Indica el conjunto de las especialidades separadas por comas (ej: 1,3,4)");
+			String[] seleccion = leer.nextLine().split(",");
+
+			for (String s : seleccion) {
+				try {
+					int indice = Integer.parseInt(s.trim()) - 1; // -1 porque la lista empieza en 0
+
+					if (indice >= 0 && indice < especialidades.size()) {
+						Especialidad especialidadAgregada = especialidades.get(indice);
+						nuevasEspec.add(especialidadAgregada);
+					} else {
+						System.out.println("La opción " + (indice + 1) + " no existe.");
+					}
+				} catch (NumberFormatException e) {
+					System.out.println("'" + s + "' no es un número válido.");
+				}
+			}
+
+			if (nuevasEspec.size() >= 1 && nuevasEspec.size() <= 5) {
+				art.setEspecialidades(nuevasEspec);
+				System.out.println("Especialidades asignadas correctamente.");
+			} else {
+				System.out.println("Error: Debes elegir entre 1 y 5 especialidades. El registro continuará sin ellas.");
+			}
+
 		} else if (perfil == 2) {
 			p = new Coordinador();
 			p.setPerfil(Perfil.COORDINACION);
-		}		
+			System.out.println("Es Senior? (s/n)");
+			String esSenior = leer.nextLine().trim().toLowerCase();
+			Coordinador coor = (Coordinador) p;
+			if (esSenior.equals("s")) {
+				coor.setSenior(true);
+
+				boolean fechaValida = false;
+				while (!fechaValida) {
+					System.out.println("Introduce la fecha Senior (formato yyyy-mm-dd):");
+					String fechaStr = leer.nextLine().trim();
+					try {
+						LocalDate fecha = LocalDate.parse(fechaStr);
+						if (fecha.isAfter(LocalDate.now())) {
+							System.out.println("La fecha no puede ser futura.");
+						} else {
+							coor.setFechasenior(fecha);
+							fechaValida = true;
+						}
+					} catch (Exception e) {
+						System.out.println("Formato de fecha incorrecto.");
+					}
+				}
+
+			} else {
+				coor.setSenior(false);
+				coor.setFechasenior(null);
+			}
+		}
 
 		System.out.println("Introduce su nombre:");
 		p.setNombre(leer.nextLine());
 		System.out.println("Introduce su email:");
 		p.setEmail(leer.nextLine());
 		System.out.println("Introduce su nacionalidad");
-		p.setNacionalidad(leer.nextLine());	
-		
+		p.setNacionalidad(leer.nextLine());
+
 		System.out.println("Nombre de usuario (login):");
 		String usuario = leer.nextLine();
 		System.out.println("Contraseña:");
 		String pass = leer.nextLine();
-		
+
 		p.setCredenciales(new Credenciales(usuario, pass));
-		
+
 		usuariosService.crearPersona(p);
 	}
 
 	public void modificarPersona() {
-		
+
+		List<Persona> lista = usuariosService.getCredencialesSistema();
+
+		for (Persona per : lista) {
+			System.out.println("ID: " + per.getId() + " - " + per.getNombre());
+		}
+		System.out.println("Introduce el ID de la persona a modificar:");
+		Long idMod = leer.nextLong();
+
+		Persona p = usuariosService.getPersonaById(idMod);
+
+		if (p.getPerfil() == Perfil.ARTISTA) {
+			Artista art = (Artista) p;
+
+			System.out.println("Introduce un nuevo apodo o pulsa ENTER:");
+			art.setApodo(leer.nextLine());
+
+			System.out.println("Quieres actualizar sus especialidades? (s/n)");
+			String resp = leer.nextLine();
+			if (resp.trim().toLowerCase().equals("s")) {
+				Set<Especialidad> nuevasEspec = new HashSet<>();
+
+				System.out.println("Especialidades disponibles:");
+				List<Especialidad> especialidades = usuariosService.getEspecialidades();
+				for (Especialidad e : especialidades) {
+					System.out.println(e.getId() + " - " + e.getNombre());
+				}
+
+				System.out.println("Indica el conjunto de las especialidades separadas por comas (ej: 1,3,4)");
+				String[] seleccion = leer.nextLine().split(",");
+
+				for (String s : seleccion) {
+					try {
+						int indice = Integer.parseInt(s.trim()) - 1; // -1 porque la lista empieza en 0
+
+						if (indice >= 0 && indice < especialidades.size()) {
+							Especialidad especialidadAgregada = especialidades.get(indice);
+							nuevasEspec.add(especialidadAgregada);
+						} else {
+							System.out.println("La opción " + (indice + 1) + " no existe.");
+						}
+					} catch (NumberFormatException e) {
+						System.out.println("'" + s + "' no es un número válido.");
+					}
+				}
+
+				if (nuevasEspec.size() >= 1 && nuevasEspec.size() <= 5) {
+					art.setEspecialidades(nuevasEspec);
+					System.out.println("Especialidades asignadas correctamente.");
+				} else {
+					System.out.println(
+							"Error: Debes elegir entre 1 y 5 especialidades. El registro continuará sin ellas.");
+				}
+			}
+
+		} else if (p.getPerfil() == Perfil.COORDINACION) {
+			Coordinador coor = (Coordinador) p;
+
+			if (coor.isSenior()) {
+				System.out.println("Este coordinador ya es senior, eso no se puede cambiar.");
+			} else {
+				System.out.println("Quieres hacer a " + coor.getNombre() + " Coordinador Senior? (s/n)");
+				String resp = leer.nextLine().trim().toLowerCase();
+				if (resp.equals("s")) {
+					coor.setSenior(true);
+					System.out.println("Introduce la fecha de ascenso: (yyyy-mm-dd)");
+					try {
+						coor.setFechasenior(LocalDate.parse(leer.nextLine()));
+						System.out.println("Ascenso registrado");
+					} catch (Exception e) {
+						System.out.println("Formato de fecha erróneo. El ascenso no se ha guardado.");
+						coor.setSenior(false);
+					}
+				}
+			}
+
+		}
+
 	}
 }

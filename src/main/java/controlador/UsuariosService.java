@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 import repository.ArtistaRepository;
 import repository.CoordinadorRepository;
 import repository.CredencialesRepository;
+import repository.EspecialidadRepository;
 import repository.PersonaRepository;
 
 @Service
@@ -34,6 +35,9 @@ public class UsuariosService {
 
 	@Autowired
 	private CredencialesRepository credencialesRepository;
+	
+	@Autowired
+	private EspecialidadRepository especialidadRepository;
 
 	Sesion actual = new Sesion();
 
@@ -63,7 +67,7 @@ public class UsuariosService {
 	}
 
 	@Transactional
-	public Persona getPersona(Long id) {
+	public Persona getPersonaById(Long id) {
 		return personaRepositoy.findById(id).orElse(null);
 	}
 
@@ -152,6 +156,11 @@ public class UsuariosService {
 	@Transactional
 	public Artista getArtista(Long id) {
 		return artistaRepository.findById(id).orElse(null);
+	}
+	
+	@Transactional
+	public List<Especialidad> getEspecialidades(){
+		return  especialidadRepository.findAll();
 	}
 
 }

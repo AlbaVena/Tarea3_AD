@@ -8,4 +8,5 @@ import entidades.Especialidad;
 @Repository
 public interface EspecialidadRepository extends JpaRepository<Especialidad, Long>{
 
+	
 }

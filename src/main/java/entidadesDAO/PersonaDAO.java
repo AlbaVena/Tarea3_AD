@@ -148,7 +148,7 @@ public class PersonaDAO {
 				for (Especialidad e : artista.getEspecialidades()) {
 
 					// insertar nuevas especialidades
-					int idEspecialidad = (int) getEspecialidadesID(e.name());
+					int idEspecialidad = 3;
 
 					if (idEspecialidad == -1) {
 						throw new SQLException("Especialidad no encontrada. Se cancela la transacción.");
@@ -731,8 +731,7 @@ public class PersonaDAO {
 			for (Especialidad e : artista.getEspecialidades()) {
 
 				// insertar nuevas especialidades
-				int idEspecialidad = (int) getEspecialidadesID(e.name());
-
+				int idEspecialidad = 3;
 				if (idEspecialidad == -1) {
 					throw new SQLException("Especialidad no encontrada. Se cancela la transacción.");
 				}
