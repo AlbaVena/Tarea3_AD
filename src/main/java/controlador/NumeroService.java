@@ -28,6 +28,10 @@ public class NumeroService {
 		numeroRepository.save(nuevo);
 	}
 	
+	 @Transactional
+	 public Numero getNumeroById(Long id) {
+		 return numeroRepository.findById(id).orElse(null);
+	 }
 	
 	
 	

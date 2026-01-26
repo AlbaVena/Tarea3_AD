@@ -1,5 +1,6 @@
 package controlador;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +137,21 @@ public class UsuariosService {
 			return false;
 		}
 		return valido;
+	}
+	
+	@Transactional
+	public Coordinador getCoordinador(Long id) {
+		return coordinadorRepository.findById(id).orElse(null);
+	}
+	
+	@Transactional
+	public List<Persona> getCredencialesSistema() {
+		return personaRepositoy.findAll();
+	}
+	
+	@Transactional
+	public Artista getArtista(Long id) {
+		return artistaRepository.findById(id).orElse(null);
 	}
 
 }

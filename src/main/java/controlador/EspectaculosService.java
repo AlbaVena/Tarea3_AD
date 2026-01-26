@@ -1,6 +1,5 @@
 package controlador;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ public class EspectaculosService {
 	}
 
 	@Transactional
-	public void setEspectaculos(ArrayList<Espectaculo> espectaculos) {
+	public void setEspectaculos(List<Espectaculo> espectaculos) {
 		espectaculoRepository.saveAll(espectaculos);
 	}
 
@@ -30,6 +29,12 @@ public class EspectaculosService {
 	public void guardarEspectaculo(Espectaculo aGuardar) {
 		espectaculoRepository.save(aGuardar);
 	}
+	
+	@Transactional
+	public Espectaculo getEspectaculo(long id) {
+		return espectaculoRepository.findById(id).orElse(null);
+	}
+	
 	
 	
 
