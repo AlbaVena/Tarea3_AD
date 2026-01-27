@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import entidades.Artista;
@@ -11,8 +12,8 @@ import entidades.Coordinador;
 import entidades.Credenciales;
 import entidades.Especialidad;
 import entidades.Numero;
+import entidades.Perfil;
 import entidades.Persona;
-import entidades.ProgramProperties;
 import entidades.Sesion;
 import jakarta.transaction.Transactional;
 import repository.ArtistaRepository;
@@ -23,6 +24,12 @@ import repository.PersonaRepository;
 
 @Service
 public class UsuariosService {
+
+	@Value("${usuarioAdmin}")
+	private String usuarioAdminMemoria;
+
+	@Value("${passwordAdmin}")
+	private String passwordAdminMemoria;
 
 	@Autowired
 	private PersonaRepository personaRepositoy;
@@ -35,7 +42,7 @@ public class UsuariosService {
 
 	@Autowired
 	private CredencialesRepository credencialesRepository;
-	
+
 	@Autowired
 	private EspecialidadRepository especialidadRepository;
 
@@ -51,11 +58,16 @@ public class UsuariosService {
 
 	public Persona login(String nombreUsuario, String password) {
 		// Admin
-		if (nombreUsuario.equals(ProgramProperties.usuarioAdmin) && password.equals(ProgramProperties.passwordAdmin)) {
-			Persona admin = new Persona(ProgramProperties.usuarioAdmin, ProgramProperties.passwordAdmin);
-			actual = new Sesion(admin);
+		if (nombreUsuario.equals(usuarioAdminMemoria) && password.equals(passwordAdminMemoria)) {
+
+			Persona admin = new Persona();
+			admin.setNombre("Administrador");
+			admin.setPerfil(Perfil.ADMIN);
+
+			this.actual = new Sesion(admin);
 			return admin;
 		}
+
 		Optional<Credenciales> cred = credencialesRepository.findByNombreAndPassword(nombreUsuario, password);
 
 		if (cred.isPresent()) {
@@ -142,25 +154,25 @@ public class UsuariosService {
 		}
 		return valido;
 	}
-	
+
 	@Transactional
 	public Coordinador getCoordinador(Long id) {
 		return coordinadorRepository.findById(id).orElse(null);
 	}
-	
+
 	@Transactional
 	public List<Persona> getCredencialesSistema() {
 		return personaRepositoy.findAll();
 	}
-	
+
 	@Transactional
 	public Artista getArtista(Long id) {
 		return artistaRepository.findById(id).orElse(null);
 	}
-	
+
 	@Transactional
-	public List<Especialidad> getEspecialidades(){
-		return  especialidadRepository.findAll();
+	public List<Especialidad> getEspecialidades() {
+		return especialidadRepository.findAll();
 	}
 
 }
