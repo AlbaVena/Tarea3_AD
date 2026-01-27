@@ -17,11 +17,10 @@ import jakarta.persistence.Table;
 @Table(name = "credenciales")
 public class Credenciales implements Serializable{
 	private static final long serialVersionUID = 1L;
-	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_credenciales")
-	private long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 	
 	@Column(name = "nombre", nullable = false, length = 25)
 	private String nombre;
@@ -57,7 +56,7 @@ public class Credenciales implements Serializable{
 	
 	public Credenciales(String nombreAdministrador, String passwordAdministrador) {
 		super();
-		this.id = -1;
+		this.id = null;
 		this.nombre = nombreAdministrador;
 		this.password = passwordAdministrador;
 		this.perfil = Perfil.ADMIN;
@@ -67,7 +66,7 @@ public class Credenciales implements Serializable{
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

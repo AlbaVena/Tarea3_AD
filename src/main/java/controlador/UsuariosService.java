@@ -32,7 +32,7 @@ public class UsuariosService {
 	private String passwordAdminMemoria;
 
 	@Autowired
-	private PersonaRepository personaRepositoy;
+	private PersonaRepository personaRepository;
 
 	@Autowired
 	private ArtistaRepository artistaRepository;
@@ -80,7 +80,7 @@ public class UsuariosService {
 
 	@Transactional
 	public Persona getPersonaById(Long id) {
-		return personaRepositoy.findById(id).orElse(null);
+		return personaRepository.findById(id).orElse(null);
 	}
 
 	public void logOut() {
@@ -120,18 +120,22 @@ public class UsuariosService {
 	@Transactional
 	public void crearPersona(Persona nueva) {
 
-		personaRepositoy.save(nueva);
-
+		
 		if (nueva.getCredenciales() != null) {
-			Credenciales cred = nueva.getCredenciales();
-			cred.setPersona(nueva);
-			credencialesRepository.save(cred);
-		}
+	        // 1. Establecemos el vínculo mientras todo está en memoria (RAM)
+	        nueva.getCredenciales().setPersona(nueva);
+	    }
+
+	    // 2. Guardamos la persona. 
+	    // Al tener CascadeType.ALL, Hibernate guardará primero la Persona,
+	    // obtendrá su ID, lo meterá en el objeto Credenciales y luego guardará las Credenciales.
+	    personaRepository.save(nueva);
+		
 	}
 
 	@Transactional
 	public Boolean comprobarEmail(String email) {
-		return personaRepositoy.existsByEmail(email);
+		return personaRepository.existsByEmail(email);
 	}
 
 	@Transactional
@@ -162,7 +166,7 @@ public class UsuariosService {
 
 	@Transactional
 	public List<Persona> getCredencialesSistema() {
-		return personaRepositoy.findAll();
+		return personaRepository.findAll();
 	}
 
 	@Transactional

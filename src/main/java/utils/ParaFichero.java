@@ -59,20 +59,20 @@ public class ParaFichero {
 	 * devuelve un array de Persona
 	 * @return
 	 */
-	private static ArrayList<Persona> cargarCredenciales() {
-		ArrayList<Persona> personas = new ArrayList<>();
-		// leer el fichero de credenciales
-		ArrayList<String> lineas = leerFichero(ProgramProperties.credenciales);
-
-		for (String linea : lineas) {
-			if (linea.contains("coordinacion")) {
-				personas.add(new Coordinador(linea));
-			} else if (linea.contains("artista")) {
-				personas.add(new Artista(linea));
-			}
-		}
-		return personas;
-	}
+//	private static ArrayList<Persona> cargarCredenciales() {
+//		ArrayList<Persona> personas = new ArrayList<>();
+//		// leer el fichero de credenciales
+//		ArrayList<String> lineas = leerFichero(ProgramProperties.credenciales);
+//
+//		for (String linea : lineas) {
+//			if (linea.contains("coordinacion")) {
+//				personas.add(new Coordinador(linea));
+//			} else if (linea.contains("artista")) {
+//				personas.add(new Artista(linea));
+//			}
+//		}
+//		return personas;
+//	}
 	
 	public static void persistirCredenciales() {
 		try {

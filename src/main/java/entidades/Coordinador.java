@@ -21,7 +21,7 @@ public class Coordinador extends Persona implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Column(name = "id_coordinador", insertable = false, updatable = false)
-	private long idCoord;
+	private Long idCoord;
 	
 	@Column(name = "senior", nullable = false)
 	private boolean senior = false;
@@ -38,23 +38,23 @@ public class Coordinador extends Persona implements Serializable {
 		super();
 	}
 
-	public Coordinador (String linea) {
-		super();
-		String[] propiedades = linea.split("\\|");
-		this.id = Long.parseLong(propiedades[0]);
-		this.credenciales = new Credenciales(propiedades[1], propiedades[2]);
-		this.email = propiedades[3];
-		this.nombre = propiedades[4];
-		this.nacionalidad = propiedades[5];
-			this.perfil=Perfil.COORDINACION;
-	}
+//	public Coordinador (String linea) {
+//		super();
+//		String[] propiedades = linea.split("\\|");
+//		this.id = Long.parseLong(propiedades[0]);
+//		this.credenciales = new Credenciales(propiedades[1], propiedades[2]);
+//		this.email = propiedades[3];
+//		this.nombre = propiedades[4];
+//		this.nacionalidad = propiedades[5];
+//			this.perfil=Perfil.COORDINACION;
+//	}
 
-	public Coordinador(long id, String email, String nombre, String nacionalidad, Credenciales credenciales, long idCoordinador) {
+	public Coordinador(Long id, String email, String nombre, String nacionalidad, Credenciales credenciales, long idCoordinador) {
 		super(id, email, nombre, nacionalidad, credenciales, Perfil.COORDINACION);
 		this.idCoord = idCoordinador;
 	}
 
-	public Coordinador(long id, String email, String nombre, String nacionalidad, Credenciales credenciales,
+	public Coordinador(Long id, String email, String nombre, String nacionalidad, Credenciales credenciales,
 			long idCoord, boolean senior, LocalDate fechasenior, Set <Espectaculo> espectaculos) {
 		super(id, email, nombre, nacionalidad, credenciales, Perfil.COORDINACION);
 		this.idCoord = idCoord;
@@ -63,11 +63,11 @@ public class Coordinador extends Persona implements Serializable {
 		this.espectaculos = espectaculos;
 	}
 
-	public long getIdCoord() {
+	public Long getIdCoord() {
 		return idCoord;
 	}
 
-	public void setIdCoord(long idCoord) {
+	public void setIdCoord(Long idCoord) {
 		this.idCoord = idCoord;
 	}
 

@@ -37,10 +37,10 @@ public class Persona implements Serializable {
 	@Column(name = "nacionalidad", nullable = false, length = 30)
 	protected String nacionalidad;
 	
-	
-	// mappedBy indica que el dueño de la relación es el campo "persona" en la clase Credenciales
 	@OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
-	protected Credenciales credenciales;
+	private Credenciales credenciales;
+	// mappedBy indica que el dueño de la relación es el campo "persona" en la clase Credenciales
+
 	
 	@Enumerated(EnumType.STRING)
 	public Perfil perfil;
@@ -70,12 +70,12 @@ public class Persona implements Serializable {
 		this.perfil = perfil;
 	}
 
-	// Constructor de administrador
-	public Persona(String usuarioAdministrador, String contraseñaAdministrador) {
-		super();
-		this.credenciales = new Credenciales(usuarioAdministrador, contraseñaAdministrador);
-		this.perfil = Perfil.ADMIN;
-	}
+//	// Constructor de administrador
+//	public Persona(String usuarioAdministrador, String contraseñaAdministrador) {
+//		super();
+//		this.credenciales = new Credenciales(usuarioAdministrador, contraseñaAdministrador);
+//		this.perfil = Perfil.ADMIN;
+//	}
 
 	public Persona(String linea) {
 		super();

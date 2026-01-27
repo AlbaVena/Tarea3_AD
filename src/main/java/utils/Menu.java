@@ -62,7 +62,7 @@ public class Menu {
 				break;
 			case 2:
 				String usuario, password;
-				;
+				
 
 				do {
 					System.out.println("Introduce tu nombre de usuario");
@@ -175,13 +175,13 @@ public class Menu {
 
 		do {
 			System.out.println("Elige una opción: \n\t1. Ver espectáculos"
-					+ "\n\t2. Crear o Modificar un espectáculo\n\t4. Log OUT");
+					+ "\n\t2. Crear o Modificar un espectáculo\n\t3. Log OUT");
 			opcion = leer.nextInt();
 			leer.nextLine();
 
 			switch (opcion) {
 			case 1:
-				espectaculosService.getEspectaculos();
+				verEspectaculos();
 				break;
 			case 2:
 				guardarEspectaculo();
@@ -194,7 +194,7 @@ public class Menu {
 
 			}
 
-		} while (opcion != 4);
+		} while (opcion != 3);
 
 	}
 
@@ -511,6 +511,7 @@ public class Menu {
 	}
 
 	public void registrarPersonaNueva() {
+		
 		Persona p = null;
 		System.out.println("--Nuevo usuario--");
 
@@ -522,6 +523,8 @@ public class Menu {
 			p.setPerfil(Perfil.ARTISTA);
 			System.out.println("Introduce su apodo");
 			Artista art = (Artista) p;
+			art.setPerfil(Perfil.ARTISTA);
+			art.setApodo(leer.nextLine() );
 
 			Set<Especialidad> nuevasEspec = new HashSet<>();
 
@@ -562,6 +565,7 @@ public class Menu {
 			System.out.println("Es Senior? (s/n)");
 			String esSenior = leer.nextLine().trim().toLowerCase();
 			Coordinador coor = (Coordinador) p;
+			coor.setPerfil(Perfil.COORDINACION);
 			if (esSenior.equals("s")) {
 				coor.setSenior(true);
 
@@ -708,7 +712,7 @@ public class Menu {
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder();
-			Document documento = builder.parse(ProgramProperties.paises);
+			Document documento = builder.parse("ficheros/paises.xml");
 			documento.getDocumentElement().normalize();
 
 			NodeList listaPaises = documento.getElementsByTagName("pais");
@@ -743,8 +747,8 @@ public class Menu {
 
 			}
 		} catch (Exception e) {
-			System.out.println(
-					"Ha ocurrido algun problema al leer el archivo XML.");
+		    System.out.println("Error al leer XML: " + e.getMessage());
+		    e.printStackTrace(); 
 		}
 
 		return paises;
