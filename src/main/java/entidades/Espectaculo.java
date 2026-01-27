@@ -25,7 +25,7 @@ public class Espectaculo implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_espectaculo")
-	private long id;
+	private long id_espectaculo;
 	
 	@Column(name = "nombre", nullable = false, length = 25)
 	private String nombre;
@@ -40,7 +40,7 @@ public class Espectaculo implements Serializable{
 	private Set <Numero> numeros;
 	
 	@ManyToOne
-	@JoinColumn(name = "id_coordinador", referencedColumnName = "idCoor", nullable = false)
+	@JoinColumn(name = "id_coordinador_fk", referencedColumnName = "id_persona")
 	private Coordinador encargadoCoor;
 	
 	
@@ -51,7 +51,7 @@ public class Espectaculo implements Serializable{
 
 	public Espectaculo(long id, String nombre, LocalDate fechaini, LocalDate fechafin, Coordinador coordinador) {
 		super();
-		this.id = id;
+		this.id_espectaculo = id;
 		this.nombre = nombre;
 		this.fechaini = fechaini;
 		this.fechafin = fechafin;
@@ -61,7 +61,7 @@ public class Espectaculo implements Serializable{
 
 	public Espectaculo(long id, String nombre, LocalDate fechaini, LocalDate fechafin,Set<Numero> numeros, Coordinador encargadoCoor ) {
 		super();
-		this.id = id;
+		this.id_espectaculo = id;
 		this.nombre = nombre;
 		this.fechaini = fechaini;
 		this.fechafin = fechafin;
@@ -70,10 +70,10 @@ public class Espectaculo implements Serializable{
 		
 	}
 	public long getId() {
-		return id;
+		return id_espectaculo;
 	}
 	public void setId(long id) {
-		this.id = id;
+		this.id_espectaculo = id;
 	}
 	public String getNombre() {
 		return nombre;
@@ -101,7 +101,7 @@ public class Espectaculo implements Serializable{
 	}
 	@Override
 	public String toString() {
-		return "Espectaculo id:" + id + ",nombre: "+ nombre + ", desde " +fechaini + ", hasta " + fechafin;
+		return "Espectaculo id:" + id_espectaculo + ",nombre: "+ nombre + ", desde " +fechaini + ", hasta " + fechafin;
 	}
 	public Coordinador getEncargadoCoor() {
 		return encargadoCoor;

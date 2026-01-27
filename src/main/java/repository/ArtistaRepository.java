@@ -10,5 +10,5 @@ import entidades.Artista;
 @Repository
 public interface ArtistaRepository extends JpaRepository<Artista, Long>{
 
-	public Optional<Artista> getByName (String nombre);
+	public Optional<Artista> getByNombre (String nombre);
 }

@@ -19,7 +19,7 @@ public class Artista extends Persona {
 	
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "id_artista", insertable = false, updatable = false)
+	@Column(insertable = false, updatable = false)
 	private long idArt;
 	
 	@Column(name = "apodo", length = 25)
@@ -28,14 +28,15 @@ public class Artista extends Persona {
 	@ManyToMany
 	@JoinTable(
 	    name = "artista_especialidad", 
-	    joinColumns = @JoinColumn(name = "id_artista", referencedColumnName = "id_artista"),
+	    joinColumns = @JoinColumn(name = "id_artista"), // Nombre de la columna en la tabla intermedia
 	    inverseJoinColumns = @JoinColumn(name = "id_especialidad"))
 	private Set<Especialidad> especialidades;
 	
 	@ManyToMany
-	@JoinTable(name = "artistas_numeros",
-	joinColumns = @JoinColumn(name = "id_artista", referencedColumnName = "id_artista"),
-	inverseJoinColumns = @JoinColumn(name = "id_numero"))
+	@JoinTable(
+	    name = "artistas_numeros",
+	    joinColumns = @JoinColumn(name = "id_artista"),
+	    inverseJoinColumns = @JoinColumn(name = "id_numero"))
 	private List<Numero> numeros;
 	
 	
