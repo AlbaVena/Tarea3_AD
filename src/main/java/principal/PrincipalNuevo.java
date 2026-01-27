@@ -17,12 +17,14 @@ import utils.Menu;
 @EntityScan(basePackages = "entidades")
 @EnableJpaRepositories(basePackages = "repository")
 public class PrincipalNuevo implements CommandLineRunner{
+	
 
 	
 	@Autowired
     private Menu menu;
 
 	public static void main(String[] args) {
+		
 		
 		SpringApplication.run(PrincipalNuevo.class, args);
 		

@@ -1,13 +1,23 @@
 package utils;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import controlador.EspectaculosService;
 import controlador.NumeroService;
@@ -20,6 +30,7 @@ import entidades.Espectaculo;
 import entidades.Numero;
 import entidades.Perfil;
 import entidades.Persona;
+import entidades.ProgramProperties;
 
 @Component
 public class Menu {
@@ -581,8 +592,19 @@ public class Menu {
 		p.setNombre(leer.nextLine());
 		System.out.println("Introduce su email:");
 		p.setEmail(leer.nextLine());
-		System.out.println("Introduce su nacionalidad");
-		p.setNacionalidad(leer.nextLine());
+		Map<String, String> mapaPaises = cargarPaises(); 
+		String opcionPais = null;
+		do {
+			System.out.println("Introduce su nacionalidad");
+			mapaPaises.forEach((id, nombre) -> System.out.println(id + " - " + nombre));
+
+			opcionPais = leer.nextLine().toUpperCase();
+			if (mapaPaises.containsKey(opcionPais)) {
+			    p.setNacionalidad(mapaPaises.get(opcionPais));
+			} else {
+				opcionPais = null;
+			}
+		}while (opcionPais == null);
 
 		System.out.println("Nombre de usuario (login):");
 		String usuario = leer.nextLine();
@@ -673,5 +695,75 @@ public class Menu {
 
 		}
 
+	}
+
+	/**
+	 * Recupera los datos de un fichero XML
+	 * 
+	 * @return una coleccion <K> siglas <V> NombrePais
+	 */
+	private static Map<String, String> cargarPaises() {
+		Map<String, String> paises = new HashMap<String, String>();
+
+		try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder();
+			Document documento = builder.parse(ProgramProperties.paises);
+			documento.getDocumentElement().normalize();
+
+			NodeList listaPaises = documento.getElementsByTagName("pais");
+			// en
+			// la
+			// lista
+			// los
+			// elementos
+			// con
+			// etiqueta
+			// "pais"
+			for (int i = 0; i < listaPaises.getLength(); i++) {
+				Node nodo = listaPaises.item(i); // me devuelve el nodo en
+				// posicion i
+
+				if (nodo.getNodeType() == Node.ELEMENT_NODE) { // devuelve un
+					// entero. solo
+					// los elementos
+					// tienen
+					// etiquetas
+					// hijo
+					Element elemento = (Element) nodo; // lo covertimos a
+					// element para usar los
+					// metodos <PAIS>
+
+					String id = getNodo("id", elemento);
+					String nombre = getNodo("nombre", elemento);
+
+					paises.put(id, nombre);
+
+				}
+
+			}
+		} catch (Exception e) {
+			System.out.println(
+					"Ha ocurrido algun problema al leer el archivo XML.");
+		}
+
+		return paises;
+	}
+
+	/**
+	 * metodo para trabajar con XML
+	 * 
+	 * @param etiqueta
+	 * @param elem
+	 * @return el nodo hijo de la etiqueta concreta
+	 */
+	private static String getNodo(String etiqueta, Element elem) { // "etiqueta"
+																	// concreta
+		NodeList nodo = elem.getElementsByTagName(etiqueta).item(0)
+				.getChildNodes(); // busca todas las qtiquetas hijas
+		// con el nombre de la etiqueta
+		// devuelve los nodos hijos
+		Node valorNodo = nodo.item(0); // primer hijo ID
+		return valorNodo.getNodeValue(); // el nodo de TEXTO (valor real) NOMBRE
 	}
 }

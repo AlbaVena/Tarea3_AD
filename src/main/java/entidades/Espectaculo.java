@@ -40,7 +40,7 @@ public class Espectaculo implements Serializable{
 	private Set <Numero> numeros;
 	
 	@ManyToOne
-	@JoinColumn(name = "id_coordinador", referencedColumnName = "id_coordinador", nullable = false)
+	@JoinColumn(name = "id_coordinador", referencedColumnName = "idCoor", nullable = false)
 	private Coordinador encargadoCoor;
 	
 	

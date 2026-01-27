@@ -29,7 +29,7 @@ public class Coordinador extends Persona implements Serializable {
 	@Column(name = "fechasenior")
 	private LocalDate fechasenior = null;
 	
-	@OneToMany(mappedBy = "coordinador", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "encargadoCoor", cascade = CascadeType.ALL)
 	private Set <Espectaculo> espectaculos;
 	
 	
