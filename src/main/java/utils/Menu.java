@@ -1,13 +1,13 @@
 package utils;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,9 +30,7 @@ import entidades.Espectaculo;
 import entidades.Numero;
 import entidades.Perfil;
 import entidades.Persona;
-import entidades.ProgramProperties;
 import jakarta.transaction.Transactional;
-import repository.ArtistaRepository;
 
 @Component
 public class Menu {
@@ -64,7 +62,6 @@ public class Menu {
 				break;
 			case 2:
 				String usuario, password;
-				
 
 				do {
 					System.out.println("Introduce tu nombre de usuario");
@@ -207,13 +204,15 @@ public class Menu {
 			System.out.println("No hay espectáculos programados.");
 		} else {
 			for (Espectaculo e : lista) {
-				System.out.println("- " + e.getNombre() + " (" + e.getFechaini() + ")");
+				System.out.println(
+						"- " + e.getNombre() + " ( desde " + e.getFechaini() + " hasta " + e.getFechafin() + ")");
 			}
 		}
 	}
 
 	@Transactional
 	public void guardarEspectaculo() {
+		boolean esnuevo = false;
 		System.out.println("Qué deseas hacer?");
 		System.out.println("\t1. Crear un espectaculo nuevo\n\t2. Modificar un expectaculo existente");
 
@@ -251,6 +250,7 @@ public class Menu {
 
 		else if (opcion == 1) {
 			espectaculo = new Espectaculo();
+			esnuevo = true;
 		} else {
 			System.out.println("opcion no valida");
 			return;
@@ -260,26 +260,38 @@ public class Menu {
 		// nombre
 		System.out.println("\t-- Introduce los siguientes datos  --");
 		System.out.println("Nombre del espectaculo (MAX 25 caracteres): ");
-		String nombre = leer.nextLine();
-
-		if (!nombre.isEmpty()) {
-			if (nombre.length() <= 25) {
-				espectaculo.setNombre(nombre);
-			} else {
-				System.out.println("Nombre demasiado largo. No se guardarán los cambios");
+		String nombre = null;
+		nombre = leer.nextLine();
+		do {
+			if (!nombre.isEmpty()) {
+				if (nombre.length() <= 25) {
+					espectaculo.setNombre(nombre);
+				} else {
+					System.out.println("Nombre demasiado largo. Intentalo de nuevo.");
+					nombre = null;
+				}
 			}
-		}
+		}while (nombre == null);
 
 		// fecha
 		boolean fechasValidas = false;
 		do {
 			try {
-				System.out.println("Fecha inicio actual" + espectaculo.getFechaini() + "\nNueva fecha (yyyy-mm-dd):");
+				if (!esnuevo) {
+					System.out.println("Fecha inicio actual: " + espectaculo.getFechaini() + "\nNueva fecha (yyyy-mm-dd):");
+				} else {
+					System.out.println("Introduce la fecha de inicio (yyyy-mm-dd):");
+				}
 				String f1 = leer.nextLine();
 				if (!f1.isEmpty())
 					espectaculo.setFechaini(LocalDate.parse(f1));
 
-				System.out.println("Fecha fin actual" + espectaculo.getFechafin() + "\nNueva fecha (yyyy-mm-dd)");
+				if (!esnuevo) {
+					System.out.println("Fecha fin actual: " + espectaculo.getFechafin() + "\nNueva fecha (yyyy-mm-dd)");
+				}else {
+					System.out.println("Introduce la fecha de fin (yyyy-mm-dd):");
+				}
+				
 				String f2 = leer.nextLine();
 				if (!f2.isEmpty())
 					espectaculo.setFechafin(LocalDate.parse(f2));
@@ -299,6 +311,74 @@ public class Menu {
 				System.out.println("Error en el formato de fecha.");
 			}
 		} while (!fechasValidas);
+		
+		Numero aInsertar = new Numero();
+		//añadir al menos 3 numeros
+		boolean completo = false;
+		System.out.println("- Registro de numeros -    (minimo 3) ");
+		List <Numero> numeros = new ArrayList<Numero>();
+		
+		do {
+			System.out.println("Añadiendo numero "+numeros.size()+1);			
+			String nombreNum = null;
+			
+			do {
+				//nombre
+				System.out.println("Introduce un nombre para el numero: (MAX 25 caracteres)");
+				nombreNum = leer.nextLine().trim();
+				if (nombreNum.length() > 25) {
+					nombreNum = null;
+					System.out.println("Nombre demasiado largo, intentalo de nuevo.");
+				}
+				aInsertar.setNombre(nombreNum);
+				
+			} while (nombre == null);
+			
+			//duracion
+			System.out.println("Introduce la duracion total en minutos: (ej: 126)");
+			int minutos = leer.nextInt();
+			leer.nextLine();
+			aInsertar.setDuracion(minutos);
+			aInsertar.setEspectaculo(espectaculo);
+			
+			//artistas
+		
+			    Set<Artista> artistasDelNumero = new HashSet<>();
+			    
+			    do {
+			        List<Persona> listaPersonas = usuariosService.getCredencialesSistema(); 
+			        System.out.println("Lista de Artistas disponibles:");
+			        for (Persona p : listaPersonas) {
+			            if (p.getPerfil() == Perfil.ARTISTA) {
+			                System.out.println(p.getId() + " - " + p.getNombre());
+			            }
+			        }
+
+			        System.out.print("Introduce el ID del artista para este número: ");
+			        long idArt = leer.nextLong();
+			        leer.nextLine();
+
+			        Artista a = (Artista) usuariosService.getPersonaById(idArt);
+			        if (a != null && !artistasDelNumero.contains(a)) {
+			            artistasDelNumero.add(a);
+			            System.out.println("Artista añadido.");
+			        }
+
+			        if (!artistasDelNumero.isEmpty()) {
+			            System.out.print("¿Añadir otro artista a este mismo número? (s/n): ");
+			            if (leer.nextLine().equalsIgnoreCase("n")) break;
+			        } else {
+			            System.out.println("Error: Todo número debe tener al menos un artista.");
+			        }
+			    } while (true);
+
+			    aInsertar.setArtistas(artistasDelNumero);
+			   
+			    numeros.add(aInsertar);
+			
+		}while (!completo);
+		
+		
 
 		// encargado coordinador
 		if (espectaculo.getEncargadoCoor() == null) {
@@ -328,25 +408,25 @@ public class Menu {
 		}
 
 		// numero
-		System.out.println("¿Quieres añadir un número a este espectáculo ahora? (s/n)");
-		String respuesta = leer.nextLine().trim().toLowerCase();
-
-		if (respuesta.equals("s")) {
-			Numero nuevoNum = new Numero();
-			System.out.println("Nombre del numero:");
-			String nombreNum = leer.nextLine();
-			System.out.println("Duracion (total minutos):");
-			int durNum = leer.nextInt();
-			leer.nextLine();
-			nuevoNum.setNombre(nombreNum);
-			nuevoNum.setDuracion(durNum);
-			nuevoNum.setEspectaculo(espectaculo);
-
-			if (espectaculo.getNumeros() == null) {
-				espectaculo.setNumeros(new HashSet<Numero>());
-			}
-			espectaculo.getNumeros().add(nuevoNum);
-		}
+//		System.out.println("¿Quieres añadir un número a este espectáculo ahora? (s/n)");
+//		String respuesta = leer.nextLine().trim().toLowerCase();
+//
+//		if (respuesta.equals("s")) {
+//			Numero nuevoNum = new Numero();
+//			System.out.println("Nombre del numero:");
+//			String nombreNum = leer.nextLine();
+//			System.out.println("Duracion (total minutos):");
+//			int durNum = leer.nextInt();
+//			leer.nextLine();
+//			nuevoNum.setNombre(nombreNum);
+//			nuevoNum.setDuracion(durNum);
+//			nuevoNum.setEspectaculo(espectaculo);
+//
+//			if (espectaculo.getNumeros() == null) {
+//				espectaculo.setNumeros(new HashSet<Numero>());
+//			}
+//			espectaculo.getNumeros().add(nuevoNum);
+//		}
 
 		espectaculosService.guardarEspectaculo(espectaculo);
 		System.out.println("Espectaculo guardado con éxito.");
@@ -518,7 +598,7 @@ public class Menu {
 
 	@Transactional
 	public void registrarPersonaNueva() {
-		
+
 		Persona p = null;
 		System.out.println("--Nuevo usuario--");
 
@@ -528,11 +608,18 @@ public class Menu {
 		if (perfil == 1) {
 			p = new Artista();
 			p.setPerfil(Perfil.ARTISTA);
+			// apodo
 			System.out.println("Introduce su apodo");
 			Artista art = (Artista) p;
-			art.setPerfil(Perfil.ARTISTA);
-			art.setApodo(leer.nextLine() );
+			String apodo = leer.nextLine();
 
+			art.setPerfil(Perfil.ARTISTA);
+			if (apodo != null) {
+				art.setApodo(apodo);
+				System.out.println("Apodo guardado.\n");
+			}
+
+			// especialidades
 			Set<Especialidad> nuevasEspec = new HashSet<>();
 
 			System.out.println("Especialidades disponibles:");
@@ -540,7 +627,6 @@ public class Menu {
 			for (Especialidad e : especialidades) {
 				System.out.println(e.getId() + " - " + e.getNombre());
 			}
-
 			System.out.println("Indica el conjunto de las especialidades separadas por comas (ej: 1,3,4)");
 			String[] seleccion = leer.nextLine().split(",");
 
@@ -561,14 +647,16 @@ public class Menu {
 
 			if (nuevasEspec.size() >= 1 && nuevasEspec.size() <= 5) {
 				art.setEspecialidades(nuevasEspec);
-				System.out.println("Especialidades asignadas correctamente.");
+				System.out.println("Especialidades cuardadas.\n");
 			} else {
-				System.out.println("Error: Debes elegir entre 1 y 5 especialidades. El registro continuará sin ellas.");
+				System.out.println("Error: Debes elegir entre 1 y 5 especialidades. El registro continuará sin ellas, se puede modificar más adelante.");
 			}
 
 		} else if (perfil == 2) {
 			p = new Coordinador();
 			p.setPerfil(Perfil.COORDINACION);
+
+			// senior
 			System.out.println("Es Senior? (s/n)");
 			String esSenior = leer.nextLine().trim().toLowerCase();
 			Coordinador coor = (Coordinador) p;
@@ -576,6 +664,7 @@ public class Menu {
 			if (esSenior.equals("s")) {
 				coor.setSenior(true);
 
+				// fechasenior
 				boolean fechaValida = false;
 				while (!fechaValida) {
 					System.out.println("Introduce la fecha Senior (formato yyyy-mm-dd):");
@@ -587,6 +676,7 @@ public class Menu {
 						} else {
 							coor.setFechasenior(fecha);
 							fechaValida = true;
+							System.out.println("Informacion Senior guardada.\n");
 						}
 					} catch (Exception e) {
 						System.out.println("Formato de fecha incorrecto.");
@@ -599,35 +689,102 @@ public class Menu {
 			}
 		}
 
-		System.out.println("Introduce su nombre:");
-		p.setNombre(leer.nextLine());
-		System.out.println("Introduce su email:");
-		p.setEmail(leer.nextLine());
-		Map<String, String> mapaPaises = cargarPaises(); 
+		// persona
+
+		// nombre
+
+		String nombre = null;
+
+		do {
+			System.out.println("Introduce su nombre:");
+			System.out.println("(No acepta tildes ni diéresis)");
+			nombre = leer.nextLine().toLowerCase();
+			if (nombreValido(nombre)) {
+				p.setNombre(nombre);
+				System.out.println("Nombre guardado.\n");
+			} else {
+				nombre = null;
+				System.out.println("Ese nombre no es válido, intentalo de nuevo");
+			}
+		} while (nombre == null);
+
+		// email
+		String email = null;
+		do {
+			System.out.println("Introduce su email:");
+			email = leer.nextLine().trim();
+
+			if (emailValido(email)) {
+				if (usuariosService.comprobarEmail(email)) {
+					email = null;
+					System.out.println("Ese email ya está registrado, por favor inténtalo de nuevo.");
+				} else {
+					p.setEmail(email);
+					System.out.println("Email guardado.\n");
+				}
+			} else {
+				System.out.println("Formato de email invalido, prueba de nuevo como 'nombre@email.com'");
+				email = null;
+			}
+		} while (email == null);
+
+		// nacionalidad
+		Map<String, String> mapaPaises = cargarPaises();
 		String opcionPais = null;
 		do {
 			System.out.println("Introduce su nacionalidad");
-			mapaPaises.forEach((id, nombre) -> System.out.println(id + " - " + nombre));
+			mapaPaises.forEach((id, nombre2) -> System.out.println(id + " - " + nombre2));
 
 			opcionPais = leer.nextLine().toUpperCase();
 			if (mapaPaises.containsKey(opcionPais)) {
-			    p.setNacionalidad(mapaPaises.get(opcionPais));
+				p.setNacionalidad(mapaPaises.get(opcionPais));
+				System.out.println("Nacionalidad guardada.\n");
 			} else {
 				opcionPais = null;
 			}
-		}while (opcionPais == null);
+		} while (opcionPais == null);
 
-		System.out.println("Nombre de usuario (login):");
-		String usuario = leer.nextLine();
-		System.out.println("Contraseña:");
-		String pass = leer.nextLine();
+		// nombreUsuario
+		String usuario = null;
+		do {
+			System.out.println("Introduce su nombre de usuario (login):");
+			System.out.println("(no puede contener espacios en blanco, ni menos de 3 caracteres)");
+			usuario = leer.nextLine();
+			if (!usuariosService.comprobarNombreUsuario(usuario)) {
+				if (!textoValido(usuario)) {
+					System.out.println("Nombre invalido, recuerda:");
+					usuario = null;
+				}	else {
+					System.out.println("Nombre de usuario guardado.\n");
+				}
+				
+			} else {
+				System.out.println("Ese nombre de usuario ya existe, por favor inténtalo de nuevo.");
+				usuario = null;
+
+			}
+		} while (usuario == null);
+
+		// contraseña
+		String pass = null;
+
+		do {
+			System.out.println("Introduce su ontraseña:");
+			System.out.println("(no puede contener espacios en blanco, tildes, ni menos de 3 caracteres)");
+			pass = leer.nextLine();
+			if (!textoValido(pass)) {
+				pass = null;
+			} else {
+				System.out.println("Contraseña guardada.\n");
+			}
+
+		} while (pass == null);
+		
 
 		p.setCredenciales(new Credenciales(usuario, pass));
 
 		usuariosService.crearPersona(p);
 	}
-
-	
 
 	/**
 	 * Recupera los datos de un fichero XML
@@ -638,8 +795,7 @@ public class Menu {
 		Map<String, String> paises = new HashMap<String, String>();
 
 		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder();
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document documento = builder.parse("ficheros/paises.xml");
 			documento.getDocumentElement().normalize();
 
@@ -675,8 +831,8 @@ public class Menu {
 
 			}
 		} catch (Exception e) {
-		    System.out.println("Error al leer XML: " + e.getMessage());
-		    e.printStackTrace(); 
+			System.out.println("Error al leer XML: " + e.getMessage());
+			e.printStackTrace();
 		}
 
 		return paises;
@@ -691,11 +847,27 @@ public class Menu {
 	 */
 	private static String getNodo(String etiqueta, Element elem) { // "etiqueta"
 																	// concreta
-		NodeList nodo = elem.getElementsByTagName(etiqueta).item(0)
-				.getChildNodes(); // busca todas las qtiquetas hijas
+		NodeList nodo = elem.getElementsByTagName(etiqueta).item(0).getChildNodes(); // busca todas las qtiquetas hijas
 		// con el nombre de la etiqueta
 		// devuelve los nodos hijos
 		Node valorNodo = nodo.item(0); // primer hijo ID
 		return valorNodo.getNodeValue(); // el nodo de TEXTO (valor real) NOMBRE
 	}
+
+	public boolean textoValido(String texto) {
+		return (texto.matches("^[a-zA-ZñÑ]+$") && texto.length() >= 3);
+
+	}
+
+	public boolean nombreValido(String texto) {
+
+		return (texto.trim().length() >= 3 && texto.matches("^[a-zA-ZñÑ ]+$"));
+	}
+
+	public boolean emailValido(String email) {
+		// [letras/números] + @ + [letras/números] + . + [2 a 6 letras]
+		String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+		return email != null && email.matches(regex);
+	}
+
 }

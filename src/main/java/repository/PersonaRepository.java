@@ -9,4 +9,6 @@ import entidades.Persona;
 public interface PersonaRepository extends JpaRepository<Persona, Long> {
 	
 	public boolean existsByEmail(String email);
+
+	public Boolean existsByNombre(String nombre);
 }

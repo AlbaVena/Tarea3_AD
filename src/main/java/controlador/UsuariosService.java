@@ -51,6 +51,7 @@ public class UsuariosService {
 	private EspecialidadRepository especialidadRepository;
 
 	Sesion actual = new Sesion();
+	Scanner leer = new Scanner(System.in);
 
 	public Sesion getSesion() {
 		return actual;
@@ -139,8 +140,13 @@ public class UsuariosService {
 	}
 
 	@Transactional
-	public Boolean comprobarEmail(String email) {
+	public boolean comprobarEmail(String email) {
 		return personaRepository.existsByEmail(email);
+	}
+	
+	@Transactional
+	public Boolean comprobarNombrePersona(String nombre) {
+		return personaRepository.existsByNombre(nombre);
 	}
 
 	@Transactional
@@ -154,14 +160,10 @@ public class UsuariosService {
 		coordinadorRepository.save(coordinador);
 	}
 
-	@Transactional // creo que sobra porque solo lee los datos
-	public Boolean comprobarNombreUsuario(String nombreUsuario) {
-		Boolean valido = true;
-		if (credencialesRepository.existsByNombre(nombreUsuario)) {
-			System.out.println("Ese nombre de usuario ya existe, elige otro.");
-			return false;
-		}
-		return valido;
+	@Transactional 
+	public boolean comprobarNombreUsuario(String nombreUsuario) {
+
+		return credencialesRepository.existsByNombre(nombreUsuario);
 	}
 
 	@Transactional
@@ -187,7 +189,7 @@ public class UsuariosService {
 	@Transactional
 	public void modificarPersona() {
 
-		Scanner leer = new Scanner(System.in);
+		
 		
 		List<Persona> lista = getCredencialesSistema();
 
