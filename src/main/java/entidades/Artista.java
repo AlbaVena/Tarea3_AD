@@ -3,6 +3,7 @@ package entidades;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -25,7 +26,7 @@ public class Artista extends Persona {
 	@Column(name = "apodo", length = 25)
 	private String apodo = null;
 	
-	@ManyToMany
+	@ManyToMany(cascade = { CascadeType.MERGE })
 	@JoinTable(
 	    name = "artista_especialidad", 
 	    joinColumns = @JoinColumn(name = "id_artista"), // Nombre de la columna en la tabla intermedia

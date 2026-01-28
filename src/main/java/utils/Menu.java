@@ -31,6 +31,8 @@ import entidades.Numero;
 import entidades.Perfil;
 import entidades.Persona;
 import entidades.ProgramProperties;
+import jakarta.transaction.Transactional;
+import repository.ArtistaRepository;
 
 @Component
 public class Menu {
@@ -198,6 +200,7 @@ public class Menu {
 
 	}
 
+	@Transactional
 	public void verEspectaculos() {
 		List<Espectaculo> lista = espectaculosService.getEspectaculos();
 		if (lista.isEmpty()) {
@@ -209,6 +212,7 @@ public class Menu {
 		}
 	}
 
+	@Transactional
 	public void guardarEspectaculo() {
 		System.out.println("Qué deseas hacer?");
 		System.out.println("\t1. Crear un espectaculo nuevo\n\t2. Modificar un expectaculo existente");
@@ -381,6 +385,7 @@ public class Menu {
 
 	}
 
+	@Transactional
 	private void asignarArtistas() {
 
 		System.out.println("--Asignar artistas--");
@@ -420,6 +425,7 @@ public class Menu {
 
 	}
 
+	@Transactional
 	public void guardarNumero() {
 		int opcion3 = -1;
 
@@ -499,7 +505,7 @@ public class Menu {
 				registrarPersonaNueva();
 				break;
 			case 2:
-				modificarPersona();
+				usuariosService.modificarPersona();
 				break;
 			case 3:
 				break;
@@ -510,6 +516,7 @@ public class Menu {
 		} while (opcion4 != 3);
 	}
 
+	@Transactional
 	public void registrarPersonaNueva() {
 		
 		Persona p = null;
@@ -620,86 +627,7 @@ public class Menu {
 		usuariosService.crearPersona(p);
 	}
 
-	public void modificarPersona() {
-
-		List<Persona> lista = usuariosService.getCredencialesSistema();
-
-		for (Persona per : lista) {
-			System.out.println("ID: " + per.getId() + " - " + per.getNombre());
-		}
-		System.out.println("Introduce el ID de la persona a modificar:");
-		Long idMod = leer.nextLong();
-
-		Persona p = usuariosService.getPersonaById(idMod);
-
-		if (p.getPerfil() == Perfil.ARTISTA) {
-			Artista art = (Artista) p;
-
-			System.out.println("Introduce un nuevo apodo o pulsa ENTER:");
-			art.setApodo(leer.nextLine());
-
-			System.out.println("Quieres actualizar sus especialidades? (s/n)");
-			String resp = leer.nextLine();
-			if (resp.trim().toLowerCase().equals("s")) {
-				Set<Especialidad> nuevasEspec = new HashSet<>();
-
-				System.out.println("Especialidades disponibles:");
-				List<Especialidad> especialidades = usuariosService.getEspecialidades();
-				for (Especialidad e : especialidades) {
-					System.out.println(e.getId() + " - " + e.getNombre());
-				}
-
-				System.out.println("Indica el conjunto de las especialidades separadas por comas (ej: 1,3,4)");
-				String[] seleccion = leer.nextLine().split(",");
-
-				for (String s : seleccion) {
-					try {
-						int indice = Integer.parseInt(s.trim()) - 1; // -1 porque la lista empieza en 0
-
-						if (indice >= 0 && indice < especialidades.size()) {
-							Especialidad especialidadAgregada = especialidades.get(indice);
-							nuevasEspec.add(especialidadAgregada);
-						} else {
-							System.out.println("La opción " + (indice + 1) + " no existe.");
-						}
-					} catch (NumberFormatException e) {
-						System.out.println("'" + s + "' no es un número válido.");
-					}
-				}
-
-				if (nuevasEspec.size() >= 1 && nuevasEspec.size() <= 5) {
-					art.setEspecialidades(nuevasEspec);
-					System.out.println("Especialidades asignadas correctamente.");
-				} else {
-					System.out.println(
-							"Error: Debes elegir entre 1 y 5 especialidades. El registro continuará sin ellas.");
-				}
-			}
-
-		} else if (p.getPerfil() == Perfil.COORDINACION) {
-			Coordinador coor = (Coordinador) p;
-
-			if (coor.isSenior()) {
-				System.out.println("Este coordinador ya es senior, eso no se puede cambiar.");
-			} else {
-				System.out.println("Quieres hacer a " + coor.getNombre() + " Coordinador Senior? (s/n)");
-				String resp = leer.nextLine().trim().toLowerCase();
-				if (resp.equals("s")) {
-					coor.setSenior(true);
-					System.out.println("Introduce la fecha de ascenso: (yyyy-mm-dd)");
-					try {
-						coor.setFechasenior(LocalDate.parse(leer.nextLine()));
-						System.out.println("Ascenso registrado");
-					} catch (Exception e) {
-						System.out.println("Formato de fecha erróneo. El ascenso no se ha guardado.");
-						coor.setSenior(false);
-					}
-				}
-			}
-
-		}
-
-	}
+	
 
 	/**
 	 * Recupera los datos de un fichero XML

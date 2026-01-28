@@ -43,6 +43,19 @@ public class Especialidad implements Serializable {
 		this.nombre = nombre;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (!(o instanceof Especialidad)) return false;
+	    Especialidad that = (Especialidad) o;
+	    return id != 0 && id == that.id;
+	}
+
+	@Override
+	public int hashCode() {
+	    return Long.hashCode(id);
+	}
+
 	
 	
 
