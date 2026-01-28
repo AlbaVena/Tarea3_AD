@@ -259,26 +259,31 @@ public class Menu {
 		// Datos a pedir
 		// nombre
 		System.out.println("\t-- Introduce los siguientes datos  --");
-		System.out.println("Nombre del espectaculo (MAX 25 caracteres): ");
-		String nombre = null;
-		nombre = leer.nextLine();
+		String nombre = "";
+		boolean espValido = false;
 		do {
+		System.out.println("Nombre del espectaculo (MAX 25 caracteres): ");
+			
+		nombre = leer.nextLine();
+		
 			if (!nombre.isEmpty()) {
 				if (nombre.length() <= 25) {
 					espectaculo.setNombre(nombre);
+					espValido = true;
 				} else {
 					System.out.println("Nombre demasiado largo. Intentalo de nuevo.");
-					nombre = null;
+					
 				}
 			}
-		}while (nombre == null);
+		} while (!espValido);
 
 		// fecha
 		boolean fechasValidas = false;
 		do {
 			try {
 				if (!esnuevo) {
-					System.out.println("Fecha inicio actual: " + espectaculo.getFechaini() + "\nNueva fecha (yyyy-mm-dd):");
+					System.out.println(
+							"Fecha inicio actual: " + espectaculo.getFechaini() + "\nNueva fecha (yyyy-mm-dd):");
 				} else {
 					System.out.println("Introduce la fecha de inicio (yyyy-mm-dd):");
 				}
@@ -288,10 +293,10 @@ public class Menu {
 
 				if (!esnuevo) {
 					System.out.println("Fecha fin actual: " + espectaculo.getFechafin() + "\nNueva fecha (yyyy-mm-dd)");
-				}else {
+				} else {
 					System.out.println("Introduce la fecha de fin (yyyy-mm-dd):");
 				}
-				
+
 				String f2 = leer.nextLine();
 				if (!f2.isEmpty())
 					espectaculo.setFechafin(LocalDate.parse(f2));
@@ -311,74 +316,75 @@ public class Menu {
 				System.out.println("Error en el formato de fecha.");
 			}
 		} while (!fechasValidas);
-		
+
 		Numero aInsertar = new Numero();
-		//añadir al menos 3 numeros
+		// añadir al menos 3 numeros
 		boolean completo = false;
 		System.out.println("- Registro de numeros -    (minimo 3) ");
-		List <Numero> numeros = new ArrayList<Numero>();
-		
+		List<Numero> numeros = new ArrayList<Numero>();
+
 		do {
-			System.out.println("Añadiendo numero "+numeros.size()+1);			
-			String nombreNum = null;
-			
+			System.out.println("Añadiendo numero " + numeros.size() + 1);
+			String nombreNum = "";
+			boolean nombreValido = false;
+
 			do {
-				//nombre
+				// nombre
 				System.out.println("Introduce un nombre para el numero: (MAX 25 caracteres)");
 				nombreNum = leer.nextLine().trim();
 				if (nombreNum.length() > 25) {
-					nombreNum = null;
 					System.out.println("Nombre demasiado largo, intentalo de nuevo.");
+				} else {
+					aInsertar.setNombre(nombreNum);
+					nombreValido = true;
 				}
-				aInsertar.setNombre(nombreNum);
-				
-			} while (nombre == null);
-			
-			//duracion
+
+			} while (!nombreValido);
+
+			// duracion
 			System.out.println("Introduce la duracion total en minutos: (ej: 126)");
 			int minutos = leer.nextInt();
 			leer.nextLine();
 			aInsertar.setDuracion(minutos);
 			aInsertar.setEspectaculo(espectaculo);
-			
-			//artistas
-		
-			    Set<Artista> artistasDelNumero = new HashSet<>();
-			    
-			    do {
-			        List<Persona> listaPersonas = usuariosService.getCredencialesSistema(); 
-			        System.out.println("Lista de Artistas disponibles:");
-			        for (Persona p : listaPersonas) {
-			            if (p.getPerfil() == Perfil.ARTISTA) {
-			                System.out.println(p.getId() + " - " + p.getNombre());
-			            }
-			        }
 
-			        System.out.print("Introduce el ID del artista para este número: ");
-			        long idArt = leer.nextLong();
-			        leer.nextLine();
+			// artistas
 
-			        Artista a = (Artista) usuariosService.getPersonaById(idArt);
-			        if (a != null && !artistasDelNumero.contains(a)) {
-			            artistasDelNumero.add(a);
-			            System.out.println("Artista añadido.");
-			        }
+			Set<Artista> artistasDelNumero = new HashSet<>();
 
-			        if (!artistasDelNumero.isEmpty()) {
-			            System.out.print("¿Añadir otro artista a este mismo número? (s/n): ");
-			            if (leer.nextLine().equalsIgnoreCase("n")) break;
-			        } else {
-			            System.out.println("Error: Todo número debe tener al menos un artista.");
-			        }
-			    } while (true);
+			do {
+				List<Persona> listaPersonas = usuariosService.getCredencialesSistema();
+				System.out.println("Lista de Artistas disponibles:");
+				for (Persona p : listaPersonas) {
+					if (p.getPerfil() == Perfil.ARTISTA) {
+						System.out.println(p.getId() + " - " + p.getNombre());
+					}
+				}
 
-			    aInsertar.setArtistas(artistasDelNumero);
-			   
-			    numeros.add(aInsertar);
-			
-		}while (!completo);
-		
-		
+				System.out.print("Introduce el ID del artista para este número: ");
+				long idArt = leer.nextLong();
+				leer.nextLine();
+
+				Artista a = (Artista) usuariosService.getPersonaById(idArt);
+				if (a != null && !artistasDelNumero.contains(a)) {
+					artistasDelNumero.add(a);
+					System.out.println("Artista añadido.");
+				}
+
+				if (!artistasDelNumero.isEmpty()) {
+					System.out.print("¿Añadir otro artista a este mismo número? (s/n): ");
+					if (leer.nextLine().equalsIgnoreCase("n"))
+						break;
+				} else {
+					System.out.println("Error: Todo número debe tener al menos un artista.");
+				}
+			} while (true);
+
+			aInsertar.setArtistas(artistasDelNumero);
+
+			numeros.add(aInsertar);
+
+		} while (!completo);
 
 		// encargado coordinador
 		if (espectaculo.getEncargadoCoor() == null) {
@@ -649,7 +655,8 @@ public class Menu {
 				art.setEspecialidades(nuevasEspec);
 				System.out.println("Especialidades cuardadas.\n");
 			} else {
-				System.out.println("Error: Debes elegir entre 1 y 5 especialidades. El registro continuará sin ellas, se puede modificar más adelante.");
+				System.out.println(
+						"Error: Debes elegir entre 1 y 5 especialidades. El registro continuará sin ellas, se puede modificar más adelante.");
 			}
 
 		} else if (perfil == 2) {
@@ -754,10 +761,10 @@ public class Menu {
 				if (!textoValido(usuario)) {
 					System.out.println("Nombre invalido, recuerda:");
 					usuario = null;
-				}	else {
+				} else {
 					System.out.println("Nombre de usuario guardado.\n");
 				}
-				
+
 			} else {
 				System.out.println("Ese nombre de usuario ya existe, por favor inténtalo de nuevo.");
 				usuario = null;
@@ -779,7 +786,6 @@ public class Menu {
 			}
 
 		} while (pass == null);
-		
 
 		p.setCredenciales(new Credenciales(usuario, pass));
 
