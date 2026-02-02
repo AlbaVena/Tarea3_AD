@@ -262,17 +262,17 @@ public class Menu {
 		String nombre = "";
 		boolean espValido = false;
 		do {
-		System.out.println("Nombre del espectaculo (MAX 25 caracteres): ");
-			
-		nombre = leer.nextLine();
-		
+			System.out.println("Nombre del espectaculo (MAX 25 caracteres): ");
+
+			nombre = leer.nextLine();
+
 			if (!nombre.isEmpty()) {
 				if (nombre.length() <= 25) {
 					espectaculo.setNombre(nombre);
 					espValido = true;
 				} else {
 					System.out.println("Nombre demasiado largo. Intentalo de nuevo.");
-					
+
 				}
 			}
 		} while (!espValido);
@@ -287,9 +287,9 @@ public class Menu {
 				} else {
 					System.out.println("Introduce la fecha de inicio (yyyy-mm-dd):");
 				}
-				String f1 = leer.nextLine();
-				if (!f1.isEmpty())
-					espectaculo.setFechaini(LocalDate.parse(f1));
+				String fecha1 = leer.nextLine();
+				if (!fecha1.isEmpty())
+					espectaculo.setFechaini(LocalDate.parse(fecha1));
 
 				if (!esnuevo) {
 					System.out.println("Fecha fin actual: " + espectaculo.getFechafin() + "\nNueva fecha (yyyy-mm-dd)");
@@ -297,9 +297,9 @@ public class Menu {
 					System.out.println("Introduce la fecha de fin (yyyy-mm-dd):");
 				}
 
-				String f2 = leer.nextLine();
-				if (!f2.isEmpty())
-					espectaculo.setFechafin(LocalDate.parse(f2));
+				String fecha2 = leer.nextLine();
+				if (!fecha2.isEmpty())
+					espectaculo.setFechafin(LocalDate.parse(fecha2));
 
 				if (espectaculo.getFechaini() != null && espectaculo.getFechafin() != null) {
 					if (espectaculo.getFechafin().isBefore(espectaculo.getFechaini())) {
@@ -457,7 +457,7 @@ public class Menu {
 				guardarEspectaculo();
 				break;
 			case 2:
-				guardarNumero();
+				gestionarNumero();
 				break;
 			case 3:
 				asignarArtistas();
@@ -512,7 +512,7 @@ public class Menu {
 	}
 
 	@Transactional
-	public void guardarNumero() {
+	public void gestionarNumero() {
 		int opcion3 = -1;
 
 		System.out.println("Qué deseas hacer?");
@@ -547,15 +547,28 @@ public class Menu {
 
 		if (!nombre.isEmpty()) {
 			numero.setNombre(nombre);
+			System.out.println("Nombre actualizado.");
 		}
 
 		System.out.println("Duracion actual [" + numero.getDuracion() + " minutos]");
 		System.out.println("Introduce una nueva duracion o pulsa ENTER");
-		int duracion = leer.nextInt();
-		leer.nextLine();
 
-		if (duracion > 0) {
-			numero.setDuracion(duracion);
+		String intentoDuracion = leer.nextLine().trim();
+
+		if (!intentoDuracion.isEmpty()) {
+			int duracion = -1;
+			try {
+				duracion = Integer.parseInt(intentoDuracion);
+			} catch (NumberFormatException e) {
+				System.err.println("Formato incorrecto para Duracion");
+				duracion = -1;
+				System.out.println("No se ha modificado la duracion.");
+			}
+			if (duracion > 0) {
+				numero.setDuracion(duracion);
+				System.out.println("Duracion actualizada.");
+			}
+
 		}
 
 		if (numero.getEspectaculo() == null) {
