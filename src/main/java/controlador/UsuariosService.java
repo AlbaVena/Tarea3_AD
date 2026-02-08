@@ -77,7 +77,7 @@ public class UsuariosService {
 		Optional<Credenciales> cred = credencialesRepository.findByNombreAndPassword(nombreUsuario, password);
 
 		if (cred.isPresent()) {
-			Persona p = cred.get().getPersona(); // recoger la persona vinculada
+			Persona p = cred.get().getPersona(); // recoger la persona actual
 			actual = new Sesion(p);
 			return p;
 		}
@@ -98,7 +98,7 @@ public class UsuariosService {
 		Persona usuario = actual.getUsuActual();
 		/**
 		 * vamos a recordar que actualmente hay un artista usando esyte metodo, ya
-		 * tenemos su id en memoriA
+		 * tenemos su id en memoria
 		 */
 
 		System.out.println("----FICHA PERSONAL----\n" + "Nombre: " + usuario.getNombre());
@@ -128,13 +128,13 @@ public class UsuariosService {
 
 		
 		if (nueva.getCredenciales() != null) {
-	        // 1. Establecemos el vínculo mientras todo está en memoria (RAM)
+
 	        nueva.getCredenciales().setPersona(nueva);
 	    }
 
-	    // 2. Guardamos la persona. 
-	    // Al tener CascadeType.ALL, Hibernate guardará primero la Persona,
-	    // obtendrá su ID, lo meterá en el objeto Credenciales y luego guardará las Credenciales.
+	    // guardamos la persona. 
+	    // al tener CascadeType.ALL, Hibernate guardará primero la Persona,
+	    // cogerásu ID, lo meterá en el objeto credenciales y luego guardará las credenciales.
 	    personaRepository.save(nueva);
 		
 	}

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -596,8 +597,14 @@ public class Menu {
 			System.out.println("\t2. Gestionar datos de Artista o Coordinador");
 			System.out.println("\t3. Atrás");
 
-			opcion4 = leer.nextInt();
-			leer.nextLine();
+			try {
+				opcion4 = leer.nextInt();
+			}catch (InputMismatchException e) {
+				System.out.println("Opcion invalida");
+			}finally {
+				opcion4 = -1;
+				leer.nextLine();
+			}
 
 			switch (opcion4) {
 			case 1:
@@ -620,10 +627,23 @@ public class Menu {
 
 		Persona p = null;
 		System.out.println("--Nuevo usuario--");
-
-		System.out.println("El nuevo usuario es.. 1-Artista o 2-Coordinador?");
-		int perfil = leer.nextInt();
-		leer.nextLine();
+		int perfil =-1; 
+		do {
+			System.out.println("El nuevo usuario es.. 1-Artista o 2-Coordinador?");
+			try {
+				perfil = leer.nextInt();			
+				
+			}catch (NumberFormatException e) {
+				System.out.println("error: 'NumberFormat'. Opciones validas (1) o (2)");
+				perfil = -1;
+			}catch (InputMismatchException e) {
+				System.out.println("error: 'InputMismatch'. Opciones validas (1) o (2)");
+				perfil = -1;
+			} finally {
+				leer.nextLine();
+			}
+		} while (perfil !=1 && perfil != 2); // TODO meter try catch por si la respuesta no es 1 o 2
+		
 		if (perfil == 1) {
 			p = new Artista();
 			p.setPerfil(Perfil.ARTISTA);
@@ -641,13 +661,17 @@ public class Menu {
 			// especialidades
 			Set<Especialidad> nuevasEspec = new HashSet<>();
 
+			nuevasEspec.clear();
 			System.out.println("Especialidades disponibles:");
 			List<Especialidad> especialidades = usuariosService.getEspecialidades();
 			for (Especialidad e : especialidades) {
 				System.out.println(e.getId() + " - " + e.getNombre());
 			}
 			System.out.println("Indica el conjunto de las especialidades separadas por comas (ej: 1,3,4)");
+			System.out.println("(IMPORTANTE: un artista debe tener al menos UNA especialidad, y máximo CINCO)");
 			String[] seleccion = leer.nextLine().split(",");
+			
+			
 
 			for (String s : seleccion) {
 				try {
@@ -675,10 +699,21 @@ public class Menu {
 		} else if (perfil == 2) {
 			p = new Coordinador();
 			p.setPerfil(Perfil.COORDINACION);
-
+			boolean respuestaValida = false;
+			String esSenior = "";
+			
 			// senior
-			System.out.println("Es Senior? (s/n)");
-			String esSenior = leer.nextLine().trim().toLowerCase();
+			do {
+				System.out.println("Es Senior? (s/n)");
+				esSenior = leer.nextLine().trim().toLowerCase();
+				
+				if (esSenior.equals("s") || esSenior.equals("n")) {
+					respuestaValida = true;
+				} else {
+					System.out.println("Por favor introduce 's' para SI, o 'n' para NO.");
+				}
+			}
+			while (!respuestaValida);
 			Coordinador coor = (Coordinador) p;
 			coor.setPerfil(Perfil.COORDINACION);
 			if (esSenior.equals("s")) {
@@ -706,6 +741,7 @@ public class Menu {
 			} else {
 				coor.setSenior(false);
 				coor.setFechasenior(null);
+				System.out.println("El usuario NO es senior. Información guardada.");
 			}
 		}
 
@@ -717,7 +753,7 @@ public class Menu {
 
 		do {
 			System.out.println("Introduce su nombre:");
-			System.out.println("(No acepta tildes ni diéresis)");
+			System.out.println("(No acepta tildes, diéresis o números)");
 			nombre = leer.nextLine().toLowerCase();
 			if (nombreValido(nombre)) {
 				p.setNombre(nombre);
@@ -743,7 +779,7 @@ public class Menu {
 					System.out.println("Email guardado.\n");
 				}
 			} else {
-				System.out.println("Formato de email invalido, prueba de nuevo como 'nombre@email.com'");
+				System.out.println("Formato de email invalido, prueba de nuevo como 'nombre@email.com' o 'nombre@email.es'.");
 				email = null;
 			}
 		} while (email == null);
@@ -768,7 +804,7 @@ public class Menu {
 		String usuario = null;
 		do {
 			System.out.println("Introduce su nombre de usuario (login):");
-			System.out.println("(no puede contener espacios en blanco, ni menos de 3 caracteres)");
+			System.out.println("(no puede contener espacios en blanco,numeros, ni menos de 3 caracteres)");
 			usuario = leer.nextLine();
 			if (!usuariosService.comprobarNombreUsuario(usuario)) {
 				if (!textoValido(usuario)) {
@@ -792,15 +828,17 @@ public class Menu {
 			System.out.println("Introduce su ontraseña:");
 			System.out.println("(no puede contener espacios en blanco, tildes, ni menos de 3 caracteres)");
 			pass = leer.nextLine();
-			if (!textoValido(pass)) {
+			if (!passValido(pass)) {
 				pass = null;
 			} else {
 				System.out.println("Contraseña guardada.\n");
 			}
 
 		} while (pass == null);
-
-		p.setCredenciales(new Credenciales(usuario, pass));
+		
+		Credenciales cred = new Credenciales(usuario.toLowerCase(), pass, p.getPerfil());
+		p.setCredenciales(cred);
+		cred.setPersona(p);
 
 		usuariosService.crearPersona(p);
 	}
@@ -876,6 +914,9 @@ public class Menu {
 	public boolean textoValido(String texto) {
 		return (texto.matches("^[a-zA-ZñÑ]+$") && texto.length() >= 3);
 
+	}
+	public boolean passValido(String texto) {
+		return (texto.matches("^[a-zA-ZñÑ0-9]+$") && texto.length() >=3);
 	}
 
 	public boolean nombreValido(String texto) {

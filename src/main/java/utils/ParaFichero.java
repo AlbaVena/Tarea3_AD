@@ -12,18 +12,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import entidades.Artista;
-import entidades.Coordinador;
 import entidades.Espectaculo;
-import entidades.Persona;
 import entidades.ProgramProperties;
 
 public class ParaFichero {
 
 	/**
-	 * Para leer .txt
-	 * Devuelve un arraylist con el contenido
-	 * si no existe lo crea.
+	 * Para leer .txt Devuelve un arraylist con el contenido si no existe lo crea.
+	 * 
 	 * @param ruta
 	 * @return
 	 */
@@ -55,8 +51,8 @@ public class ParaFichero {
 	}
 
 	/**
-	 * leer un fichero txt
-	 * devuelve un array de Persona
+	 * leer un fichero txt devuelve un array de Persona
+	 * 
 	 * @return
 	 */
 //	private static ArrayList<Persona> cargarCredenciales() {
@@ -73,24 +69,25 @@ public class ParaFichero {
 //		}
 //		return personas;
 //	}
-	
-	public static void persistirCredenciales() {
-		try {
-			FileWriter writer = new FileWriter(ProgramProperties.credenciales);
-			String contenido = "";
-			Persona[] credencialesSistema = null;
-			for (Persona p : credencialesSistema ) {
-				contenido += p.toFicheroCredenciales()+"\n";
-			}
-			writer.write(contenido);
-			writer.close();
-		} catch (IOException e) {
-			System.out.println("error al escribir el archivo");
-		}
-	}
+
+//	public static void persistirCredenciales() {
+//		try {
+//			FileWriter writer = new FileWriter(ProgramProperties.credenciales);
+//			String contenido = "";
+//			Persona[] credencialesSistema = null;
+//			for (Persona p : credencialesSistema ) {
+//				contenido += p.toFicheroCredenciales()+"\n";
+//			}
+//			writer.write(contenido);
+//			writer.close();
+//		} catch (IOException e) {
+//			System.out.println("error al escribir el archivo");
+//		}
+//	}
 
 	/**
 	 * lee un .dat de Objetos Serializados
+	 * 
 	 * @return
 	 */
 	private static ArrayList<Espectaculo> cargarEspectaculosDat() {
@@ -124,7 +121,7 @@ public class ParaFichero {
 
 		return espectaculos;
 	}
-	
+
 	/*
 	 * escribee un .dat de objetos serializados
 	 */
@@ -145,11 +142,5 @@ public class ParaFichero {
 			e.printStackTrace();
 		}
 	}
-
-
-
-
-
-
 
 }
