@@ -49,6 +49,8 @@ public class UsuariosService {
 
 	@Autowired
 	private EspecialidadRepository especialidadRepository;
+	
+	
 
 	Sesion actual = new Sesion();
 	Scanner leer = new Scanner(System.in);

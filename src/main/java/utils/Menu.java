@@ -2,7 +2,6 @@ package utils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -10,18 +9,12 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import controlador.implementacion.EspectaculosService;
 import controlador.implementacion.NumeroService;
+import controlador.implementacion.PaisesService;
 import controlador.implementacion.UsuariosService;
 import entidades.Artista;
 import entidades.Coordinador;
@@ -46,6 +39,11 @@ public class Menu {
 
 	@Autowired
 	EspectaculosService espectaculosService;
+	
+	@Autowired
+	PaisesService paisesService;
+	
+	
 
 
 	public void menuInvitado() {
@@ -599,6 +597,7 @@ public class Menu {
 
 	}
 
+	@Transactional
 	public void gestionarPersonas() {
 		int opcion4 = -1;
 
@@ -613,8 +612,8 @@ public class Menu {
 				opcion4 = leer.nextInt();
 			} catch (InputMismatchException e) {
 				System.out.println("Opcion invalida");
-			} finally {
 				opcion4 = -1;
+			} finally {				
 				leer.nextLine();
 			}
 
@@ -800,22 +799,28 @@ public class Menu {
 			}
 		} while (email == null);
 
-		// nacionalidad
-		Map<String, String> mapaPaises = cargarPaises();
+		
+		
+		
+		// nacionalidad 
 		String opcionPais = null;
+		
 		do {
 			System.out.println("Introduce su nacionalidad");
-			mapaPaises.forEach((id, nombre2) -> System.out.println(id + " - " + nombre2));
-
+			mostrarPaises();
+			
 			opcionPais = leer.nextLine().toUpperCase();
-			if (mapaPaises.containsKey(opcionPais)) {
-				p.setNacionalidad(mapaPaises.get(opcionPais));
+			if (paisesService.getPaises().containsKey(opcionPais)) {
+				p.setNacionalidad(paisesService.getPaises().get(opcionPais));
 				System.out.println("Nacionalidad guardada.\n");
 			} else {
 				opcionPais = null;
+				System.out.println("Opción inválida. Prueba de nuevo");
 			}
 		} while (opcionPais == null);
 
+		
+		
 		// nombreUsuario
 		String usuario = null;
 		do {
@@ -858,73 +863,13 @@ public class Menu {
 
 		usuariosService.crearPersona(p);
 	}
-
-	/**
-	 * Recupera los datos de un fichero XML
-	 * 
-	 * @return una coleccion <K> siglas <V> NombrePais
-	 */
-	private static Map<String, String> cargarPaises() {
-		Map<String, String> paises = new HashMap<String, String>();
-
-		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document documento = builder.parse("ficheros/paises.xml");
-			documento.getDocumentElement().normalize();
-
-			NodeList listaPaises = documento.getElementsByTagName("pais");
-			// en
-			// la
-			// lista
-			// los
-			// elementos
-			// con
-			// etiqueta
-			// "pais"
-			for (int i = 0; i < listaPaises.getLength(); i++) {
-				Node nodo = listaPaises.item(i); // me devuelve el nodo en
-				// posicion i
-
-				if (nodo.getNodeType() == Node.ELEMENT_NODE) { // devuelve un
-					// entero. solo
-					// los elementos
-					// tienen
-					// etiquetas
-					// hijo
-					Element elemento = (Element) nodo; // lo covertimos a
-					// element para usar los
-					// metodos <PAIS>
-
-					String id = getNodo("id", elemento);
-					String nombre = getNodo("nombre", elemento);
-
-					paises.put(id, nombre);
-
-				}
-
-			}
-		} catch (Exception e) {
-			System.out.println("Error al leer XML: " + e.getMessage());
-			e.printStackTrace();
-		}
-
-		return paises;
+	
+	private void mostrarPaises() {
+		Map<String, String> mapaPaises = paisesService.getPaises();
+		mapaPaises.forEach((id, nombre2) -> System.out.println(id + " - " + nombre2));
+		
 	}
 
-	/**
-	 * metodo para trabajar con XML
-	 * 
-	 * @param etiqueta
-	 * @param elem
-	 * @return el nodo hijo de la etiqueta concreta
-	 */
-	private static String getNodo(String etiqueta, Element elem) { // "etiqueta"
-																	// concreta
-		NodeList nodo = elem.getElementsByTagName(etiqueta).item(0).getChildNodes(); // busca todas las qtiquetas hijas
-		// con el nombre de la etiqueta
-		// devuelve los nodos hijos
-		Node valorNodo = nodo.item(0); // primer hijo ID
-		return valorNodo.getNodeValue(); // el nodo de TEXTO (valor real) NOMBRE
-	}
+	
 
 }
