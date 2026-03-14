@@ -5,12 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import controlador.IEspectaculosService;
 import entidades.Espectaculo;
 import jakarta.transaction.Transactional;
 import repository.EspectaculoRepository;
 
 @Service
-public class EspectaculosService {
+public class EspectaculosService implements IEspectaculosService{
 
 	@Autowired
 	private EspectaculoRepository espectaculoRepository;

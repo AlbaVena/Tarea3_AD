@@ -12,10 +12,12 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import controlador.IEspectaculosService;
+import controlador.INumeroService;
+import controlador.IUsuariosService;
 import controlador.implementacion.EspectaculosService;
 import controlador.implementacion.NumeroService;
 import controlador.implementacion.PaisesService;
-import controlador.implementacion.UsuariosService;
 import entidades.Artista;
 import entidades.Coordinador;
 import entidades.Credenciales;
@@ -32,13 +34,13 @@ public class Menu {
 	private final Scanner leer = new Scanner(System.in);
 
 	@Autowired
-	UsuariosService usuariosService;
+	IUsuariosService usuariosService;
 
 	@Autowired
-	NumeroService numerosService;
+	INumeroService numerosService;
 
 	@Autowired
-	EspectaculosService espectaculosService;
+	IEspectaculosService espectaculosService;
 	
 	@Autowired
 	PaisesService paisesService;

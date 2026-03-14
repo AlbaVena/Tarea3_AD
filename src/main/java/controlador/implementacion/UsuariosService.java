@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import controlador.IUsuariosService;
 import entidades.Artista;
 import entidades.Coordinador;
 import entidades.Credenciales;
@@ -27,7 +28,7 @@ import repository.EspecialidadRepository;
 import repository.PersonaRepository;
 
 @Service
-public class UsuariosService {
+public class UsuariosService implements IUsuariosService{
 
 	@Value("${usuarioAdmin}")
 	private String usuarioAdminMemoria;
