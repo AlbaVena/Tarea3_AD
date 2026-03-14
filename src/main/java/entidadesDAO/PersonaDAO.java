@@ -429,7 +429,7 @@ public class PersonaDAO {
 						fechaLocal = fecha.toLocalDate();
 					}
 
-					// TODO cuando tenga los espectaculos tendran que ir aqui
+					
 					persona = new Coordinador(idPersona, email, nombre, nacionalidad, credenciales, idCoordinador,
 							senior, fechaLocal, null);
 				}

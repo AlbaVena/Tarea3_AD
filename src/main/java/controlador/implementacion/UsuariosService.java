@@ -1,4 +1,4 @@
-package controlador;
+package controlador.implementacion;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -94,7 +94,7 @@ public class UsuariosService {
 	}
 
 	@Transactional()
-	public void mostrarFicha() {
+	public void mostrarFichaArtista() {
 		Persona usuario = actual.getUsuActual();
 		/**
 		 * vamos a recordar que actualmente hay un artista usando esyte metodo, ya

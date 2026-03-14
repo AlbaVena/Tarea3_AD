@@ -20,9 +20,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import controlador.EspectaculosService;
-import controlador.NumeroService;
-import controlador.UsuariosService;
+import controlador.implementacion.EspectaculosService;
+import controlador.implementacion.NumeroService;
+import controlador.implementacion.UsuariosService;
 import entidades.Artista;
 import entidades.Coordinador;
 import entidades.Credenciales;
@@ -46,6 +46,7 @@ public class Menu {
 
 	@Autowired
 	EspectaculosService espectaculosService;
+
 
 	public void menuInvitado() {
 		int opcion = -1;
@@ -97,7 +98,7 @@ public class Menu {
 				System.out.println("**-- Se ha cerrado la aplicación. Adiós! --**");
 				break;
 			default:
-				System.out.println("No has intrpducido una opción valida, por favor inténtalo de nuevo.");
+				System.out.println("No has introducido una opción valida, por favor inténtalo de nuevo.");
 				break;
 			}
 		} while (opcion != 3);
@@ -151,7 +152,7 @@ public class Menu {
 			leer.nextLine();
 			switch (opcion) {
 			case 1:
-				usuariosService.mostrarFicha();
+				usuariosService.mostrarFichaArtista();
 				break;
 			case 2:
 				verEspectaculos();
@@ -325,7 +326,7 @@ public class Menu {
 		List<Numero> numeros = new ArrayList<Numero>();
 
 		do {
-			System.out.println("Añadiendo numero " + numeros.size() + 1);
+			System.out.println("Añadiendo numero " + (numeros.size() + 1)); 
 			String nombreNum = "";
 			boolean nombreValido = false;
 
@@ -333,8 +334,8 @@ public class Menu {
 				// nombre
 				System.out.println("Introduce un nombre para el numero: (MAX 25 caracteres)");
 				nombreNum = leer.nextLine().trim();
-				if (nombreNum.length() > 25) {
-					System.out.println("Nombre demasiado largo, intentalo de nuevo.");
+				if (nombreNum.length() > 25 || nombreNum.length() < 3) { 
+					System.out.println("Recuerda: el nombre debe tener entre 3 y 25 caracteres. Inténtalo de nuevo");
 				} else {
 					aInsertar.setNombre(nombreNum);
 					nombreValido = true;
@@ -343,11 +344,21 @@ public class Menu {
 			} while (!nombreValido);
 
 			// duracion
-			System.out.println("Introduce la duracion total en minutos: (ej: 126)");
-			int minutos = leer.nextInt();
-			leer.nextLine();
-			aInsertar.setDuracion(minutos);
-			aInsertar.setEspectaculo(espectaculo);
+			int minutos = -1;
+			
+			do {
+				System.out.println("Introduce la duracion total en minutos: (ej: 126)");
+				System.out.println("(Duracion maxima 150 minutos, minima 15 minutos.)");
+				minutos = leer.nextInt();
+				leer.nextLine();
+				if (minutos > 15 && minutos < 150) {
+					aInsertar.setDuracion(minutos);
+					aInsertar.setEspectaculo(espectaculo);
+				} else {
+					minutos = -1;
+				}
+			}
+			while (minutos < 15);
 
 			// artistas
 
@@ -367,7 +378,7 @@ public class Menu {
 				leer.nextLine();
 
 				Artista a = (Artista) usuariosService.getPersonaById(idArt);
-				if (a != null && !artistasDelNumero.contains(a)) {
+				if (a != null && !artistasDelNumero.contains(a)) { // TODO corregir que no se escoja EL MISMO
 					artistasDelNumero.add(a);
 					System.out.println("Artista añadido.");
 				}
@@ -384,6 +395,7 @@ public class Menu {
 			aInsertar.setArtistas(artistasDelNumero);
 
 			numeros.add(aInsertar);
+			completo = true;
 
 		} while (!completo);
 
@@ -466,7 +478,7 @@ public class Menu {
 			case 4:
 				break;
 			default:
-				System.out.println("Opcion invalida. Intentalo de nuevo");
+				System.out.println("Opcion inválida. Intentalo de nuevo");
 			}
 		} while (opcion2 != 4);
 
@@ -508,7 +520,7 @@ public class Menu {
 		}
 		numero.getArtistas().add(artista);
 		numerosService.guardarNumero(numero);
-		System.out.println("Informacion guardada.");
+		System.out.println("Información guardada.");
 
 	}
 
@@ -551,8 +563,8 @@ public class Menu {
 			System.out.println("Nombre actualizado.");
 		}
 
-		System.out.println("Duracion actual [" + numero.getDuracion() + " minutos]");
-		System.out.println("Introduce una nueva duracion o pulsa ENTER");
+		System.out.println("Duración actual [" + numero.getDuracion() + " minutos]");
+		System.out.println("Introduce una nueva duración o pulsa ENTER");
 
 		String intentoDuracion = leer.nextLine().trim();
 
@@ -561,13 +573,13 @@ public class Menu {
 			try {
 				duracion = Integer.parseInt(intentoDuracion);
 			} catch (NumberFormatException e) {
-				System.err.println("Formato incorrecto para Duracion");
+				System.err.println("Formato incorrecto para Duración");
 				duracion = -1;
-				System.out.println("No se ha modificado la duracion.");
+				System.out.println("No se ha modificado la duración.");
 			}
 			if (duracion > 0) {
 				numero.setDuracion(duracion);
-				System.out.println("Duracion actualizada.");
+				System.out.println("Duración actualizada.");
 			}
 
 		}
@@ -591,7 +603,7 @@ public class Menu {
 		int opcion4 = -1;
 
 		do {
-			System.out.println("--Gestion de personas--");
+			System.out.println("--Gestión de personas--");
 			System.out.println("Qué deseas hacer?");
 			System.out.println("\t1. Registrar una persona nueva");
 			System.out.println("\t2. Gestionar datos de Artista o Coordinador");
@@ -599,9 +611,9 @@ public class Menu {
 
 			try {
 				opcion4 = leer.nextInt();
-			}catch (InputMismatchException e) {
+			} catch (InputMismatchException e) {
 				System.out.println("Opcion invalida");
-			}finally {
+			} finally {
 				opcion4 = -1;
 				leer.nextLine();
 			}
@@ -627,35 +639,41 @@ public class Menu {
 
 		Persona p = null;
 		System.out.println("--Nuevo usuario--");
-		int perfil =-1; 
+		int perfil = -1;
 		do {
 			System.out.println("El nuevo usuario es.. 1-Artista o 2-Coordinador?");
 			try {
-				perfil = leer.nextInt();			
-				
-			}catch (NumberFormatException e) {
+				perfil = leer.nextInt();
+
+			} catch (NumberFormatException e) {
 				System.out.println("error: 'NumberFormat'. Opciones validas (1) o (2)");
 				perfil = -1;
-			}catch (InputMismatchException e) {
+			} catch (InputMismatchException e) {
 				System.out.println("error: 'InputMismatch'. Opciones validas (1) o (2)");
 				perfil = -1;
 			} finally {
 				leer.nextLine();
 			}
-		} while (perfil !=1 && perfil != 2); // TODO meter try catch por si la respuesta no es 1 o 2
-		
+		} while (perfil != 1 && perfil != 2); // TODO meter try catch por si la respuesta no es 1 o 2
+
 		if (perfil == 1) {
 			p = new Artista();
 			p.setPerfil(Perfil.ARTISTA);
 			// apodo
 			System.out.println("Introduce su apodo");
+			System.out.println("(No acepta diéresis o números)");
 			Artista art = (Artista) p;
 			String apodo = leer.nextLine();
 
 			art.setPerfil(Perfil.ARTISTA);
-			if (apodo != null) {
+			if (apodo != null && Validador.esCadenaValida(apodo, Validador.nombreGeneralRegex)) {
 				art.setApodo(apodo);
 				System.out.println("Apodo guardado.\n");
+			} else {
+				if (!Validador.esCadenaValida(apodo, Validador.nombreGeneralRegex)) {
+					System.out.println("El apodo introducido no es válido.");
+				}
+				System.out.println("Se continúa sin guardar un apodo, esto se puede modificar más adelante.");
 			}
 
 			// especialidades
@@ -670,8 +688,6 @@ public class Menu {
 			System.out.println("Indica el conjunto de las especialidades separadas por comas (ej: 1,3,4)");
 			System.out.println("(IMPORTANTE: un artista debe tener al menos UNA especialidad, y máximo CINCO)");
 			String[] seleccion = leer.nextLine().split(",");
-			
-			
 
 			for (String s : seleccion) {
 				try {
@@ -701,19 +717,18 @@ public class Menu {
 			p.setPerfil(Perfil.COORDINACION);
 			boolean respuestaValida = false;
 			String esSenior = "";
-			
+
 			// senior
 			do {
 				System.out.println("Es Senior? (s/n)");
 				esSenior = leer.nextLine().trim().toLowerCase();
-				
+
 				if (esSenior.equals("s") || esSenior.equals("n")) {
 					respuestaValida = true;
 				} else {
 					System.out.println("Por favor introduce 's' para SI, o 'n' para NO.");
 				}
-			}
-			while (!respuestaValida);
+			} while (!respuestaValida);
 			Coordinador coor = (Coordinador) p;
 			coor.setPerfil(Perfil.COORDINACION);
 			if (esSenior.equals("s")) {
@@ -731,7 +746,7 @@ public class Menu {
 						} else {
 							coor.setFechasenior(fecha);
 							fechaValida = true;
-							System.out.println("Informacion Senior guardada.\n");
+							System.out.println("Información Senior guardada.\n");
 						}
 					} catch (Exception e) {
 						System.out.println("Formato de fecha incorrecto.");
@@ -753,14 +768,14 @@ public class Menu {
 
 		do {
 			System.out.println("Introduce su nombre:");
-			System.out.println("(No acepta tildes, diéresis o números)");
+			System.out.println("(No acepta diéresis o números)");
 			nombre = leer.nextLine().toLowerCase();
-			if (nombreValido(nombre)) {
+			if (Validador.esCadenaValida(nombre,Validador.nombreGeneralRegex)) {
 				p.setNombre(nombre);
 				System.out.println("Nombre guardado.\n");
 			} else {
 				nombre = null;
-				System.out.println("Ese nombre no es válido, intentalo de nuevo");
+				System.out.println("Ese nombre no es válido, inténtalo de nuevo");
 			}
 		} while (nombre == null);
 
@@ -770,7 +785,7 @@ public class Menu {
 			System.out.println("Introduce su email:");
 			email = leer.nextLine().trim();
 
-			if (emailValido(email)) {
+			if (Validador.esCadenaValida(email, Validador.emailRegex)) {
 				if (usuariosService.comprobarEmail(email)) {
 					email = null;
 					System.out.println("Ese email ya está registrado, por favor inténtalo de nuevo.");
@@ -779,7 +794,8 @@ public class Menu {
 					System.out.println("Email guardado.\n");
 				}
 			} else {
-				System.out.println("Formato de email invalido, prueba de nuevo como 'nombre@email.com' o 'nombre@email.es'.");
+				System.out.println(
+						"Formato de email invalido, prueba de nuevo como 'nombre@email.com' o 'nombre@email.es'.");
 				email = null;
 			}
 		} while (email == null);
@@ -804,10 +820,10 @@ public class Menu {
 		String usuario = null;
 		do {
 			System.out.println("Introduce su nombre de usuario (login):");
-			System.out.println("(no puede contener espacios en blanco,numeros, ni menos de 3 caracteres)");
+			System.out.println("(Solo admite letras, numeros, '_', '#', '!','\\', '-' y '.')");
 			usuario = leer.nextLine();
 			if (!usuariosService.comprobarNombreUsuario(usuario)) {
-				if (!textoValido(usuario)) {
+				if (!Validador.esCadenaValida(usuario, Validador.nombreUsuarioRegex)) {
 					System.out.println("Nombre invalido, recuerda:");
 					usuario = null;
 				} else {
@@ -825,17 +841,17 @@ public class Menu {
 		String pass = null;
 
 		do {
-			System.out.println("Introduce su ontraseña:");
-			System.out.println("(no puede contener espacios en blanco, tildes, ni menos de 3 caracteres)");
+			System.out.println("Introduce su contraseña:"); 	//^[a-zA-Z0-9_!]{4,15}$";
+			System.out.println("(Solo admite letras, numeros, '_' y '!'. Debe tener más de 4 caracteres)");
 			pass = leer.nextLine();
-			if (!passValido(pass)) {
+			if (!Validador.esCadenaValida(pass, Validador.passwordRegex)) {
 				pass = null;
 			} else {
 				System.out.println("Contraseña guardada.\n");
 			}
 
 		} while (pass == null);
-		
+
 		Credenciales cred = new Credenciales(usuario.toLowerCase(), pass, p.getPerfil());
 		p.setCredenciales(cred);
 		cred.setPersona(p);
@@ -909,25 +925,6 @@ public class Menu {
 		// devuelve los nodos hijos
 		Node valorNodo = nodo.item(0); // primer hijo ID
 		return valorNodo.getNodeValue(); // el nodo de TEXTO (valor real) NOMBRE
-	}
-
-	public boolean textoValido(String texto) {
-		return (texto.matches("^[a-zA-ZñÑ]+$") && texto.length() >= 3);
-
-	}
-	public boolean passValido(String texto) {
-		return (texto.matches("^[a-zA-ZñÑ0-9]+$") && texto.length() >=3);
-	}
-
-	public boolean nombreValido(String texto) {
-
-		return (texto.trim().length() >= 3 && texto.matches("^[a-zA-ZñÑ ]+$"));
-	}
-
-	public boolean emailValido(String email) {
-		// [letras/números] + @ + [letras/números] + . + [2 a 6 letras]
-		String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
-		return email != null && email.matches(regex);
 	}
 
 }

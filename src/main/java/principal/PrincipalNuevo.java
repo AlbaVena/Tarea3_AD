@@ -25,7 +25,7 @@ public class PrincipalNuevo implements CommandLineRunner{
 
 	public static void main(String[] args) {
 		
-		//TODO PRoblema de creación de perfiles, todos salen admin
+		
 		SpringApplication.run(PrincipalNuevo.class, args);
 		
 		
