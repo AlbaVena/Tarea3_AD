@@ -12,12 +12,6 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import controlador.IEspectaculosService;
-import controlador.INumeroService;
-import controlador.IUsuariosService;
-import controlador.implementacion.EspectaculosService;
-import controlador.implementacion.NumeroService;
-import controlador.implementacion.PaisesService;
 import entidades.Artista;
 import entidades.Coordinador;
 import entidades.Credenciales;
@@ -27,6 +21,10 @@ import entidades.Numero;
 import entidades.Perfil;
 import entidades.Persona;
 import jakarta.transaction.Transactional;
+import servicios.IEspectaculosService;
+import servicios.INumeroService;
+import servicios.IUsuariosService;
+import servicios.implementacion.PaisesService;
 
 @Component
 public class Menu {

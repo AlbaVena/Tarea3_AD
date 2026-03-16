@@ -1,6 +1,8 @@
-package controlador;
+package servicios;
 
 import java.util.List;
+
+
 
 import entidades.Artista;
 import entidades.Coordinador;

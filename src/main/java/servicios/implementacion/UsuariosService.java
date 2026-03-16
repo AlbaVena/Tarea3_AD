@@ -1,4 +1,4 @@
-package controlador.implementacion;
+package servicios.implementacion;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import controlador.IUsuariosService;
 import entidades.Artista;
 import entidades.Coordinador;
 import entidades.Credenciales;
@@ -26,6 +25,7 @@ import repository.CoordinadorRepository;
 import repository.CredencialesRepository;
 import repository.EspecialidadRepository;
 import repository.PersonaRepository;
+import servicios.IUsuariosService;
 
 @Service
 public class UsuariosService implements IUsuariosService{

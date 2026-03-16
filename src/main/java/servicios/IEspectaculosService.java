@@ -1,4 +1,4 @@
-package controlador;
+package servicios;
 
 import java.util.List;
 

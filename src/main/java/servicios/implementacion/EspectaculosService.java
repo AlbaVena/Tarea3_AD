@@ -1,14 +1,14 @@
-package controlador.implementacion;
+package servicios.implementacion;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import controlador.IEspectaculosService;
 import entidades.Espectaculo;
 import jakarta.transaction.Transactional;
 import repository.EspectaculoRepository;
+import servicios.IEspectaculosService;
 
 @Service
 public class EspectaculosService implements IEspectaculosService{

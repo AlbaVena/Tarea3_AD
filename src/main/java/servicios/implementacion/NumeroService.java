@@ -1,4 +1,4 @@
-package controlador.implementacion;
+package servicios.implementacion;
 
 
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import controlador.INumeroService;
 import entidades.Numero;
 import jakarta.transaction.Transactional;
 import repository.NumeroRepository;
+import servicios.INumeroService;
 
 
 @Service
