@@ -6,6 +6,7 @@ import java.util.Set;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -26,17 +27,17 @@ public class Artista extends Persona {
 	@Column(name = "apodo", length = 25)
 	private String apodo = null;
 	
-	@ManyToMany(cascade = { CascadeType.MERGE })
+	@ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(
 	    name = "artista_especialidad", 
 	    joinColumns = @JoinColumn(name = "id_artista"), // Nombre de la columna en la tabla intermedia
 	    inverseJoinColumns = @JoinColumn(name = "id_especialidad"))
 	private Set<Especialidad> especialidades;
 	
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 	    name = "artistas_numeros",
-	    joinColumns = @JoinColumn(name = "id_artista"),
+	    joinColumns = @JoinColumn(name = "id_artista" ),
 	    inverseJoinColumns = @JoinColumn(name = "id_numero"))
 	private List<Numero> numeros;
 	

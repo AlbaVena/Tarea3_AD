@@ -2,7 +2,7 @@ package servicios;
 
 import java.util.List;
 
-
+import org.springframework.stereotype.Service;
 
 import entidades.Artista;
 import entidades.Coordinador;
@@ -10,7 +10,7 @@ import entidades.Especialidad;
 import entidades.Persona;
 import entidades.Sesion;
 
-
+@Service
 public interface IUsuariosService {
 
 	Persona login(String nombreUsuario, String password);

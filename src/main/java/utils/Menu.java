@@ -72,25 +72,7 @@ public class Menu {
 					System.out.println("Introduce tu contraseña");
 					password = leer.nextLine();
 				} while (password == null);
-				Persona usuarioLogueado = usuariosService.login(usuario, password);
-				if (usuarioLogueado != null) {
-					switch (usuarioLogueado.getPerfil()) {
-					case ARTISTA:
-						menuArtista();
-						break;
-					case COORDINACION:
-						menuCoordinador();
-						break;
-					case ADMIN:
-						menuAdmin();
-						break;
-					default:
-						System.out.println("Perfil no reconocido.");
-						break;
-					}
-				} else {
-					System.out.println("Usuario o contraseña incorrecto");
-				}
+				logIn(usuario, password);
 				break;
 			case 3:
 				System.out.println("**-- Se ha cerrado la aplicación. Adiós! --**");
@@ -101,6 +83,28 @@ public class Menu {
 			}
 		} while (opcion != 3);
 
+	}
+
+	public void logIn(String usuario, String password) {
+		Persona usuarioLogueado = usuariosService.login(usuario, password);
+		if (usuarioLogueado != null) {
+			switch (usuarioLogueado.getPerfil()) {
+			case ARTISTA:
+				menuArtista();
+				break;
+			case COORDINACION:
+				menuCoordinador();
+				break;
+			case ADMIN:
+				menuAdmin();
+				break;
+			default:
+				System.out.println("Perfil no reconocido.");
+				break;
+			}
+		} else {
+			System.out.println("Usuario o contraseña incorrecto");
+		}
 	}
 
 	public void menuAdmin() {

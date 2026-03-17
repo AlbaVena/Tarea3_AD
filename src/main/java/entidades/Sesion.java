@@ -1,5 +1,8 @@
 package entidades;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Sesion {
 	private Persona usuActual;
 	private Perfil perfilActual = Perfil.INVITADO;

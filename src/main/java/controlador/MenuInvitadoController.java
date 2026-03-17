@@ -71,7 +71,6 @@ public class MenuInvitadoController implements Initializable {
 		List<Espectaculo> lista = espectaculoService.getEspectaculos();
 		tablaEspectaculos.getItems().setAll(lista);
 
-		// La hacemos visible (tu truco de magia)
 		tablaEspectaculos.setVisible(true);
 	}
 
