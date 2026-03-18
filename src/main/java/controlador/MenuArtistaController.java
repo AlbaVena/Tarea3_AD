@@ -41,6 +41,8 @@ public class MenuArtistaController implements Initializable{
 		@FXML private StackPane stkpaneInvitado; 
 		@FXML private GridPane  fichaArtista;
 		
+		//eswto siempre, para Ver Espectaculos
+		
 	    @FXML private TableView<Espectaculo> tablaEspectaculos;
 	    @FXML private TableColumn<Espectaculo, String> columnNombreE;
 	    @FXML private TableColumn<Espectaculo, LocalDate> columnFechaIniE;

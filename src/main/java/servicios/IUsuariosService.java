@@ -1,6 +1,8 @@
 package servicios;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -9,6 +11,7 @@ import entidades.Coordinador;
 import entidades.Especialidad;
 import entidades.Persona;
 import entidades.Sesion;
+import javafx.util.Callback;
 
 @Service
 public interface IUsuariosService {
@@ -38,5 +41,7 @@ public interface IUsuariosService {
 	boolean comprobarNombreUsuario(String nombreUsuario);
 	
 	void crearPersona(Persona nueva);
+
+	Set<Artista> getArtistas();
 	
 }

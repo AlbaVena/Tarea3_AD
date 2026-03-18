@@ -285,4 +285,12 @@ public class UsuariosService implements IUsuariosService{
 		}
 
 	}
+
+	@Transactional
+	public Set<Artista> getArtistas() {
+	    // Obtenemos la lista de todos los artistas y la transformamos en un HashSet
+	    List<Artista> listaArtistas = artistaRepository.findAll();
+	    return new HashSet<>(listaArtistas);
+	}
+
 }

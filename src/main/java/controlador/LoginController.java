@@ -63,7 +63,7 @@ public class LoginController {
              System.out.println("Pantalla de Admin en construcción...");
             break;
         case COORDINACION:
-            System.out.println("Pantalla de Coordinador en construcción...");
+        	cargarPantalla(event, "/vista/MenuCoordinador.fxml");
             break;
         default:
             System.out.println("Perfil no reconocido.");
