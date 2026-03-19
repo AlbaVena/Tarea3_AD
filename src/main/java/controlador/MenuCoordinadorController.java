@@ -33,6 +33,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
@@ -52,7 +53,7 @@ import servicios.IUsuariosService;
 @Controller
 public class MenuCoordinadorController implements Initializable{
 	
-	@FXML private StackPane stkpaneInvitado; 
+	@FXML private StackPane stkpaneCoor; 
 	
 	//ver espectaculos
 	@FXML private TableView<Espectaculo> tablaEspectaculos;
@@ -65,6 +66,8 @@ public class MenuCoordinadorController implements Initializable{
     @FXML private Button btnLogOut;
     @FXML private Button btnCargarE;
     @FXML private Button btnFinalizarTodo;
+    @FXML private Button btnRegistrarNumero;
+    @FXML private Button btnAgregar;
     
     //paneles de vistas
     @FXML private GridPane panelFormularioDatos;
@@ -83,9 +86,11 @@ public class MenuCoordinadorController implements Initializable{
     @FXML private Spinner<Integer> spnduracionN;
     @FXML private ComboBox<Artista> cbartistasN;
     @FXML private ListView<Numero> lvNumCreados;
+    @FXML private ListView<Artista> lvArtistasSeleccionados;
     
     //buscador para modificar
     @FXML private ComboBox<Espectaculo> cbSelectorE;
+    
     
     //resumen
     @FXML private Label lblResumenNombre, lblResumenFechas, lblResumenCoordinadr;
@@ -103,6 +108,68 @@ public class MenuCoordinadorController implements Initializable{
     /**
      * MÉTODOS:
      */
+    
+    
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+    	//configuracion de la tabla como en Invitadp
+		columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+	    columnFechaIniE.setCellValueFactory(new PropertyValueFactory<>("fechaini"));
+	    columnFechaFinE.setCellValueFactory(new PropertyValueFactory<>("fechafin"));
+
+	    tablaEspectaculos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+	    tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles en este momento."));
+
+	    //cargar el spinner de duracion
+	    SpinnerValueFactory<Integer> valueFactory = 
+	            new SpinnerValueFactory.IntegerSpinnerValueFactory(15, 150, 15);//min, max, base
+	    spnduracionN.setValueFactory(valueFactory);
+	    
+	    //conversor del buscador de espectaculos
+	    cbSelectorE.setConverter(new StringConverter<Espectaculo>() {
+	        @Override
+	        public String toString(Espectaculo esp) {
+	            return (esp == null) ? "" : esp.getNombre();
+	        }
+	        //conversor en direccion contraria
+	        @Override
+	        public Espectaculo fromString(String string) { return null; }
+	    });
+	    
+	    //conversor igual para artistas
+	    conversorArtistasCombo();
+	    conversorArtistasSeleccionados();
+	    
+	    conversorNumeros();
+	    
+	    //cargar artistas
+	    cbartistasN.setItems(FXCollections.observableArrayList(usuariosService.getArtistas()));
+	    lvArtistasSeleccionados.setItems(artistasDelNumeroActual);
+	    
+	    //BINDING = condicion
+        //condicion: si algun campo no esta bien relleno
+        
+        //panel 1: si faltan datos
+        btnAccion.disableProperty().bind(
+                tfNombre.textProperty().isEmpty()
+                .or(dpFechaIni.valueProperty().isNull())
+                .or(dpFechafin.valueProperty().isNull())
+            );
+        
+        //buscador, si no se selecciona nada
+        btnCargarE.disableProperty().bind(
+                cbSelectorE.valueProperty().isNull()
+            );
+        
+        //boton finalizar, con menos de 3 numeros
+        btnFinalizarTodo.disableProperty().bind(
+                Bindings.size(lvNumCreados.getItems()).lessThan(3)
+            );
+        
+        
+        //estado inicial
+        ocultarTodo();
+    }
     
     /**
      * para ocultar todos los paneles a la vez
@@ -184,34 +251,11 @@ public class MenuCoordinadorController implements Initializable{
 	    }
 	}
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-    	//configuracion de la tabla como en Invitadp
-		columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-	    columnFechaIniE.setCellValueFactory(new PropertyValueFactory<>("fechaini"));
-	    columnFechaFinE.setCellValueFactory(new PropertyValueFactory<>("fechafin"));
+   
 
-	    tablaEspectaculos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
-	    tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles en este momento."));
-
-	    //cargar el spinner de duracion
-	    SpinnerValueFactory<Integer> valueFactory = 
-	            new SpinnerValueFactory.IntegerSpinnerValueFactory(15, 150, 15);//min, max, base
-	    spnduracionN.setValueFactory(valueFactory);
-	    
-	    //conversor del buscador de espectaculos
-	    cbSelectorE.setConverter(new StringConverter<Espectaculo>() {
-	        @Override
-	        public String toString(Espectaculo esp) {
-	            return (esp == null) ? "" : esp.getNombre();
-	        }
-	        //conversor en direccion contraria
-	        @Override
-	        public Espectaculo fromString(String string) { return null; }
-	    });
-	    
-	    //conversor igual para artistas
-	    cbartistasN.setConverter(new StringConverter<Artista>() {
+    @FXML
+	public void conversorArtistasCombo() {
+		cbartistasN.setConverter(new StringConverter<Artista>() {
 	        @Override
 	        public String toString(Artista a) {
 	            return (a == null) ? "" : a.getNombre();
@@ -219,33 +263,34 @@ public class MenuCoordinadorController implements Initializable{
 	        @Override
 	        public Artista fromString(String string) { return null; }
 	    });
-	    
-	    cbartistasN.setItems(FXCollections.observableArrayList(usuariosService.getArtistas()));
-	    
-	    //BINDING = condicion
-        //condicion: si algun campo no esta bien relleno
-        
-        //panel 1: si faltan datos
-        btnAccion.disableProperty().bind(
-                tfNombre.textProperty().isEmpty()
-                .or(dpFechaIni.valueProperty().isNull())
-                .or(dpFechafin.valueProperty().isNull())
-            );
-        //buscador, si no se selecciona nada
-        btnCargarE.disableProperty().bind(
-                cbSelectorE.valueProperty().isNull()
-            );
-        
-        //boton finalizar, con menos de 3 numeros
-        btnFinalizarTodo.disableProperty().bind(
-                Bindings.size(lvNumCreados.getItems()).lessThan(3)
-            );
-        
-        
-        //estado inicial
-        ocultarTodo();
+	}
+    
+    @FXML
+    private void conversorArtistasSeleccionados() {
+    	lvArtistasSeleccionados.setCellFactory(lv -> new ListCell<>() {
+            @Override protected void updateItem(Artista item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getNombre());
+            }
+        });
     }
     
+    @FXML
+    private void conversorNumeros() {
+    	lvNumCreados.setCellFactory(lv -> new ListCell<>() {
+            @Override protected void updateItem(Numero item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getNombre() + " (" + item.getDuracion() + " min) - " + 
+                           (item.getArtistas() != null ? item.getArtistas().size() : 0) + " artistas");
+                }
+            }
+        });
+    }
+    
+    @FXML
     private void limpiarEstilosErrores() {
         tfnombreN.setStyle("-fx-background-color: #D6EAF8;"); 
         cbartistasN.setStyle("-fx-background-color: #D6EAF8;"); 
@@ -253,6 +298,8 @@ public class MenuCoordinadorController implements Initializable{
     
     @FXML
     private void handleAnadirArtistaAListaTemporal() {
+    	
+    	
         Artista seleccionado = cbartistasN.getValue();
         if (seleccionado != null && !artistasDelNumeroActual.contains(seleccionado)) {//TODO peude estar mal
             artistasDelNumeroActual.add(seleccionado);
@@ -293,12 +340,21 @@ public class MenuCoordinadorController implements Initializable{
         lvNumCreados.getItems().add(nuevoNumero);
         
         //al final, limppiar campos
-        tfnombreN.clear();
-        cbartistasN.setValue(null);
-        spnduracionN.getValueFactory().setValue(15);
+        limpiarCampos();
         
         
     }
+
+    @FXML
+	public void limpiarCampos() {
+		tfnombreN.clear();
+        cbartistasN.setValue(null);
+        spnduracionN.getValueFactory().setValue(15);
+        dpFechaIni.setValue(null);
+        dpFechafin.setValue(null);
+        lvNumCreados.getItems().clear();
+        lvArtistasSeleccionados.getItems().clear();
+	}
     
     //navegacion atras en creacion/modificacion
     @FXML
@@ -355,6 +411,59 @@ public class MenuCoordinadorController implements Initializable{
         panelResumen.setVisible(true);
         
     }
+    
+    /**
+     * boton '+' añade un artista a una lista temporal, para luego 
+     * pasar a la listview y al numero
+     */
+    @FXML
+    private void handleVincularArtista() {
+    	//TODO comprobacion temporal
+    	System.out.println("Intentando vincular artista...");
+    	Artista seleccionado = cbartistasN.getValue();
+    	
+    	if (seleccionado != null) {
+            // evitar duplicados en la lista de este número concreto
+            if (!lvArtistasSeleccionados.getItems().contains(seleccionado)) {
+                lvArtistasSeleccionados.getItems().add(seleccionado);
+                
+                
+                //TODO prueba temporal
+                System.out.println("Artista añadido a la lista: " + seleccionado.getNombre());
+                
+                // forzar que refresque al añadir
+                lvArtistasSeleccionados.refresh();
+            }
+            else {
+                System.out.println("El artista ya está en la lista.");
+            }
+        }
+    	
+    }
+    
+    @FXML
+    private void handleRegistrarNumero() {
+    	 String nombreNum = tfnombreN.getText();
+         int duracion = spnduracionN.getValue();
+         List<Artista> seleccionados = new ArrayList<>(lvArtistasSeleccionados.getItems());
+
+         if (nombreNum != null && !nombreNum.isEmpty() && !seleccionados.isEmpty()) {
+             Numero nuevoNumero = new Numero();
+             nuevoNumero.setNombre(nombreNum);
+             nuevoNumero.setDuracion(duracion);
+             nuevoNumero.setArtistas(new HashSet<>(seleccionados));
+             nuevoNumero.setEspectaculo(espectaculoEnEdicion);
+             
+             lvNumCreados.getItems().add(nuevoNumero);
+
+             //hay que limpiar para añadir  nuevo numero
+             tfnombreN.clear();
+             lvArtistasSeleccionados.getItems().clear();
+             spnduracionN.getValueFactory().setValue(15);
+         }
+    	
+    }
+    
     
     
     
