@@ -102,7 +102,7 @@ public class LoginController {
 	private void handleCancelar(ActionEvent event) {
         try {
             // Volver a MenuInvitado.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/MenuInvitado.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vista/MenuInvitado.fxml"));
             loader.setControllerFactory(context::getBean);
             Parent root = loader.load();
             

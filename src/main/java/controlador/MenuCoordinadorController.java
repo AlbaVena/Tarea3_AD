@@ -68,6 +68,8 @@ public class MenuCoordinadorController implements Initializable{
     @FXML private Button btnFinalizarTodo;
     @FXML private Button btnRegistrarNumero;
     @FXML private Button btnAgregar;
+    @FXML private Button btnEliminarA; 
+    @FXML private Button btnEliminarN;
     
     //paneles de vistas
     @FXML private GridPane panelFormularioDatos;
@@ -101,7 +103,8 @@ public class MenuCoordinadorController implements Initializable{
     @Autowired private IUsuariosService usuariosService;
     @Autowired private ConfigurableApplicationContext context;
 
-    
+
+    //temporales
     private Espectaculo espectaculoEnEdicion;
     private ObservableList<Artista> artistasDelNumeroActual = FXCollections.observableArrayList();
     
@@ -141,6 +144,7 @@ public class MenuCoordinadorController implements Initializable{
 	    conversorArtistasSeleccionados();
 	    
 	    conversorNumeros();
+	 
 	    
 	    //cargar artistas
 	    cbartistasN.setItems(FXCollections.observableArrayList(usuariosService.getArtistas()));
@@ -181,6 +185,8 @@ public class MenuCoordinadorController implements Initializable{
         panelGestionNumeros.setVisible(false);
         panelResumen.setVisible(false);
         panelBuscadorE.setVisible(false);
+        
+   
     }
     
     @FXML
@@ -211,6 +217,7 @@ public class MenuCoordinadorController implements Initializable{
     
     @FXML
     private void handleCargarParaModificar() {
+    	ocultarTodo();
         espectaculoEnEdicion = cbSelectorE.getValue();
         
         if (espectaculoEnEdicion != null) {
@@ -223,10 +230,35 @@ public class MenuCoordinadorController implements Initializable{
             ObservableList<Numero> numerosCargados = FXCollections.observableArrayList(espectaculoEnEdicion.getNumeros());
             lvNumCreados.setItems(numerosCargados);
             
-            btnAccion.setText("Actualizar");
+            btnAccion.setText("Siguiente");
             ocultarTodo();
             panelFormularioDatos.setVisible(true);
         }
+    }
+    
+    @FXML
+    private void handleEliminarArtista() {
+        Artista seleccionado = lvArtistasSeleccionados.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            lvArtistasSeleccionados.getItems().remove(seleccionado);
+        }
+    }
+    
+    @FXML
+    private void handleEliminarNumero() {
+        Numero seleccionado = lvNumCreados.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            lvNumCreados.getItems().remove(seleccionado);
+        }
+    }
+    
+    @FXML
+    public void handleModificarE() {
+        ocultarTodo();
+        // [NUEVO] Cargar lista de la BD para el ComboBox
+        cbSelectorE.setItems(FXCollections.observableArrayList(espectaculoService.getEspectaculos()));
+        panelBuscadorE.setVisible(true);
+        
     }
     
     @FXML
@@ -402,9 +434,14 @@ public class MenuCoordinadorController implements Initializable{
         //listview:
         ObservableList<String> itemsResumen = FXCollections.observableArrayList();
         for (Numero n : espectaculoEnEdicion.getNumeros()) {
+        	n.getArtistas().size();
             itemsResumen.add(n.getNombre() + " | Duración: " + n.getDuracion() + " min");
+            
         }
         lvResumenNumeros.setItems(itemsResumen);
+        btnFinalizarTodo.disableProperty().unbind();
+        btnFinalizarTodo.disableProperty().bind(
+        Bindings.size(lvNumCreados.getItems()).lessThan(3));
         
         //cuando trodo cargado, mostrar
         ocultarTodo();
@@ -417,7 +454,7 @@ public class MenuCoordinadorController implements Initializable{
      * pasar a la listview y al numero
      */
     @FXML
-    private void handleVincularArtista() {
+    public void handleVincularArtista() {
     	//TODO comprobacion temporal
     	System.out.println("Intentando vincular artista...");
     	Artista seleccionado = cbartistasN.getValue();
@@ -463,6 +500,8 @@ public class MenuCoordinadorController implements Initializable{
          }
     	
     }
+    
+   
     
     
     
