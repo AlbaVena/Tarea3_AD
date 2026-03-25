@@ -34,11 +34,7 @@ public class Artista extends Persona {
 	    inverseJoinColumns = @JoinColumn(name = "id_especialidad"))
 	private Set<Especialidad> especialidades;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(
-	    name = "artistas_numeros",
-	    joinColumns = @JoinColumn(name = "id_artista" ),
-	    inverseJoinColumns = @JoinColumn(name = "id_numero"))
+	@ManyToMany(mappedBy = "artistas", fetch = FetchType.EAGER)
 	private List<Numero> numeros;
 	
 	

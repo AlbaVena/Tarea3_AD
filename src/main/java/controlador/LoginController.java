@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import servicios.IUsuariosService;
 
@@ -39,6 +40,13 @@ public class LoginController {
     public void initialize() {
         btnCancelar.setOnAction(this::handleCancelar);    
         btnLogin.setOnAction(this::handleLogin);
+        
+        //con boton Pass seleccionado, pulsar ENTER sirve para entrar
+        tfPass.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                handleLogin(new ActionEvent());
+            }
+        });
     }
     
     
@@ -88,9 +96,16 @@ public class LoginController {
             loader.setControllerFactory(context::getBean); 
             Parent root = loader.load();
             
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            
+            Stage stage = (Stage) tfPass.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
+//            
+//            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//            stage.setScene(new Scene(root));
+//            stage.show();
+            
+            
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Error al cargar la vista: " + rutaFxml);

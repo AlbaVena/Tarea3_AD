@@ -11,5 +11,7 @@ public interface IEspectaculosService {
 	Espectaculo getEspectaculo(long id);
 	
 	void guardarEspectaculo(Espectaculo aGuardar);
+	
+	void eliminarEspectaculo(long id);
 
 }

@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -29,7 +30,7 @@ public class Numero implements Serializable{
 	 */
 	private int orden;
 	
-	@Column(name = "nombre", nullable = false, length = 25)
+	@Column(name = "nombre", nullable = false, length = 50)
 	private String nombre;
 	
 	@Column(name = "duracion", nullable = false, length = 2)
@@ -39,8 +40,13 @@ public class Numero implements Serializable{
 	@JoinColumn(name = "id_espectaculo", referencedColumnName = "id_espectaculo", nullable = false)
 	private Espectaculo espectaculo;
 	
-	@ManyToMany(mappedBy = "numeros", fetch = FetchType.EAGER)
-	private Set <Artista> artistas;
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+	    name = "artistas_numeros",
+	    joinColumns = @JoinColumn(name = "id_numero"),
+	    inverseJoinColumns = @JoinColumn(name = "id_artista")
+	)
+	private Set<Artista> artistas;
 	
 	public Numero() {
 		

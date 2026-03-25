@@ -28,7 +28,7 @@ public class Espectaculo implements Serializable{
 	@Column(name = "id_espectaculo")
 	private long id_espectaculo;
 	
-	@Column(name = "nombre", nullable = false, length = 25)
+	@Column(name = "nombre", nullable = false, length = 50)
 	private String nombre;
 	
 	@Column(name = "fecha_inicio")
@@ -37,7 +37,7 @@ public class Espectaculo implements Serializable{
 	@Column(name = "fecha_fin")
 	private LocalDate fechafin;
 	
-	@OneToMany(mappedBy = "espectaculo", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "espectaculo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private Set <Numero> numeros;
 	
 	@ManyToOne

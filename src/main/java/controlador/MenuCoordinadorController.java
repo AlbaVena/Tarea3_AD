@@ -68,8 +68,9 @@ public class MenuCoordinadorController implements Initializable{
     @FXML private Button btnFinalizarTodo;
     @FXML private Button btnRegistrarNumero;
     @FXML private Button btnAgregar;
-    @FXML private Button btnEliminarA; 
-    @FXML private Button btnEliminarN;
+    @FXML private Button btnEliminarA;
+    @FXML private Button btnEliminarE;
+    @FXML private Button btnEliminar;
     
     //paneles de vistas
     @FXML private GridPane panelFormularioDatos;
@@ -165,6 +166,8 @@ public class MenuCoordinadorController implements Initializable{
                 cbSelectorE.valueProperty().isNull()
             );
         
+        btnEliminar.disableProperty().bind(cbSelectorE.valueProperty().isNull());
+        
         //boton finalizar, con menos de 3 numeros
         btnFinalizarTodo.disableProperty().bind(
                 Bindings.size(lvNumCreados.getItems()).lessThan(3)
@@ -203,8 +206,31 @@ public class MenuCoordinadorController implements Initializable{
         ocultarTodo();
         //combo con los espectáculos actuales
         cbSelectorE.getItems().setAll(espectaculoService.getEspectaculos());
+        btnCargarE.setVisible(true);
+        btnEliminar.setVisible(false);
         panelBuscadorE.setVisible(true);
     }
+    @FXML
+    private void handleBotonEliminarLateral() {
+        ocultarTodo();
+        cbSelectorE.getItems().setAll(espectaculoService.getEspectaculos());
+        btnCargarE.setVisible(false);
+        btnEliminar.setVisible(true);
+        panelBuscadorE.setVisible(true);
+    }
+    
+    @FXML
+    private void handleEliminarE() {
+        Espectaculo seleccionado = cbSelectorE.getValue();
+        if (seleccionado != null) {
+            espectaculoService.eliminarEspectaculo(seleccionado.getId());
+            cbSelectorE.getItems().remove(seleccionado);
+            cbSelectorE.setValue(null);
+        }
+    }
+    
+    
+   
     
     @FXML
     private void handleCrearE() {
@@ -228,13 +254,17 @@ public class MenuCoordinadorController implements Initializable{
             
             //cargar los numeros que ya tiene en la listview
             ObservableList<Numero> numerosCargados = FXCollections.observableArrayList(espectaculoEnEdicion.getNumeros());
-            lvNumCreados.setItems(numerosCargados);
+            
+            lvNumCreados.getItems().clear();
+            lvNumCreados.getItems().addAll(espectaculoEnEdicion.getNumeros());
             
             btnAccion.setText("Siguiente");
             ocultarTodo();
             panelFormularioDatos.setVisible(true);
         }
     }
+    
+    
     
     @FXML
     private void handleEliminarArtista() {
@@ -448,6 +478,8 @@ public class MenuCoordinadorController implements Initializable{
         panelResumen.setVisible(true);
         
     }
+    
+   
     
     /**
      * boton '+' añade un artista a una lista temporal, para luego 

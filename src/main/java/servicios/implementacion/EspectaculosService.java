@@ -36,6 +36,11 @@ public class EspectaculosService implements IEspectaculosService{
 		return espectaculoRepository.findById(id).orElse(null);
 	}
 	
+	@Transactional
+	public void eliminarEspectaculo(long id) {
+		espectaculoRepository.deleteById(id);
+	}
+	
 	
 	
 
