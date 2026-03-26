@@ -409,7 +409,7 @@
                   </HBox>
                </children>
             </VBox>
-            <GridPane fx:id="gridDatosPersona" prefWidth="609.0">
+            <GridPane fx:id="gridDatosPersona" prefWidth="609.0" visible="false">
               <columnConstraints>
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="323.20001220703125" minWidth="10.0" prefWidth="201.60003662109375" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="406.39996337890625" minWidth="10.0" prefWidth="406.39996337890625" />
@@ -488,6 +488,81 @@
                <StackPane.margin>
                   <Insets bottom="20.0" left="10.0" right="10.0" />
                </StackPane.margin>
+            </GridPane>
+            <GridPane fx:id="gridArtista">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="275.20001220703125" minWidth="10.0" prefWidth="221.5999755859375" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="118.4000244140625" minWidth="50.0" prefWidth="35.19999999999999" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="333.59997558593756" minWidth="10.0" prefWidth="308.00000000000006" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="126.19999542236329" minHeight="10.0" prefHeight="126.19999542236329" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="100.59998168945313" minHeight="10.0" prefHeight="80.5999969482422" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="245.60003967285155" minHeight="10.0" prefHeight="79.0000030517578" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="201.79996337890623" minHeight="10.0" prefHeight="118.79997558593749" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="114.80002441406253" minHeight="10.0" prefHeight="114.80002441406253" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <StackPane.margin>
+                  <Insets bottom="20.0" left="10.0" top="10.0" />
+               </StackPane.margin>
+               <children>
+                  <Label text="2. Datos de Artista" textAlignment="CENTER" GridPane.columnSpan="3" GridPane.halignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Label>
+                  <Label text="Apodo :" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <VBox alignment="TOP_RIGHT" prefHeight="81.0" prefWidth="190.0" spacing="10.0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                     <children>
+                        <Label alignment="CENTER_RIGHT" text="Especialidades :" />
+                        <ComboBox fx:id="cbArtistaEsp" prefWidth="150.0" promptText="selecciona" />
+                     </children>
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin>
+                  </VBox>
+                  <ListView fx:id="lvArtistaEsp" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.rowSpan="2">
+                     <GridPane.margin>
+                        <Insets bottom="20.0" left="20.0" right="20.0" />
+                     </GridPane.margin>
+                  </ListView>
+                  <Button fx:id="btnEliminarEsp" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #85C1E9;" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="btnAgregarEsp" alignment="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #85C1E9;" text="+" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <TextField fx:id="txtApodo" promptText="El Gran Mago" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </GridPane.margin>
+                  </TextField>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                     <children>
+                        <Button fx:id="btnAtrasA" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #D6EAF8;" text="Atrás" />
+                        <Button fx:id="btnFinalizarA" disable="true" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #85C1E9;" text="Finalizar" />
+                     </children>
+                     <GridPane.margin>
+                        <Insets left="10.0" />
+                     </GridPane.margin>
+                  </HBox>
+                  <Label alignment="TOP_CENTER" contentDisplay="CENTER" text="Un artista debe tener entre 1 y 5 especialidades." textAlignment="RIGHT" wrapText="true" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="TOP">
+                     <font>
+                        <Font name="System Italic" size="12.0" />
+                     </font>
+                     <GridPane.margin>
+                        <Insets left="20.0" right="10.0" />
+                     </GridPane.margin>
+                  </Label>
+               </children>
             </GridPane>
 			</children>
 		</StackPane>
