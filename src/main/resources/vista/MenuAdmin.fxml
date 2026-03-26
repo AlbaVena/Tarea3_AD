@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="brdPaneCoor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controlador.MenuAdminController">
+	<left>
+		<VBox fx:id="vboxMenu" prefHeight="364.0" prefWidth="160.0" spacing="20.0" style="-fx-background-color: #85C1E9;" BorderPane.alignment="CENTER">
+			<children>
+				<Button fx:id="btnVerEspectaculos" alignment="CENTER" mnemonicParsing="false" onAction="#handleVerEspectaculos" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Ver espectáculos">
+					<opaqueInsets>
+						<Insets />
+					</opaqueInsets>
+					<VBox.margin>
+						<Insets top="20.0" />
+					</VBox.margin>
+				</Button>
+            <TitledPane fx:id="titGestionE" contentDisplay="CENTER" expanded="false" lineSpacing="10.0" nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #D6EAF8;" text="Gestión Espectaculos" textAlignment="CENTER">
+               <content>
+                  <VBox fx:id="vbMenu" prefHeight="200.0" prefWidth="100.0" spacing="15.0" style="-fx-background-color: #85C1E9;">
+                     <children>
+                        <Button fx:id="btncrearE" mnemonicParsing="false" onAction="#handleCrearE" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Crear Espectáculo" />
+                        <Button fx:id="btnmodificarE" mnemonicParsing="false" onAction="#handleBotonModificarLateral" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Modificar Espectáculo" />
+                        <Button fx:id="btnEliminarE" mnemonicParsing="false" onAction="#handleBotonEliminarLateral" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Eliminar Espectáctulo" />
+                     </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </TitledPane>
+			</children>
+			<BorderPane.margin>
+				<Insets right="10.0" />
+			</BorderPane.margin>
+		</VBox>
+	</left>
+	<top>
+		<Button fx:id="btnLogOut" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleLogOut" style="-fx-background-color: #D6EAF8;" text="LogOut" BorderPane.alignment="CENTER_RIGHT">
+			<BorderPane.margin>
+				<Insets bottom="10.0" right="30.0" top="10.0" />
+			</BorderPane.margin>
+		</Button>
+	</top>
+	<center>
+		<StackPane fx:id="stkpaneCoor" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+			<children>
+				<TableView fx:id="tablaEspectaculos" visible="false">
+					<columns>
+						<TableColumn fx:id="columnNombreE" minWidth="200.0" prefWidth="250.0" text="Nombre" />
+						<TableColumn fx:id="columnFechaIniE" prefWidth="75.0" text="Fecha inicio" />
+						<TableColumn fx:id="columnFechaFinE" prefWidth="75.0" text="Fecha fin" />
+					</columns>
+               <StackPane.margin>
+                  <Insets bottom="20.0" right="10.0" />
+               </StackPane.margin>
+				</TableView>
+            <GridPane fx:id="panelFormularioDatos" visible="false">
+              <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" maxWidth="210.20001220703125" minWidth="10.0" prefWidth="119.99999237060547" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="309.60000762939455" minWidth="10.0" prefWidth="309.60000762939455" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label fx:id="lblNombre" text="Nombre:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets right="20.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <Label fx:id="lblfechaIni" text="Fecha de inicio:" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets right="20.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <Label fx:id="lblFechaFin" text="Fecha de fin:" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets right="20.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <TextField fx:id="tfNombre" maxWidth="300.0" promptText="..." style="-fx-background-color: #D6EAF8;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets right="20.0" />
+                     </GridPane.margin>
+                  </TextField>
+                  <DatePicker fx:id="dpFechaIni" maxWidth="200.0" style="-fx-background-color: #D6EAF8;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <DatePicker fx:id="dpFechafin" maxWidth="200.0" style="-fx-background-color: #D6EAF8;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                  <HBox fx:id="hbBotones" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <children>
+                        <Button fx:id="btnCancelar" cancelButton="true" mnemonicParsing="false" onAction="#handleCancelar" style="-fx-background-color: #D6EAF8;" text="Cancelar" />
+                        <Button fx:id="btnAccion" mnemonicParsing="false" onAction="#handleContinuar" style="-fx-background-color: #85C1E9;" text="Guardar" />
+                     </children>
+                     <padding>
+                        <Insets left="10.0" top="10.0" />
+                     </padding>
+                  </HBox>
+                  <Label prefHeight="20.0" prefWidth="196.0" text="1. Datos del Espectáculo" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </GridPane>
+            <VBox fx:id="panelGestionNumeros" prefHeight="200.0" prefWidth="100.0" visible="false">
+               <children>
+                  <Label fx:id="lbltituloGestionE" alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="442.0" text="2. Registro de Números">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="CENTER" prefHeight="15.0" prefWidth="430.0" text="(mínimo 3 numeros)">
+                     <font>
+                        <Font name="System Italic" size="10.0" />
+                     </font>
+                  </Label>
+                  <GridPane prefHeight="227.0" prefWidth="430.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="161.2000274658203" minWidth="10.0" prefWidth="146.00001525878906" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="97.20001220703125" minWidth="10.0" prefWidth="62.199987792968756" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="183.19998779296878" minWidth="10.0" prefWidth="170.3999755859375" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="98.20001220703125" minWidth="10.0" prefWidth="45.60002441406249" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="25.60001220703125" minHeight="10.0" prefHeight="19.19998779296875" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="44.80001220703125" minHeight="10.0" prefHeight="37.599999999999994" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="44.80001220703125" minHeight="10.0" prefHeight="24.599999999999994" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="44.80001220703125" minHeight="10.0" prefHeight="32.599999999999994" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="44.80001220703125" minHeight="10.0" prefHeight="32.599999999999994" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="41.60000000000001" minHeight="10.0" prefHeight="32.19998779296874" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="77.4" minHeight="10.0" prefHeight="57.800012207031244" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                     <children>
+                        <TextField fx:id="tfnombreN" promptText="..." style="-fx-background-color: #D6EAF8;" GridPane.rowIndex="1" />
+                        <Spinner fx:id="spnduracionN" editable="true" style="-fx-background-color: #D6EAF8;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Spinner>
+                        <ComboBox fx:id="cbartistasN" prefHeight="26.0" prefWidth="168.0" style="-fx-background-color: #D6EAF8;" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </ComboBox>
+                        <Button fx:id="btnAgregar" mnemonicParsing="false" onAction="#handleAnadirArtistaAListaTemporal" prefWidth="28.0" style="-fx-background-color: #85C1E9;" text="+" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Button>
+                        <Label prefHeight="18.0" prefWidth="114.0" text="Nombre del número" GridPane.valignment="BOTTOM" />
+                        <Label text="Duración" GridPane.columnIndex="1" GridPane.valignment="BOTTOM">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label prefHeight="18.0" prefWidth="68.0" text="Artistas" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <ListView fx:id="lvNumCreados" prefHeight="98.0" prefWidth="373.0" GridPane.columnSpan="3" GridPane.rowIndex="6" GridPane.rowSpan="3">
+                           <GridPane.margin>
+                              <Insets left="20.0" top="10.0" />
+                           </GridPane.margin>
+                        </ListView>
+                        <Label text="Numeros creados:" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin></Label>
+                        <ListView fx:id="lvArtistasSeleccionados" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="3">
+                           <GridPane.margin>
+                              <Insets left="10.0" top="5.0" />
+                           </GridPane.margin>
+                        </ListView>
+                        <Label text="Artistas participantes:" GridPane.columnIndex="2">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Button fx:id="btnRegistrarNumero" mnemonicParsing="false" onAction="#handleRegistrarNumero" style="-fx-background-color: #85C1E9;" text="Registrar" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                           <GridPane.margin>
+                              <Insets top="10.0" />
+                           </GridPane.margin>
+                        </Button>
+                        <Button fx:id="btnEliminarN" alignment="CENTER" mnemonicParsing="false" onAction="#handleEliminarNumero" prefWidth="36.0" style="-fx-background-color: #85C1E9;" text="-" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                           <GridPane.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </GridPane.margin>
+                        </Button>
+                        <Button fx:id="btnEliminarA" alignment="CENTER" mnemonicParsing="false" onAction="#handleEliminarArtista" prefWidth="28.0" style="-fx-background-color: #85C1E9;" text="-" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Button>
+                     </children>
+                  </GridPane>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                     <children>
+                        <Button fx:id="btnAtras" mnemonicParsing="false" onAction="#handleAtras" prefWidth="100.0" style="-fx-background-color: #D6EAF8;" text="Atrás" GridPane.halignment="RIGHT">
+                           <GridPane.margin>
+                              <Insets right="10.0" />
+                           </GridPane.margin>
+                        </Button>
+                        <Button fx:id="btnFinalizarTodo" mnemonicParsing="false" onAction="#handleFinalizar" prefWidth="100.0" style="-fx-background-color: #85C1E9;" text="Finalizar" GridPane.columnIndex="1">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </Button>
+                     </children>
+                  </GridPane>
+               </children>
+            </VBox>
+            <ScrollPane fx:id="panelResumen" prefHeight="200.0" prefWidth="200.0" visible="false">
+               <content>
+                  <VBox fx:id="vbResumen" alignment="CENTER" prefHeight="350.0" prefWidth="400.0" spacing="20.0">
+                     <padding>
+                        <Insets left="15.0" right="15.0" />
+                     </padding>
+                     <children>
+                        <Label alignment="TOP_CENTER" prefHeight="24.0" prefWidth="216.0" text="3. ¡Espectáculo creado con éxito!">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="1.0" />
+                           </VBox.margin>
+                        </Label>
+                        <GridPane fx:id="gridResumen" prefHeight="90.0" prefWidth="370.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="180.20001220703125" minWidth="10.0" prefWidth="73.4000244140625" />
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="295.7999755859375" minWidth="10.0" prefWidth="295.7999755859375" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Nombre:" />
+                              <Label text="Fechas:" GridPane.rowIndex="1" />
+                              <Label text="Coordinador:" GridPane.rowIndex="2" />
+                              <Label fx:id="lblResumenNombre" GridPane.columnIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label fx:id="lblResumenFechas" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label fx:id="lblResumenCoordinadr" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                           </children>
+                        </GridPane>
+                        <Separator prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <Label alignment="TOP_LEFT" contentDisplay="CENTER" prefHeight="18.0" prefWidth="411.0" text="Desglose de números y artistas:" />
+                        <ListView fx:id="lvResumenNumeros" opacity="0.68" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                           <VBox.margin>
+                              <Insets bottom="20.0" />
+                           </VBox.margin>
+                        </ListView>
+                     </children>
+                  </VBox>
+               </content>
+            </ScrollPane>
+            <VBox fx:id="panelBuscadorE" prefHeight="200.0" prefWidth="100.0" visible="false">
+               <children>
+                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="431.0" text="Espectaculo a modificar">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label text="Selecciona el espectaculo que quieres modificar">
+                     <font>
+                        <Font name="System Italic" size="12.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <ComboBox fx:id="cbSelectorE" prefHeight="26.0" prefWidth="334.0" promptText="Espectáculos" visibleRowCount="30">
+                     <VBox.margin>
+                        <Insets left="10.0" top="10.0" />
+                     </VBox.margin>
+                  </ComboBox>
+                  <Region prefHeight="224.0" prefWidth="430.0" />
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button fx:id="btnCargarE" alignment="CENTER" mnemonicParsing="false" onAction="#handleCargarParaModificar" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #85C1E9;" text="Cargar" />
+                        <Button fx:id="btnEliminar" alignment="CENTER" mnemonicParsing="false" onAction="#handleEliminarE" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #85C1E9;" text="Eliminar" visible="false">
+                           <HBox.margin>
+                              <Insets left="185.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+			</children>
+		</StackPane>
+	</center>
+</BorderPane>
