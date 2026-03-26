@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="brdPaneCoor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controlador.MenuAdminController">
+<BorderPane fx:id="brdPaneCoor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controlador.MenuAdminController">
 	<left>
 		<VBox fx:id="vboxMenu" prefHeight="364.0" prefWidth="160.0" spacing="20.0" style="-fx-background-color: #85C1E9;" BorderPane.alignment="CENTER">
 			<children>
@@ -35,6 +35,11 @@
 						<Insets top="20.0" />
 					</VBox.margin>
 				</Button>
+            <Button fx:id="btnVerArtistas" alignment="CENTER" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Ver artistas">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Button>
             <TitledPane fx:id="titGestionE" contentDisplay="CENTER" expanded="false" lineSpacing="10.0" nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #D6EAF8;" text="Gestión Espectaculos" textAlignment="CENTER">
                <content>
                   <VBox fx:id="vbMenu" prefHeight="200.0" prefWidth="100.0" spacing="15.0" style="-fx-background-color: #85C1E9;">
@@ -42,6 +47,20 @@
                         <Button fx:id="btncrearE" mnemonicParsing="false" onAction="#handleCrearE" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Crear Espectáculo" />
                         <Button fx:id="btnmodificarE" mnemonicParsing="false" onAction="#handleBotonModificarLateral" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Modificar Espectáculo" />
                         <Button fx:id="btnEliminarE" mnemonicParsing="false" onAction="#handleBotonEliminarLateral" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Eliminar Espectáctulo" />
+                     </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </TitledPane>
+            <TitledPane fx:id="titGestionP" contentDisplay="CENTER" layoutX="10.0" layoutY="121.0" lineSpacing="10.0" nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #D6EAF8;" text="Gestión Personas" textAlignment="CENTER">
+               <content>
+                  <VBox fx:id="vbMenu1" prefHeight="200.0" prefWidth="100.0" spacing="15.0" style="-fx-background-color: #85C1E9;">
+                     <children>
+                        <Button fx:id="btnRegistrarP" mnemonicParsing="false" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Registrar usuario" />
+                        <Button fx:id="btnmodificarP" mnemonicParsing="false" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Modificar usuario" />
+                        <Button fx:id="btnEliminarP" mnemonicParsing="false" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Eliminar usuario" />
                      </children>
                      <padding>
                         <Insets top="10.0" />
@@ -249,7 +268,7 @@
                   </GridPane>
                </children>
             </VBox>
-            <ScrollPane fx:id="panelResumen" prefHeight="200.0" prefWidth="200.0" visible="false">
+            <ScrollPane fx:id="panelResumen" disable="true" prefHeight="200.0" prefWidth="200.0" visible="false">
                <content>
                   <VBox fx:id="vbResumen" alignment="CENTER" prefHeight="350.0" prefWidth="400.0" spacing="20.0">
                      <padding>
@@ -342,6 +361,68 @@
                   </HBox>
                </children>
             </VBox>
+            <TableView fx:id="tablaArtistas" prefHeight="200.0" prefWidth="200.0" visible="false">
+              <columns>
+                <TableColumn fx:id="columnNombreA" minWidth="150.0" prefWidth="150.0" text="Nombre" />
+                <TableColumn fx:id="columnApodoA" minWidth="120.0" prefWidth="75.0" text="Apodo" />
+                  <TableColumn fx:id="columnEspecA" minWidth="150.0" prefWidth="-1.0" text="Especialidades" />
+              </columns>
+               <StackPane.margin>
+                  <Insets bottom="20.0" right="10.0" />
+               </StackPane.margin>
+            </TableView>
+            <VBox fx:id="panelBuscadorP" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" visible="false">
+               <children>
+                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="431.0" text="Modificar datos de usuario">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label text="Selecciona el usuario a modificar">
+                     <font>
+                        <Font name="System Italic" size="12.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <ComboBox fx:id="cbSelectorP" prefHeight="26.0" prefWidth="334.0" promptText="Usuario..." visibleRowCount="30">
+                     <VBox.margin>
+                        <Insets left="10.0" top="10.0" />
+                     </VBox.margin>
+                  </ComboBox>
+                  <Region prefHeight="224.0" prefWidth="430.0" />
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button fx:id="btnCargarP" alignment="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #85C1E9;" text="Cargar" />
+                        <Button fx:id="btnEliminarP" alignment="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #85C1E9;" text="Eliminar" visible="false">
+                           <HBox.margin>
+                              <Insets left="185.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <GridPane fx:id="gridDatosPersona">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
 			</children>
 		</StackPane>
 	</center>
