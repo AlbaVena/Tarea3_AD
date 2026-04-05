@@ -599,7 +599,7 @@
                   </Label>
                </children>
             </GridPane>
-            <ScrollPane fx:id="panelResumenP" fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" StackPane.alignment="CENTER">
+            <ScrollPane fx:id="panelResumenP" fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" visible="false" StackPane.alignment="CENTER">
                <content>
                   <VBox fx:id="vbResumen1" alignment="CENTER" spacing="20.0">
                      <padding>
@@ -660,21 +660,36 @@
                            </children>
                         </GridPane>
                         <Separator prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="411.0" text="Datos específicos" textAlignment="JUSTIFY" />
-                        <GridPane prefHeight="138.0" prefWidth="598.0">
-                          <columnConstraints>
-                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="411.0" text="Datos específicos" textAlignment="JUSTIFY">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font></Label>
+                        <VBox fx:id="vbDatosEspefcificos" prefHeight="200.0" prefWidth="100.0">
                            <children>
-                              <Label text="Senior desde" />
+                              <VBox fx:id="vBResumenArtista" prefHeight="200.0" prefWidth="100.0">
+                                 <children>
+                                    <HBox alignment="CENTER" prefHeight="65.0" prefWidth="598.0" spacing="30.0">
+                                       <children>
+                                          <Label text="Apodo: " />
+                                          <Label fx:id="lblResumenApodoA" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER" prefHeight="87.0" prefWidth="598.0" spacing="30.0">
+                                       <children>
+                                          <Label text="Especialidades: " />
+                                          <Label fx:id="lblResumenEspA" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <VBox fx:id="vbDatosCoor" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
+                                 <children>
+                                    <Label text="Senior desde: " />
+                                    <Label fx:id="lblResumenCoor" />
+                                 </children>
+                              </VBox>
                            </children>
-                        </GridPane>
+                        </VBox>
                      </children>
                   </VBox>
                </content>
