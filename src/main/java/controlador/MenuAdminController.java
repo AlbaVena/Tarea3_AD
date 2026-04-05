@@ -15,9 +15,11 @@ import org.springframework.stereotype.Controller;
 
 import entidades.Artista;
 import entidades.Coordinador;
+import entidades.Credenciales;
 import entidades.Especialidad;
 import entidades.Espectaculo;
 import entidades.Numero;
+import entidades.Perfil;
 import entidades.Persona;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -52,6 +54,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import servicios.IEspectaculosService;
 import servicios.IUsuariosService;
+import servicios.implementacion.PaisesService;
 
 @Controller
 public class MenuAdminController implements Initializable{
@@ -160,6 +163,7 @@ public class MenuAdminController implements Initializable{
     @Autowired private IEspectaculosService espectaculoService;
     @Autowired private IUsuariosService usuariosService;
     @Autowired private ConfigurableApplicationContext context;
+    @Autowired private PaisesService paisesService;
 
 
     //temporales
@@ -208,7 +212,7 @@ public class MenuAdminController implements Initializable{
 	    cbartistasN.setItems(FXCollections.observableArrayList(usuariosService.getArtistas()));
 	    lvArtistasSeleccionados.setItems(artistasDelNumeroActual);
 	    
-	    //BINDING = condicion
+	    //BINDING = condiciones
         //condicion: si algun campo no esta bien relleno
         
         //panel 1: si faltan datos
@@ -230,6 +234,48 @@ public class MenuAdminController implements Initializable{
                 Bindings.size(lvNumCreados.getItems()).lessThan(3)
             );
         
+        //boton de cargar o eliminar persona
+        btnCargarP.disableProperty().bind(cbSelectorP.valueProperty().isNull());
+        btnEliminarP.disableProperty().bind(cbSelectorP.valueProperty().isNull());
+        
+        
+        columnNombreA.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        columnApodoA.setCellValueFactory(new PropertyValueFactory<>("apodo"));
+        //TODO especialidades necesita conversor especial, lo dejamos pendiente
+        tablaArtistas.setPlaceholder(new Label("No hay artistas registrados."));
+        
+        //cargar el combo de paises
+        cbNacionalidad.setItems(FXCollections.observableArrayList(        	    
+        		paisesService.getPaises().values()));
+        
+        //Cargar especialidades en el combo de aritsta
+        cbArtistaEsp.setItems(FXCollections.observableArrayList(
+        	    usuariosService.getEspecialidades()));
+        
+        
+        //TODO conversor de especialidades
+        cbArtistaEsp.setConverter(new StringConverter<Especialidad>() {
+            @Override
+            public String toString(Especialidad e) {
+                return (e == null) ? "" : e.getNombre();
+            }
+            @Override
+            public Especialidad fromString(String string) { return null; }
+        });
+        
+        
+        //conversor del combobox de personas
+        cbSelectorP.setConverter(new StringConverter<Persona>() {
+            @Override
+            public String toString(Persona p) {
+                return (p == null) ? "" : p.getNombre() + " (" + p.getPerfil() + ")";
+            }
+            @Override
+            public Persona fromString(String string) { return null; }
+        });
+        
+        //habilkitar el datepicker SOLO si el checkbox está marcado
+        dateCoor.disableProperty().bind(chbCoor.selectedProperty().not());
         
         //estado inicial
         ocultarTodo();
@@ -240,14 +286,159 @@ public class MenuAdminController implements Initializable{
      */
     @FXML
     private void ocultarTodo() {
+    	//de espectaculos
         tablaEspectaculos.setVisible(false);
         panelFormularioDatos.setVisible(false);
         panelGestionNumeros.setVisible(false);
         panelResumen.setVisible(false);
         panelBuscadorE.setVisible(false);
         
+        //de personas
+        tablaArtistas.setVisible(false);
+        panelBuscadorP.setVisible(false);
+        gridDatosPersona.setVisible(false);
+        gridArtista.setVisible(false);
+        gridCoordinador.setVisible(false);
+        panelResumenP.setVisible(false);
+        
    
     }
+    
+    @FXML
+    private void verArtistas() {
+    	ocultarTodo();
+    	tablaArtistas.getItems().setAll(usuariosService.getArtistas());
+    	tablaArtistas.setVisible(true);
+    }
+    
+    @FXML
+    private void registrarPersona() {
+    	ocultarTodo();
+    	txtNombre.clear();
+    	txtEmail.clear();
+    	txtNombreU.clear();
+    	txtPass.clear();
+    	txtApodo.clear();
+    	cbNacionalidad.setValue(null);
+        rbArtista.setSelected(false);
+        rbCoor.setSelected(false);
+        lvArtistaEsp.getItems().clear();
+        dateCoor.setValue(null);
+        chbCoor.setSelected(false);
+        
+        gridDatosPersona.setVisible(true);
+    }
+    
+    @FXML 
+    private void botonModificarP() {
+    	ocultarTodo();
+    	cbSelectorP.getItems().setAll(usuariosService.getCredencialesSistema());
+    	btnCargarP.setVisible(true);
+    	btnEliminarP.setVisible(false);
+    	panelBuscadorP.setVisible(true);
+    }
+    
+    @FXML
+    private void botonEliminarP() {
+    	ocultarTodo();
+        cbSelectorP.getItems().setAll(usuariosService.getCredencialesSistema());
+        btnCargarP.setVisible(false);
+        btnEliminarP.setVisible(true);
+        panelBuscadorP.setVisible(true);
+    }
+    
+    /**
+     * muestra datos para artista o coordinador dependiendo de lo
+     * que este marcado
+     */
+    @FXML
+    private void botonSiguientePersona() {
+    	ocultarTodo();
+        if (rbArtista.isSelected()) {
+            gridArtista.setVisible(true);
+        } else if (rbCoor.isSelected()) {
+            gridCoordinador.setVisible(true);
+        } else {
+            // ninguno seleccionado, volvemos a mostrar el panel
+            gridDatosPersona.setVisible(true);
+            rbArtista.setStyle("-fx-border-color: red;");
+            rbCoor.setStyle("-fx-border-color: red;");
+        }
+    }
+    
+    @FXML
+    private void botonAtrasDesdeArtista() {
+        ocultarTodo();
+        gridDatosPersona.setVisible(true);
+    }
+
+    @FXML
+    private void botonAtrasDesdeCoordinador() {
+        ocultarTodo();
+        gridDatosPersona.setVisible(true);
+    }
+    
+    @FXML
+    private void finalizarArtista() {
+    	Artista nuevo = new Artista();
+    	
+    	//comunes
+    	nuevo.setNombre(txtNombre.getText());
+    	nuevo.setEmail(txtEmail.getText());
+    	nuevo.setNacionalidad(cbNacionalidad.getValue());
+    	nuevo.setPerfil(Perfil.ARTISTA);
+    	
+    	//credenciales
+    	Credenciales cred = new Credenciales(txtNombreU.getText(), txtPass.getText(), Perfil.ARTISTA);
+    	nuevo.setCredenciales(cred);
+    	cred.setPersona(nuevo);
+    	
+    	//especificos artista
+    	nuevo.setApodo(txtApodo.getText());
+    	nuevo.setEspecialidades(new HashSet<Especialidad>(lvArtistaEsp.getItems()));
+    	
+    	//se guarda:
+    	usuariosService.crearPersona(nuevo);
+    	
+    	//mostrar en resumen
+    	
+    	lblResumenNombre.setText(nuevo.getNombre());
+    	lblResumenEmailP.setText(nuevo.getEmail());
+    	lblResumenNacionP.setText(nuevo.getNacionalidad());
+        lblResumenUsuarioP.setText(txtNombreU.getText());
+        lblResumenPuestoP.setText("Artista");
+        lblResumenApodoA.setText(nuevo.getApodo());
+       
+        String especialidades = "";
+        for (Especialidad e : nuevo.getEspecialidades()) {
+        	if (!especialidades.isEmpty()) {
+        		especialidades += ", ";
+        	}
+        	especialidades += e.getNombre();
+        }
+        
+        lblResumenEspA.setText(especialidades);
+        
+        //mostrar artista, ocultar coordinador
+        vBResumenArtista.setVisible(true);
+        vBResumenArtista.setManaged(true);
+        vbDatosCoor.setVisible(false);
+        vbDatosCoor.setManaged(false);
+        
+        ocultarTodo();
+        panelResumenP.setVisible(true);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     @FXML
     private void handleVerEspectaculos() {
@@ -286,9 +477,6 @@ public class MenuAdminController implements Initializable{
         }
     }
     
-    
-   
-    
     @FXML
     private void handleCrearE() {
         ocultarTodo();
@@ -309,8 +497,10 @@ public class MenuAdminController implements Initializable{
             dpFechaIni.setValue(espectaculoEnEdicion.getFechaini());
             dpFechafin.setValue(espectaculoEnEdicion.getFechafin());
             
+            //SE COMENTA PORQUE NO SE USA
+            
             //cargar los numeros que ya tiene en la listview
-            ObservableList<Numero> numerosCargados = FXCollections.observableArrayList(espectaculoEnEdicion.getNumeros());
+            //ObservableList<Numero> numerosCargados = FXCollections.observableArrayList(espectaculoEnEdicion.getNumeros());
             
             lvNumCreados.getItems().clear();
             lvNumCreados.getItems().addAll(espectaculoEnEdicion.getNumeros());
@@ -369,9 +559,7 @@ public class MenuAdminController implements Initializable{
 	        System.err.println("Error al cerrar sesión: " + e.getMessage());
 	    }
 	}
-
-   
-
+    
     @FXML
 	public void conversorArtistasCombo() {
 		cbartistasN.setConverter(new StringConverter<Artista>() {
@@ -500,7 +688,6 @@ public class MenuAdminController implements Initializable{
         panelGestionNumeros.setVisible(true);
     }
     
-    
     @FXML
     private void handleFinalizar() {
     	//asigna automaticamente el coordinador actual
@@ -535,9 +722,6 @@ public class MenuAdminController implements Initializable{
         panelResumen.setVisible(true);
         
     }
-    
-   
-    
     /**
      * boton '+' añade un artista a una lista temporal, para luego 
      * pasar a la listview y al numero
