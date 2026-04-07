@@ -68,7 +68,7 @@ public class LoginController {
             cargarPantalla(event, "/vista/MenuArtista.fxml");
             break;
         case ADMIN:
-             System.out.println("Pantalla de Admin en construcción...");
+             cargarPantalla(event, "/vista/MenuAdmin.fxml");
             break;
         case COORDINACION:
         	cargarPantalla(event, "/vista/MenuCoordinador.fxml");
