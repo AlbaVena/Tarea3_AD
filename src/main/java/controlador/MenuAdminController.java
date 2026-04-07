@@ -472,17 +472,6 @@ public class MenuAdminController implements Initializable{
         
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @FXML
     private void handleVerEspectaculos() {
 		ocultarTodo();
@@ -553,8 +542,6 @@ public class MenuAdminController implements Initializable{
             panelFormularioDatos.setVisible(true);
         }
     }
-    
-    
     
     @FXML
     private void handleEliminarArtista() {
