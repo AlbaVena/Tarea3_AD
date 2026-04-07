@@ -113,6 +113,7 @@ public class MenuAdminController implements Initializable{
     //resumen
     @FXML private Label lblResumenNombre, lblResumenFechas, lblResumenCoordinadr;
     @FXML private ListView<String> lvResumenNumeros;
+    @FXML private VBox vbDatosEspefcificos;
     
     //tabla artistas
     @FXML private TableView<Artista> tablaArtistas;
@@ -146,6 +147,7 @@ public class MenuAdminController implements Initializable{
     @FXML private DatePicker dateCoor;
     @FXML private Button btnAtrasC;
     @FXML private Button btnFinalizarC;
+    @FXML private Label lblTituloSenior;
     
     
     //resumen persona
@@ -427,6 +429,47 @@ public class MenuAdminController implements Initializable{
         
         ocultarTodo();
         panelResumenP.setVisible(true);
+    }
+    
+    @FXML
+    private void finalizarCoordinador() {
+    	Coordinador nuevo = new Coordinador();
+    	
+    	// datos comunes
+    	nuevo.setNombre(txtNombre.getText());
+    	nuevo.setEmail(txtEmail.getText());
+    	nuevo.setNacionalidad(cbNacionalidad.getValue());
+    	nuevo.setPerfil(Perfil.COORDINACION);
+    	
+    	//credenciales
+    	Credenciales cred = new Credenciales(txtNombreU.getText(), txtPass.getText(), Perfil.COORDINACION);
+    	nuevo.setCredenciales(cred);
+    	cred.setPersona(nuevo);
+    	
+    	//de coordinador
+    	nuevo.setSenior(chbCoor.isSelected());
+    	if (chbCoor.isSelected()) {
+    		nuevo.setFechasenior(dateCoor.getValue());
+    	}
+    	
+    	usuariosService.crearPersona(nuevo);
+    	
+    	//mostrar resumen
+    	lblResumenNombreP.setText(nuevo.getNombre());
+        lblResumenEmailP.setText(nuevo.getEmail());
+        lblResumenNacionP.setText(nuevo.getNacionalidad());
+        lblResumenUsuarioP.setText(txtNombreU.getText());
+        lblResumenPuestoP.setText("Coordinador");
+    			
+        if (nuevo.isSenior()) {
+        	lblTituloSenior.setVisible(true);
+        	lblResumenCoor.setText(nuevo.getFechasenior().toString());
+        	
+        } else {
+        	lblTituloSenior.setVisible(false);
+        	lblResumenCoor.setText("No es Senior.");
+        }
+        
     }
     
     

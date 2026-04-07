@@ -684,7 +684,7 @@
                               </VBox>
                               <VBox fx:id="vbDatosCoor" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
                                  <children>
-                                    <Label text="Senior desde: " />
+                                    <Label fx:id="lblTituloSenior" text="Senior desde: " />
                                     <Label fx:id="lblResumenCoor" />
                                  </children>
                               </VBox>
