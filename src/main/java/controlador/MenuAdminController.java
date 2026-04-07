@@ -77,6 +77,9 @@ public class MenuAdminController implements Initializable{
     @FXML private Button btnEliminarA;
     @FXML private Button btnEliminarE;
     @FXML private Button btnEliminar;
+    @FXML private Button btnRegistrarP;
+    @FXML private Button btnmodificarP;
+    @FXML private Button btnEliminarPLateral;
     
     //paneles de vistas
     @FXML private GridPane panelFormularioDatos;
