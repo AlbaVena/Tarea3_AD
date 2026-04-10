@@ -44,4 +44,6 @@ public interface IUsuariosService {
 
 	Set<Artista> getArtistas();
 	
+	void eliminarPersona(Long id);
+	
 }

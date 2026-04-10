@@ -293,4 +293,7 @@ public class UsuariosService implements IUsuariosService{
 	    return new HashSet<>(listaArtistas);
 	}
 
+	public void eliminarPersona(Long id) {
+		personaRepository.deleteById(id);
+	}
 }

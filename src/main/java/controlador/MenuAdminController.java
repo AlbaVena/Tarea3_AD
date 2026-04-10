@@ -31,6 +31,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -46,6 +47,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -91,6 +93,7 @@ public class MenuAdminController implements Initializable{
     @FXML private GridPane gridCoordinador;
     @FXML private ScrollPane panelResumenP;
     
+    
    //form datos
     @FXML private TextField tfNombre;
     @FXML private DatePicker dpFechaIni;
@@ -105,13 +108,15 @@ public class MenuAdminController implements Initializable{
     @FXML private ListView<Artista> lvArtistasSeleccionados;
     
     //buscador para modificar
-    @FXML private ComboBox<Espectaculo> cbSelectorE;   
+    @FXML private ComboBox<Espectaculo> cbSelectorE;
+    @FXML private Label lblTituloBuscadorE;
     
     //buscador personas
     @FXML private VBox panelBuscadorP;
     @FXML private ComboBox<Persona> cbSelectorP;
     @FXML private Button btnCargarP;
     @FXML private Button btnEliminarP;
+    @FXML private Label lblPanelBuscadorP;
     
     //resumen
     @FXML private Label lblResumenNombre, lblResumenFechas, lblResumenCoordinadr;
@@ -334,6 +339,22 @@ public class MenuAdminController implements Initializable{
         gridDatosPersona.setVisible(true);
     }
     
+    @FXML
+    private void handleEliminarPersona() {
+    	//mostrar recuadro
+    	Alert alerta = new Alert(AlertType.INFORMATION);
+    	alerta.setTitle("En desarrollo");
+    	alerta.setHeaderText(null);//queda mejor sin cabecera
+    	alerta.setContentText("Esta función está actualmente en desarrollo.");
+    	alerta.showAndWait();
+    }
+    
+    
+    
+    
+    
+    
+    
     @FXML 
     private void botonModificarP() {
     	ocultarTodo();
@@ -346,10 +367,17 @@ public class MenuAdminController implements Initializable{
     @FXML
     private void botonEliminarP() {
     	ocultarTodo();
+    	lblPanelBuscadorP.setText("Eliminar usuario");
         cbSelectorP.getItems().setAll(usuariosService.getCredencialesSistema());
         btnCargarP.setVisible(false);
         btnEliminarP.setVisible(true);
         panelBuscadorP.setVisible(true);
+        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("En desarrollo");
+        alert.setHeaderText(null); // sin cabecera, queda más limpio
+        alert.setContentText("Esta función está actualmente en desarrollo.");
+        alert.showAndWait();
     }
     
     /**
@@ -496,10 +524,18 @@ public class MenuAdminController implements Initializable{
     @FXML
     private void handleBotonEliminarLateral() {
         ocultarTodo();
+        lblTituloBuscadorE.setText("Eliminar Espectaculo");
         cbSelectorE.getItems().setAll(espectaculoService.getEspectaculos());
         btnCargarE.setVisible(false);
         btnEliminar.setVisible(true);
         panelBuscadorE.setVisible(true);
+        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("En desarrollo");
+        alert.setHeaderText(null); // sin cabecera, queda más limpio
+        alert.setContentText("Esta función está actualmente en desarrollo.");
+        alert.showAndWait();
+        
     }
     
     @FXML
@@ -510,6 +546,11 @@ public class MenuAdminController implements Initializable{
             cbSelectorE.getItems().remove(seleccionado);
             cbSelectorE.setValue(null);
         }
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("En desarrollo");
+        alert.setHeaderText(null); // sin cabecera, queda más limpio
+        alert.setContentText("Esta función está actualmente en desarrollo.");
+        alert.showAndWait();
     }
     
     @FXML

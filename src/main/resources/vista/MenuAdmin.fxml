@@ -45,7 +45,7 @@
             </Button>
             <TitledPane fx:id="titGestionE" contentDisplay="CENTER" expanded="false" lineSpacing="10.0" nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #D6EAF8;" text="Gestión Espectaculos" textAlignment="CENTER">
                <content>
-                  <VBox fx:id="vbMenu" prefHeight="200.0" prefWidth="100.0" spacing="15.0" style="-fx-background-color: #85C1E9;">
+                  <VBox fx:id="vbMenu" prefHeight="82.0" prefWidth="158.0" spacing="15.0" style="-fx-background-color: #85C1E9;">
                      <children>
                         <Button fx:id="btncrearE" mnemonicParsing="false" onAction="#handleCrearE" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Crear Espectáculo" />
                         <Button fx:id="btnmodificarE" mnemonicParsing="false" onAction="#handleBotonModificarLateral" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Modificar Espectáculo" />
@@ -57,13 +57,13 @@
                   </VBox>
                </content>
             </TitledPane>
-            <TitledPane fx:id="titGestionP" contentDisplay="CENTER" layoutX="10.0" layoutY="121.0" lineSpacing="10.0" nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #D6EAF8;" text="Gestión Personas" textAlignment="CENTER">
+            <TitledPane fx:id="titGestionP" contentDisplay="CENTER" expanded="false" layoutX="10.0" layoutY="121.0" lineSpacing="10.0" nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #D6EAF8;" text="Gestión Personas" textAlignment="CENTER">
                <content>
                   <VBox fx:id="vbMenu1" prefHeight="200.0" prefWidth="100.0" spacing="15.0" style="-fx-background-color: #85C1E9;">
                      <children>
                         <Button fx:id="btnRegistrarP" mnemonicParsing="false" onAction="#registrarPersona" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Registrar usuario" />
                         <Button fx:id="btnmodificarP" mnemonicParsing="false" onAction="#botonModificarP" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Modificar usuario" />
-                        <Button fx:id="btnEliminarPLateral" mnemonicParsing="false" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Eliminar usuario" />
+                        <Button fx:id="btnEliminarPLateral" mnemonicParsing="false" onAction="#botonEliminarP" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Eliminar usuario" />
                      </children>
                      <padding>
                         <Insets top="10.0" />
@@ -330,7 +330,7 @@
             </ScrollPane>
             <VBox fx:id="panelBuscadorE" prefHeight="200.0" prefWidth="100.0" visible="false">
                <children>
-                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="431.0" text="Espectaculo a modificar">
+                  <Label fx:id="lblTituloBuscadorE" alignment="CENTER" prefHeight="18.0" prefWidth="431.0" text="Espectaculo a modificar">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -374,9 +374,9 @@
                   <Insets bottom="20.0" right="10.0" />
                </StackPane.margin>
             </TableView>
-            <VBox fx:id="panelBuscadorP" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0">
+            <VBox fx:id="panelBuscadorP" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" visible="false">
                <children>
-                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="431.0" text="Modificar datos de usuario">
+                  <Label fx:id="lblPanelBuscadorP" alignment="CENTER" prefHeight="18.0" prefWidth="431.0" text="Modificar datos de usuario">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -400,8 +400,8 @@
                   <Region prefHeight="224.0" prefWidth="430.0" />
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Button fx:id="btnCargarP" alignment="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #85C1E9;" text="Cargar" />
-                        <Button fx:id="btnEliminarP" alignment="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #85C1E9;" text="Eliminar" visible="false">
+                        <Button fx:id="btnCargarP" onAction="#botonModificarP" alignment="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #85C1E9;" text="Cargar" />
+                        <Button fx:id="btnEliminarP" onAction="#botonEliminarP" alignment="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #85C1E9;" text="Eliminar" visible="false">
                            <HBox.margin>
                               <Insets left="185.0" />
                            </HBox.margin>
