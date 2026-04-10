@@ -251,8 +251,25 @@ public class MenuAdminController implements Initializable{
         
         columnNombreA.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         columnApodoA.setCellValueFactory(new PropertyValueFactory<>("apodo"));
-        //TODO especialidades necesita conversor especial, lo dejamos pendiente
+        
+        //especialidades necesita conversor especial
+        columnEspecA.setCellValueFactory(cellData -> {
+            Artista artista = cellData.getValue();
+            String especialidades = "";
+            if (artista.getEspecialidades() != null) {
+                for (Especialidad e : artista.getEspecialidades()) {
+                    if (!especialidades.isEmpty()) {
+                        especialidades += ", ";
+                    }
+                    especialidades += e.getNombre();
+                }
+            }
+            return new javafx.beans.property.SimpleStringProperty(especialidades);
+        });
+        
+        
         tablaArtistas.setPlaceholder(new Label("No hay artistas registrados."));
+        tablaArtistas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
         
         //cargar el combo de paises
         cbNacionalidad.setItems(FXCollections.observableArrayList(        	    

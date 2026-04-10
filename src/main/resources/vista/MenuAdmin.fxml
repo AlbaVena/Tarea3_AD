@@ -50,7 +50,7 @@
                         <Button fx:id="btncrearE" mnemonicParsing="false" onAction="#handleCrearE" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Crear Espectáculo" />
                         <Button fx:id="btnmodificarE" mnemonicParsing="false" onAction="#handleBotonModificarLateral" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Modificar Espectáculo" />
                         <Button fx:id="btnEliminarE" mnemonicParsing="false" onAction="#handleBotonEliminarLateral" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Eliminar Espectáctulo" />
-                     </children>
+                     </children> 
                      <padding>
                         <Insets top="10.0" />
                      </padding>
