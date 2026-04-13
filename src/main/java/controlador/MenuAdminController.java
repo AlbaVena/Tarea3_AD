@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -54,10 +55,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import lombok.extern.slf4j.Slf4j;
 import servicios.IEspectaculosService;
 import servicios.IUsuariosService;
 import servicios.implementacion.PaisesService;
 
+import utils.Validador;
+
+@Slf4j
 @Controller
 public class MenuAdminController implements Initializable{
 	
@@ -180,6 +185,47 @@ public class MenuAdminController implements Initializable{
     private Espectaculo espectaculoEnEdicion;
     private ObservableList<Artista> artistasDelNumeroActual = FXCollections.observableArrayList();
     
+    
+    /**
+     * METODOS AUXILIARES DE VALIDACION
+     */
+    
+    private boolean validarCampo(TextField campo, String regex) {
+    	if (!Validador.esCadenaValida(campo.getText(), regex)) {
+    		campo.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+    		return true;
+    	}
+    	campo.setStyle("-fx-background-color: #D6EAF8;");
+    	return false;
+    }
+    
+    private boolean validarCombo(ComboBox<?> combo) {
+    	if (combo.getValue() == null) {
+    		combo.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+    		return true;
+    	}
+    	combo.setStyle("-fx-background-color: #D6EAF8;");
+    	return false;
+    }
+    
+    private boolean validarFecha(DatePicker fecha) {
+    	if(fecha.getValue() == null) {
+    		fecha.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+    		return true;
+    	}
+    	fecha.setStyle("-fx-background-color: #D6EAF8;");
+    	return false;
+    }
+    
+    private boolean validarLista(ListView<?> lista, int min, int max) {
+    	if(lista.getItems().size() < min || lista.getItems().size() > max) {
+    		lista.setStyle("-fx-border-color: red;");
+    		return true;
+    	}
+    	lista.setStyle(null);
+    	return false;
+    }
+    
     /**
      * MÉTODOS:
      */
@@ -187,6 +233,7 @@ public class MenuAdminController implements Initializable{
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+    	log.info("Sesion iniciada como Admin");
     	//configuracion de la tabla como en Invitadp
 		columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
 	    columnFechaIniE.setCellValueFactory(new PropertyValueFactory<>("fechaini"));
@@ -272,8 +319,9 @@ public class MenuAdminController implements Initializable{
         tablaArtistas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
         
         //cargar el combo de paises
-        cbNacionalidad.setItems(FXCollections.observableArrayList(        	    
-        		paisesService.getPaises().values()));
+        List<String> paises = new ArrayList<>(paisesService.getPaises().values());
+        Collections.sort(paises);
+        cbNacionalidad.setItems(FXCollections.observableArrayList(paises));
         
         //Cargar especialidades en el combo de aritsta
         cbArtistaEsp.setItems(FXCollections.observableArrayList(
@@ -313,6 +361,7 @@ public class MenuAdminController implements Initializable{
      */
     @FXML
     private void ocultarTodo() {
+    	log.info("ocultando todas las pantallas");
     	//de espectaculos
         tablaEspectaculos.setVisible(false);
         panelFormularioDatos.setVisible(false);
@@ -333,14 +382,18 @@ public class MenuAdminController implements Initializable{
     
     @FXML
     private void verArtistas() {
+
     	ocultarTodo();
+    	log.info("mostrando lista de artistas del sistema");
     	tablaArtistas.getItems().setAll(usuariosService.getArtistas());
     	tablaArtistas.setVisible(true);
     }
     
     @FXML
     private void registrarPersona() {
+
     	ocultarTodo();
+    	log.info("mostrar panel de creacion de usuario");
     	txtNombre.clear();
     	txtEmail.clear();
     	txtNombreU.clear();
@@ -358,6 +411,7 @@ public class MenuAdminController implements Initializable{
     
     @FXML
     private void handleEliminarPersona() {
+    	log.info("en DESARROLLO - eliminar usuario del sistema");
     	//mostrar recuadro
     	Alert alerta = new Alert(AlertType.INFORMATION);
     	alerta.setTitle("En desarrollo");
@@ -375,6 +429,7 @@ public class MenuAdminController implements Initializable{
     @FXML 
     private void botonModificarP() {
     	ocultarTodo();
+    	log.info("buscar usuario para modificar");
     	cbSelectorP.getItems().setAll(usuariosService.getCredencialesSistema());
     	btnCargarP.setVisible(true);
     	btnEliminarP.setVisible(false);
@@ -403,16 +458,70 @@ public class MenuAdminController implements Initializable{
      */
     @FXML
     private void botonSiguientePersona() {
+    	boolean error = false;
+    	//ocultarTodo();
+    	System.out.println("validando nombre: "+txtNombre.getText());
+    	System.out.println("Resultado: " + Validador.esCadenaValida(txtNombre.getText(), Validador.nombreGeneralRegex));
+    	
+    	//limpiar estilos
+    	txtNombre.setStyle("-fx-background-color: #D6EAF8;");
+    	txtEmail.setStyle("-fx-background-color: #D6EAF8;");
+    	txtNombreU.setStyle("-fx-background-color: #D6EAF8;");
+    	txtPass.setStyle("-fx-background-color: #D6EAF8;");
+    	cbNacionalidad.setStyle("-fx-background-color: #D6EAF8;");
+    	rbArtista.setStyle(null);
+    	rbCoor.setStyle(null);
+    	
+    	//validaciones
+    	
+    	if (validarCampo(txtNombre, Validador.nombreGeneralRegex)) {
+    	    error = true;
+    	}
+    	if (validarCampo(txtEmail, Validador.emailRegex)) {
+    	    error = true;
+    	}
+    	if (validarCampo(txtNombreU, Validador.nombreUsuarioRegex)) {
+    	    error = true;
+    	}
+    	if (validarCampo(txtPass, Validador.passwordRegex)) {
+    	    error = true;
+    	}
+    	if (validarCombo(cbNacionalidad)) {
+    	    error = true;
+    	}
+    	
+    	
+    	if (!error) {
+    		if(usuariosService.comprobarEmail(txtEmail.getText())) {
+    			txtEmail.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+    			log.info("email ya registrado");
+    			error = true;
+    		}
+    		if(usuariosService.comprobarNombreUsuario(txtNombreU.getText())){
+    			txtNombreU.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+    			log.info("nombre de usuario ya registrado");
+    			error = true;
+    		}
+    	}
+    	
+    	if (!rbArtista.isSelected() && !rbCoor.isSelected()) {
+            rbArtista.setStyle("-fx-border-color: red;");
+            rbCoor.setStyle("-fx-border-color: red;");
+            error = true;
+        }
+    	
+    	
+    	
+    	if (error) {
+            return;
+    	}
+    	
     	ocultarTodo();
+    	
         if (rbArtista.isSelected()) {
             gridArtista.setVisible(true);
         } else if (rbCoor.isSelected()) {
             gridCoordinador.setVisible(true);
-        } else {
-            // ninguno seleccionado, volvemos a mostrar el panel
-            gridDatosPersona.setVisible(true);
-            rbArtista.setStyle("-fx-border-color: red;");
-            rbCoor.setStyle("-fx-border-color: red;");
         }
     }
     

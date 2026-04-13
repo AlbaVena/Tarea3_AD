@@ -6,8 +6,8 @@ import java.time.temporal.ChronoUnit;
 
 public class Validador {
 
-	public final static String nombreUsuarioRegex = "^[a-zA-Z0-9_#!\\-.]{3,25}$";
-	public final static String nombreGeneralRegex = "^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]{3,25}$";
+	public final static String nombreUsuarioRegex = "^[a-zA-Z]{3,25}$";
+	public final static String nombreGeneralRegex = "^[a-zA-ZñÑ]{3,25}$";
 	public final static String passwordRegex = "^[a-zA-Z0-9_!]{4,15}$";
 	public final static String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
