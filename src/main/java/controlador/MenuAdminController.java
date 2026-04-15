@@ -3,6 +3,7 @@ package controlador;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -261,7 +262,7 @@ public class MenuAdminController implements Initializable{
 	    //conversor igual para artistas
 	    conversorArtistasCombo();
 	    conversorArtistasSeleccionados();
-	    
+	    conversorEspecialidadArtista();
 	    conversorNumeros();
 	 
 	    
@@ -294,6 +295,15 @@ public class MenuAdminController implements Initializable{
         //boton de cargar o eliminar persona
         btnCargarP.disableProperty().bind(cbSelectorP.valueProperty().isNull());
         btnEliminarP.disableProperty().bind(cbSelectorP.valueProperty().isNull());
+        
+        
+        // finalizar artista: habilitado solo si hay entre 1 y 5 especialidades
+        btnFinalizarA.disableProperty().bind(
+            Bindings.size(lvArtistaEsp.getItems()).lessThan(1)
+        );
+        btnAgregarEsp.disableProperty().bind(
+        	    Bindings.size(lvArtistaEsp.getItems()).greaterThanOrEqualTo(5)
+        	);
         
         
         columnNombreA.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -561,7 +571,7 @@ public class MenuAdminController implements Initializable{
     	
     	//mostrar en resumen
     	
-    	lblResumenNombre.setText(nuevo.getNombre());
+    	lblResumenNombreP.setText(nuevo.getNombre());
     	lblResumenEmailP.setText(nuevo.getEmail());
     	lblResumenNacionP.setText(nuevo.getNacionalidad());
         lblResumenUsuarioP.setText(txtNombreU.getText());
@@ -712,6 +722,56 @@ public class MenuAdminController implements Initializable{
             panelFormularioDatos.setVisible(true);
         }
     }
+    @FXML
+    private void agregarEspecialidad() {
+    	Especialidad seleccionada = cbArtistaEsp.getValue();
+    	boolean error = false;
+    	
+    	if (seleccionada == null) {
+    		cbArtistaEsp.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+    		error = true;
+    	} else if (lvArtistaEsp.getItems().contains(seleccionada)) {
+    		cbArtistaEsp.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+    		error = true;
+    	}
+    	
+    	
+    	if(error) {
+    		return;
+    	} else {
+    	lvArtistaEsp.getItems().add(seleccionada);
+    	cbArtistaEsp.setStyle("-fx-background-color: #D6EAF8;");
+    	}
+    }
+    
+    @FXML
+    private void eliminarEspecialidad() {
+    	Especialidad seleccionada = lvArtistaEsp.getSelectionModel().getSelectedItem();
+    	if (seleccionada != null) {
+    		lvArtistaEsp.getItems().remove(seleccionada);
+    	}
+    }
+    
+    @FXML
+    private void cargarPersonaParaModificar() {
+    	Persona seleccionada = cbSelectorP.getValue();
+    	
+    	if (seleccionada == null) {
+    		return;
+    	}
+    	txtNombre.setText(seleccionada.getNombre());
+        txtEmail.setText(seleccionada.getEmail());
+        cbNacionalidad.setValue(seleccionada.getNacionalidad());
+        txtNombreU.setText(seleccionada.getCredenciales().getNombre());
+        txtPass.setText(seleccionada.getCredenciales().getPassword());
+        
+        
+        if (seleccionada instanceof Artista artista) {
+        	rbArtista.setSelected(true);
+        	txtApodo.setText(artista.getApodo());
+        	//TODO  
+        }
+    }
     
     @FXML
     private void handleEliminarArtista() {
@@ -775,11 +835,23 @@ public class MenuAdminController implements Initializable{
     @FXML
     private void conversorArtistasSeleccionados() {
     	lvArtistasSeleccionados.setCellFactory(lv -> new ListCell<>() {
-            @Override protected void updateItem(Artista item, boolean empty) {
+            @Override 
+            protected void updateItem(Artista item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || item == null ? null : item.getNombre());
             }
         });
+    }
+    
+    @FXML
+    private void conversorEspecialidadArtista() {
+    	lvArtistaEsp.setCellFactory(lv -> new ListCell<Especialidad>() {
+    	    @Override
+    	    protected void updateItem(Especialidad item, boolean empty) {
+    	        super.updateItem(item, empty);
+    	        setText(empty || item == null ? null : item.getNombre());
+    	    }
+    	});
     }
     
     @FXML
@@ -879,6 +951,43 @@ public class MenuAdminController implements Initializable{
     //navegacion de continuar en creacion/modificacion
     @FXML
     private void handleContinuar() {
+    	
+    	boolean error = false;
+    	
+    	tfNombre.setStyle("-fx-background-color: #D6EAF8;");
+        dpFechaIni.setStyle("-fx-background-color: #D6EAF8;");
+        dpFechafin.setStyle("-fx-background-color: #D6EAF8;");
+    	
+        if (validarCampo(tfNombre, Validador.nombreEspectaculoRegex)) {
+        	error = true;
+        }
+        
+        if (dpFechaIni.getValue() == null || dpFechafin.getValue() == null) {
+        	if (dpFechaIni.getValue() == null) {
+        		dpFechaIni.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+        	}
+        	if (dpFechafin.getValue() == null) {
+        		dpFechafin.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+        	}
+        	error = true;
+        } else {
+        	String fIni = dpFechaIni.getValue().format(Validador.formFecha);
+        	String fFin = dpFechafin.getValue().format(Validador.formFecha);
+        	
+        	if (!Validador.esFechaValida(fIni, fFin)) {
+        		dpFechafin.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+        		error = true;
+        	}
+        }
+        
+        if (error) {
+        	return;
+        }
+    	
+    	
+    	
+    	
+    	
         // actualiza el objeto con los datos de los campos antes de cambiar
         espectaculoEnEdicion.setNombre(tfNombre.getText());
         espectaculoEnEdicion.setFechaini(dpFechaIni.getValue());
