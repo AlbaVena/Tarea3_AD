@@ -472,7 +472,7 @@
                   </TextField>
                   <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                      <children>
-                        <Button fx:id="btnCancelarP" onAction="#handleCancelar" cancelButton="true" mnemonicParsing="false" style="-fx-background-color: #D6EAF8;" text="Cancelar">
+                        <Button fx:id="btnCancelarP" cancelButton="true" mnemonicParsing="false" onAction="#handleCancelar" style="-fx-background-color: #D6EAF8;" text="Cancelar">
                            <HBox.margin>
                               <Insets left="20.0" />
                            </HBox.margin>
@@ -531,12 +531,12 @@
                         <Insets bottom="20.0" left="20.0" right="20.0" />
                      </GridPane.margin>
                   </ListView>
-                  <Button fx:id="btnEliminarEsp" onAction="#eliminarEspecialidad" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #85C1E9;" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <Button fx:id="btnEliminarEsp" mnemonicParsing="false" onAction="#eliminarEspecialidad" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #85C1E9;" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btnAgregarEsp" onAction="#agregarEspecialidad" alignment="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #85C1E9;" text="+" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <Button fx:id="btnAgregarEsp" alignment="CENTER" mnemonicParsing="false" onAction="#agregarEspecialidad" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #85C1E9;" text="+" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -548,8 +548,8 @@
                   </TextField>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                      <children>
-                        <Button fx:id="btnAtrasA" onAction="#botonAtrasDesdeArtista" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #D6EAF8;" text="Atrás" />
-                        <Button fx:id="btnFinalizarA" onAction="#finalizarArtista" disable="true" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #85C1E9;" text="Finalizar" />
+                        <Button fx:id="btnAtrasA" mnemonicParsing="false" onAction="#botonAtrasDesdeArtista" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #D6EAF8;" text="Atrás" />
+                        <Button fx:id="btnFinalizarA" disable="true" mnemonicParsing="false" onAction="#finalizarArtista" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #85C1E9;" text="Finalizar" />
                      </children>
                      <GridPane.margin>
                         <Insets left="10.0" />
@@ -582,7 +582,7 @@
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0" GridPane.rowIndex="3">
                      <children>
                         <Button fx:id="btnAtrasC" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #D6EAF8;" text="Atrás" />
-                        <Button fx:id="btnFinalizarC" disable="true" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #85C1E9;" text="Finalizar" />
+                        <Button fx:id="btnFinalizarC" disable="false" mnemonicParsing="false" onAction="#finalizarCoordinador" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #85C1E9;" text="Finalizar" />
                      </children>
                   </HBox>
                   <Label text="2. Datos de Coordinador" GridPane.halignment="CENTER">
