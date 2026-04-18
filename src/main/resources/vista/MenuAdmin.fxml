@@ -78,7 +78,7 @@
 		</VBox>
 	</left>
 	<top>
-		<Button fx:id="btnLogOut" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleLogOut" style="-fx-background-color: #D6EAF8;" text="LogOut" BorderPane.alignment="CENTER_RIGHT">
+		<Button fx:id="btnLogOut" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleLogOut" style="-fx-background-color: #D6EAF8;" text="Cerrar sesión" BorderPane.alignment="CENTER_RIGHT">
 			<BorderPane.margin>
 				<Insets bottom="10.0" right="30.0" top="10.0" />
 			</BorderPane.margin>
@@ -271,7 +271,7 @@
                   </GridPane>
                </children>
             </VBox>
-            <ScrollPane fx:id="panelResumen" disable="true" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" visible="false">
+            <ScrollPane fx:id="panelResumen" disable="false" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" visible="false">
                <content>
                   <VBox fx:id="vbResumen" alignment="CENTER" prefHeight="350.0" prefWidth="400.0" spacing="20.0">
                      <padding>
@@ -400,7 +400,7 @@
                   <Region prefHeight="224.0" prefWidth="430.0" />
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Button fx:id="btnCargarP" alignment="CENTER" mnemonicParsing="false" onAction="#botonModificarP" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #85C1E9;" text="Cargar" />
+                        <Button fx:id="btnCargarP"  alignment="CENTER" mnemonicParsing="false" onAction="#cargarPersonaParaModificar" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #85C1E9;" text="Cargar" />
                         <Button fx:id="btnEliminarP" alignment="CENTER" mnemonicParsing="false" onAction="#botonEliminarP" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #85C1E9;" text="Eliminar" visible="false">
                            <HBox.margin>
                               <Insets left="185.0" />

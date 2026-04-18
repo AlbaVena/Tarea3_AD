@@ -138,7 +138,7 @@ public class MenuAdminController implements Initializable {
 	@FXML
 	private TextField tfnombreN;
 	@FXML
-	private Spinner<Integer> spnduracionN;
+	private Spinner<Double> spnduracionN;
 	@FXML
 	private ComboBox<Artista> cbartistasN;
 	@FXML
@@ -332,8 +332,8 @@ public class MenuAdminController implements Initializable {
 				new Label("No hay espectáculos disponibles en este momento."));
 
 		// cargar el spinner de duracion
-		SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
-				15, 150, 15);// min, max, base
+		SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 15.5, 5.0, 0.5);
+		
 		spnduracionN.setValueFactory(valueFactory);
 
 		// conversor del buscador de espectaculos
@@ -587,8 +587,12 @@ public class MenuAdminController implements Initializable {
 		if (validarCombo(cbNacionalidad)) {
 			error = true;
 		}
+		if (txtNombreU.getText().equalsIgnoreCase("admin")) {
+		    txtNombreU.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+		    error = true;
+		}
 
-		if (!error) {
+		if (!error && personaEnEdicion == null) {
 			if (usuariosService.comprobarEmail(txtEmail.getText())) {
 				txtEmail.setStyle(
 						"-fx-border-color: red; -fx-background-color: #D6EAF8;");
@@ -1078,7 +1082,7 @@ public class MenuAdminController implements Initializable {
 	public void limpiarCampos() {
 		tfnombreN.clear();
 		cbartistasN.setValue(null);
-		spnduracionN.getValueFactory().setValue(15);
+		spnduracionN.getValueFactory().setValue(5.0);
 		dpFechaIni.setValue(null);
 		dpFechafin.setValue(null);
 		lvNumCreados.getItems().clear();
@@ -1215,7 +1219,7 @@ public class MenuAdminController implements Initializable {
 	@FXML
 	private void handleRegistrarNumero() {
 		String nombreNum = tfnombreN.getText();
-		int duracion = spnduracionN.getValue();
+		double duracion = spnduracionN.getValue();
 		List<Artista> seleccionados = new ArrayList<>(
 				lvArtistasSeleccionados.getItems());
 
@@ -1232,7 +1236,7 @@ public class MenuAdminController implements Initializable {
 			// hay que limpiar para añadir nuevo numero
 			tfnombreN.clear();
 			lvArtistasSeleccionados.getItems().clear();
-			spnduracionN.getValueFactory().setValue(15);
+			spnduracionN.getValueFactory().setValue(0.5);
 		}
 
 	}

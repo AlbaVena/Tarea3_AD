@@ -34,7 +34,7 @@ public class Numero implements Serializable{
 	private String nombre;
 	
 	@Column(name = "duracion", nullable = false, length = 2)
-	private int duracion;
+	private Double duracion;
 	
 	@ManyToOne
 	@JoinColumn(name = "id_espectaculo", referencedColumnName = "id_espectaculo", nullable = false)
@@ -54,7 +54,7 @@ public class Numero implements Serializable{
 
 
 
-	public Numero(long id, int orden, String nombre, int duracion, Espectaculo espectaculo, Set<Artista> artistas) {
+	public Numero(long id, int orden, String nombre, Double duracion, Espectaculo espectaculo, Set<Artista> artistas) {
 		this.id = id;
 		this.orden = orden;
 		this.nombre = nombre;
@@ -65,7 +65,7 @@ public class Numero implements Serializable{
 	
 	
 
-	public Numero(long id, String nombre, int duracion, Set<Artista> artistas) {
+	public Numero(long id, String nombre, Double duracion, Set<Artista> artistas) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
@@ -75,7 +75,7 @@ public class Numero implements Serializable{
 
 
 
-	public Numero (String nombre, int duracion) {
+	public Numero (String nombre, Double duracion) {
 		this.nombre = nombre;
 		this.duracion = duracion;
 	}
@@ -103,12 +103,12 @@ public class Numero implements Serializable{
 		this.nombre = nombre;
 	}
 
-	public int getDuracion() {
+	public Double getDuracion() {
 		return duracion;
 	}
 
-	public void setDuracion(int duracion) {
-		this.duracion = duracion;
+	public void setDuracion(Double double1) {
+		this.duracion = double1;
 	}
 
 	public Espectaculo getEspectaculo() {
