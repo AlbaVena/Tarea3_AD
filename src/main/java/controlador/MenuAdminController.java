@@ -285,7 +285,7 @@ public class MenuAdminController implements Initializable {
 		campo.setStyle("-fx-background-color: #D6EAF8;");
 		return false;
 	}
-
+	
 	private boolean validarCombo(ComboBox<?> combo) {
 		if (combo.getValue() == null) {
 			combo.setStyle(
@@ -360,7 +360,14 @@ public class MenuAdminController implements Initializable {
 		        return (c == null) ? "" : c.getNombre();
 		    }
 		    @Override
-		    public Coordinador fromString(String string) { return null; }
+		    public Coordinador fromString(String string) { 
+		    	for (Coordinador c : cbCoordinadores.getItems()) {
+		            if (c.getNombre().equals(string)) {
+		                return c;
+		            }
+		        }
+		    	return null; 
+		    	}
 		});
 
 		cbCoordinadores.setItems(FXCollections.observableArrayList(
@@ -473,6 +480,8 @@ public class MenuAdminController implements Initializable {
 				return null;
 			}
 		});
+		//TODO comprobacion temporal
+		System.out.println("Coordinadores cargados: " + usuariosService.getCoordinadores().size());
 
 		// habilkitar el datepicker SOLO si el checkbox está marcado
 		dateCoor.disableProperty().bind(chbCoor.selectedProperty().not());
@@ -610,6 +619,15 @@ public class MenuAdminController implements Initializable {
 		if (validarCombo(cbNacionalidad)) {
 			error = true;
 		}
+		// comprobar que no use "admin" en ningun campo
+		if (txtNombreU.getText().equalsIgnoreCase("admin")) {
+		    txtNombreU.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+		    error = true;
+		}
+		if (txtNombre.getText().equalsIgnoreCase("admin")) {
+		    txtNombre.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+		    error = true;
+		} //admin
 		if (txtNombreU.getText().equalsIgnoreCase("admin")) {
 		    txtNombreU.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 		    error = true;
@@ -1141,6 +1159,7 @@ public class MenuAdminController implements Initializable {
 			System.out.println("error en nombre");
 		}
 		if (validarCombo(cbCoordinadores)) {
+			System.out.println("error en coordinador");
 			error = true;
 			
 		}
@@ -1161,7 +1180,7 @@ public class MenuAdminController implements Initializable {
 			
 			if (!Validador.esFechaValida(dpFechaIni.getValue(), dpFechafin.getValue())) {
 			    dpFechafin.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
-			    System.out.println("error en coordinador");
+			    System.out.println("error en fechas");
 			    error = true;
 			}
 		}
@@ -1194,7 +1213,7 @@ public class MenuAdminController implements Initializable {
 		// mostrar resumen
 		lblResumenNombre.setText(espectaculoEnEdicion.getNombre());
 		lblResumenFechas
-				.setText("Válido de " + espectaculoEnEdicion.getFechaini()
+				.setText("Disponible de " + espectaculoEnEdicion.getFechaini()
 						+ " a " + espectaculoEnEdicion.getFechafin());
 		lblResumenCoordinadr.setText(cbCoordinadores.getValue().getNombre());
 
@@ -1202,9 +1221,15 @@ public class MenuAdminController implements Initializable {
 		ObservableList<String> itemsResumen = FXCollections
 				.observableArrayList();
 		for (Numero n : espectaculoEnEdicion.getNumeros()) {
-			n.getArtistas().size();
+			String artistas = "";
+			for (Artista a : n.getArtistas()) {
+		        if (!artistas.isEmpty()) {
+		            artistas += ", ";
+		        }
+		        artistas += a.getNombre();
+		    }
 			itemsResumen.add(
-					n.getNombre() + " | Duración: " + n.getDuracion() + " min");
+					n.getNombre() + " | Duración: " + n.getDuracion() + " min | Artistas: "+artistas);
 
 		}
 		lvResumenNumeros.setItems(itemsResumen);
@@ -1255,7 +1280,7 @@ public class MenuAdminController implements Initializable {
 		lvArtistasSeleccionados.setStyle(null);
 		
 		//validaciones
-		if(validarCampo(tfnombreN, Validador.nombreGeneralRegex)) {
+		if(validarCampo(tfnombreN, Validador.nombreEspectaculoRegex)) {
 			error = true;
 		}
 		if (validarLista(lvArtistasSeleccionados, 1, Integer.MAX_VALUE)) {

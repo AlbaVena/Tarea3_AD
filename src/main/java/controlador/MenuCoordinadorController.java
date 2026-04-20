@@ -49,6 +49,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import servicios.IEspectaculosService;
 import servicios.IUsuariosService;
+import utils.Validador;
 
 @Controller
 public class MenuCoordinadorController implements Initializable{
@@ -86,7 +87,7 @@ public class MenuCoordinadorController implements Initializable{
     
     //numeros
     @FXML private TextField tfnombreN;
-    @FXML private Spinner<Integer> spnduracionN;
+    @FXML private Spinner<Double> spnduracionN;
     @FXML private ComboBox<Artista> cbartistasN;
     @FXML private ListView<Numero> lvNumCreados;
     @FXML private ListView<Artista> lvArtistasSeleccionados;
@@ -110,6 +111,49 @@ public class MenuCoordinadorController implements Initializable{
     private ObservableList<Artista> artistasDelNumeroActual = FXCollections.observableArrayList();
     
     /**
+	 * METODOS AUXILIARES DE VALIDACION
+	 */
+
+	private boolean validarCampo(TextField campo, String regex) {
+		if (!Validador.esCadenaValida(campo.getText(), regex)) {
+			campo.setStyle(
+					"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			return true;
+		}
+		campo.setStyle("-fx-background-color: #D6EAF8;");
+		return false;
+	}
+	
+	private boolean validarCombo(ComboBox<?> combo) {
+		if (combo.getValue() == null) {
+			combo.setStyle(
+					"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			return true;
+		}
+		combo.setStyle("-fx-background-color: #D6EAF8;");
+		return false;
+	}
+
+	private boolean validarFecha(DatePicker fecha) {
+		if (fecha.getValue() == null) {
+			fecha.setStyle(
+					"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			return true;
+		}
+		fecha.setStyle("-fx-background-color: #D6EAF8;");
+		return false;
+	}
+
+	private boolean validarLista(ListView<?> lista, int min, int max) {
+		if (lista.getItems().size() < min || lista.getItems().size() > max) {
+			lista.setStyle("-fx-border-color: red;");
+			return true;
+		}
+		lista.setStyle(null);
+		return false;
+	}
+    
+    /**
      * MÉTODOS:
      */
     
@@ -125,8 +169,7 @@ public class MenuCoordinadorController implements Initializable{
 	    tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles en este momento."));
 
 	    //cargar el spinner de duracion
-	    SpinnerValueFactory<Integer> valueFactory = 
-	            new SpinnerValueFactory.IntegerSpinnerValueFactory(15, 150, 15);//min, max, base
+	    SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 15.5, 5.0, 0.5);
 	    spnduracionN.setValueFactory(valueFactory);
 	    
 	    //conversor del buscador de espectaculos
@@ -411,7 +454,7 @@ public class MenuCoordinadorController implements Initializable{
 	public void limpiarCampos() {
 		tfnombreN.clear();
         cbartistasN.setValue(null);
-        spnduracionN.getValueFactory().setValue(15);
+        spnduracionN.getValueFactory().setValue(5.0);
         dpFechaIni.setValue(null);
         dpFechafin.setValue(null);
         lvNumCreados.getItems().clear();
@@ -434,6 +477,41 @@ public class MenuCoordinadorController implements Initializable{
     //navegacion de continuar en creacion/modificacion
     @FXML
     private void handleContinuar() {
+    	boolean error = false;
+    	
+        tfNombre.setStyle("-fx-background-color: #D6EAF8;");
+        dpFechaIni.setStyle("-fx-background-color: #D6EAF8;");
+        dpFechafin.setStyle("-fx-background-color: #D6EAF8;");
+        
+        if (validarCampo(tfNombre, Validador.nombreEspectaculoRegex)) {
+        	System.out.println("Error en el nombre del espectaculo");
+        	error = true;
+        }
+        if (dpFechaIni.getValue() == null || dpFechafin.getValue() == null) {
+			if (dpFechaIni.getValue() == null) {
+				dpFechaIni.setStyle(
+						"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+				System.out.println("error en fechas nulas");
+			}
+			if (dpFechafin.getValue() == null) {
+				dpFechafin.setStyle(
+						"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+				System.out.println("error en rango fechas");
+			}
+			error = true;
+		} else {
+			
+			if (!Validador.esFechaValida(dpFechaIni.getValue(), dpFechafin.getValue())) {
+			    dpFechafin.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			    System.out.println("error en fechas");
+			    error = true;
+			}
+		}
+        
+        if (error) {
+        	return;
+        }
+        
         // actualiza el objeto con los datos de los campos antes de cambiar
         espectaculoEnEdicion.setNombre(tfNombre.getText());
         espectaculoEnEdicion.setFechaini(dpFechaIni.getValue());
@@ -464,8 +542,14 @@ public class MenuCoordinadorController implements Initializable{
         //listview:
         ObservableList<String> itemsResumen = FXCollections.observableArrayList();
         for (Numero n : espectaculoEnEdicion.getNumeros()) {
-        	n.getArtistas().size();
-            itemsResumen.add(n.getNombre() + " | Duración: " + n.getDuracion() + " min");
+        	String artistas = "";
+			for (Artista a : n.getArtistas()) {
+		        if (!artistas.isEmpty()) {
+		            artistas += ", ";
+		        }
+		        artistas += a.getNombre();
+		    }
+            itemsResumen.add(n.getNombre() + " | Duración: " + n.getDuracion() + " min | Artistas: "+artistas);
             
         }
         lvResumenNumeros.setItems(itemsResumen);
@@ -498,7 +582,8 @@ public class MenuCoordinadorController implements Initializable{
                 
                 
                 //TODO prueba temporal
-                System.out.println("Artista añadido a la lista: " + seleccionado.getNombre());
+                System.out.println("Artista añadido a la lista: " 
+                + seleccionado.getNombre());
                 
                 // forzar que refresque al añadir
                 lvArtistasSeleccionados.refresh();
@@ -512,9 +597,27 @@ public class MenuCoordinadorController implements Initializable{
     
     @FXML
     private void handleRegistrarNumero() {
+    	boolean error = false;    	
+    	
+		tfnombreN.setStyle("-fx-background-color: #D6EAF8;");
+		lvArtistasSeleccionados.setStyle(null);
+		
+		//validaciones
+				if(validarCampo(tfnombreN, Validador.nombreEspectaculoRegex)) {
+					error = true;
+				}
+				if (validarLista(lvArtistasSeleccionados, 1, Integer.MAX_VALUE)) {
+					error = true;
+				}
+				
+				if (error) {
+					return;
+				}
+    	
     	 String nombreNum = tfnombreN.getText();
-         int duracion = spnduracionN.getValue();
-         List<Artista> seleccionados = new ArrayList<>(lvArtistasSeleccionados.getItems());
+         Double duracion = spnduracionN.getValue();
+         List<Artista> seleccionados = new ArrayList<>(
+        		 lvArtistasSeleccionados.getItems());
 
          if (nombreNum != null && !nombreNum.isEmpty() && !seleccionados.isEmpty()) {
              Numero nuevoNumero = new Numero();
@@ -528,7 +631,7 @@ public class MenuCoordinadorController implements Initializable{
              //hay que limpiar para añadir  nuevo numero
              tfnombreN.clear();
              lvArtistasSeleccionados.getItems().clear();
-             spnduracionN.getValueFactory().setValue(15);
+             spnduracionN.getValueFactory().setValue(5.0);
          }
     	
     }
