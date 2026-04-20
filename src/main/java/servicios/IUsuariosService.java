@@ -1,6 +1,5 @@
 package servicios;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -11,7 +10,6 @@ import entidades.Coordinador;
 import entidades.Especialidad;
 import entidades.Persona;
 import entidades.Sesion;
-import javafx.util.Callback;
 
 @Service
 public interface IUsuariosService {

@@ -43,7 +43,7 @@
                   <Insets />
                </opaqueInsets>
             </Button>
-            <TitledPane fx:id="titGestionE" contentDisplay="CENTER" expanded="false" lineSpacing="10.0" nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #D6EAF8;" text="Gestión Espectaculos" textAlignment="CENTER">
+            <TitledPane fx:id="titGestionE" contentDisplay="CENTER" expanded="false" lineSpacing="10.0" nodeOrientation="LEFT_TO_RIGHT" style="-fx-base: #D6EAF8;" text="Gestión Espectaculos" textAlignment="CENTER">
                <content>
                   <VBox fx:id="vbMenu" prefHeight="82.0" prefWidth="158.0" spacing="15.0" style="-fx-background-color: #85C1E9;">
                      <children>
@@ -57,7 +57,7 @@
                   </VBox>
                </content>
             </TitledPane>
-            <TitledPane fx:id="titGestionP" contentDisplay="CENTER" expanded="false" layoutX="10.0" layoutY="121.0" lineSpacing="10.0" nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #D6EAF8;" text="Gestión Personas" textAlignment="CENTER">
+            <TitledPane fx:id="titGestionP" contentDisplay="CENTER" expanded="false" layoutX="10.0" layoutY="121.0" lineSpacing="10.0" nodeOrientation="LEFT_TO_RIGHT" style="-fx-base: #D6EAF8;" text="Gestión Personas" textAlignment="CENTER">
                <content>
                   <VBox fx:id="vbMenu1" prefHeight="200.0" prefWidth="100.0" spacing="15.0" style="-fx-background-color: #85C1E9;">
                      <children>
