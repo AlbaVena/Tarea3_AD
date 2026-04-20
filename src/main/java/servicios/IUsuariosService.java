@@ -46,4 +46,5 @@ public interface IUsuariosService {
 	
 	void eliminarPersona(Long id);
 	
+	List<Coordinador> getCoordinadores();
 }

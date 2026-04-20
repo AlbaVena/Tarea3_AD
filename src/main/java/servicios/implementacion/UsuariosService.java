@@ -173,6 +173,11 @@ public class UsuariosService implements IUsuariosService{
 	public Coordinador getCoordinador(Long id) {
 		return coordinadorRepository.findById(id).orElse(null);
 	}
+	
+	@Transactional
+	public List<Coordinador> getCoordinadores() {
+	    return coordinadorRepository.findAll();
+	}
 
 	@Transactional
 	public List<Persona> getCredencialesSistema() {

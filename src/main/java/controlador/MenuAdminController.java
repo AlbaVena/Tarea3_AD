@@ -145,6 +145,9 @@ public class MenuAdminController implements Initializable {
 	private ListView<Numero> lvNumCreados;
 	@FXML
 	private ListView<Artista> lvArtistasSeleccionados;
+	
+	@FXML
+	private ComboBox<Coordinador> cbCoordinadores;
 
 	// buscador para modificar
 	@FXML
@@ -350,7 +353,19 @@ public class MenuAdminController implements Initializable {
 			}
 		});
 
-		// conversor igual para artistas
+		
+		cbCoordinadores.setConverter(new StringConverter<Coordinador>() {
+		    @Override
+		    public String toString(Coordinador c) {
+		        return (c == null) ? "" : c.getNombre();
+		    }
+		    @Override
+		    public Coordinador fromString(String string) { return null; }
+		});
+
+		cbCoordinadores.setItems(FXCollections.observableArrayList(
+		    usuariosService.getCoordinadores()));
+		
 		conversorArtistasCombo();
 		conversorArtistasSeleccionados();
 		conversorEspecialidadArtista();
@@ -393,6 +408,14 @@ public class MenuAdminController implements Initializable {
 
 		columnNombreA.setCellValueFactory(new PropertyValueFactory<>("nombre"));
 		columnApodoA.setCellValueFactory(new PropertyValueFactory<>("apodo"));
+		
+		
+		btnAccion.disableProperty().bind(
+			    tfNombre.textProperty().isEmpty()
+			    .or(dpFechaIni.valueProperty().isNull())
+			    .or(dpFechafin.valueProperty().isNull())
+			    .or(cbCoordinadores.valueProperty().isNull())
+			);
 
 		// especialidades necesita conversor especial
 		columnEspecA.setCellValueFactory(cellData -> {
@@ -1105,7 +1128,8 @@ public class MenuAdminController implements Initializable {
 	// navegacion de continuar en creacion/modificacion
 	@FXML
 	private void handleContinuar() {
-
+		
+		  System.out.println("handleContinuar llamado");
 		boolean error = false;
 
 		tfNombre.setStyle("-fx-background-color: #D6EAF8;");
@@ -1114,32 +1138,38 @@ public class MenuAdminController implements Initializable {
 
 		if (validarCampo(tfNombre, Validador.nombreEspectaculoRegex)) {
 			error = true;
+			System.out.println("error en nombre");
+		}
+		if (validarCombo(cbCoordinadores)) {
+			error = true;
+			
 		}
 
 		if (dpFechaIni.getValue() == null || dpFechafin.getValue() == null) {
 			if (dpFechaIni.getValue() == null) {
 				dpFechaIni.setStyle(
 						"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+				System.out.println("error en fechas nulas");
 			}
 			if (dpFechafin.getValue() == null) {
 				dpFechafin.setStyle(
 						"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+				System.out.println("error en rango fechas");
 			}
 			error = true;
 		} else {
-			String fIni = dpFechaIni.getValue().format(Validador.formFecha);
-			String fFin = dpFechafin.getValue().format(Validador.formFecha);
-
-			if (!Validador.esFechaValida(fIni, fFin)) {
-				dpFechafin.setStyle(
-						"-fx-border-color: red; -fx-background-color: #D6EAF8;");
-				error = true;
+			
+			if (!Validador.esFechaValida(dpFechaIni.getValue(), dpFechafin.getValue())) {
+			    dpFechafin.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			    System.out.println("error en coordinador");
+			    error = true;
 			}
 		}
 
 		if (error) {
 			return;
 		}
+		System.out.println("avanzando a panel numeros");
 
 		// actualiza el objeto con los datos de los campos antes de cambiar
 		espectaculoEnEdicion.setNombre(tfNombre.getText());
@@ -1153,9 +1183,9 @@ public class MenuAdminController implements Initializable {
 	@FXML
 	private void handleFinalizar() {
 		// asigna automaticamente el coordinador actual
-		Persona usuarioActual = usuariosService.getSesion().getUsuActual();
-		if (usuarioActual instanceof Coordinador coor) {
-			espectaculoEnEdicion.setEncargadoCoor(coor);
+		Coordinador coordinadorElegido = cbCoordinadores.getValue();
+		if (coordinadorElegido != null) {
+			espectaculoEnEdicion.setEncargadoCoor(coordinadorElegido);
 		}
 
 		espectaculoEnEdicion.setNumeros(new HashSet<>(lvNumCreados.getItems()));
@@ -1166,7 +1196,7 @@ public class MenuAdminController implements Initializable {
 		lblResumenFechas
 				.setText("Válido de " + espectaculoEnEdicion.getFechaini()
 						+ " a " + espectaculoEnEdicion.getFechafin());
-		lblResumenCoordinadr.setText(usuarioActual.getNombre());
+		lblResumenCoordinadr.setText(cbCoordinadores.getValue().getNombre());
 
 		// listview:
 		ObservableList<String> itemsResumen = FXCollections
@@ -1218,6 +1248,24 @@ public class MenuAdminController implements Initializable {
 
 	@FXML
 	private void handleRegistrarNumero() {
+		boolean error = false;
+		
+		//limpiar previos
+		tfnombreN.setStyle("-fx-background-color: #D6EAF8;");
+		lvArtistasSeleccionados.setStyle(null);
+		
+		//validaciones
+		if(validarCampo(tfnombreN, Validador.nombreGeneralRegex)) {
+			error = true;
+		}
+		if (validarLista(lvArtistasSeleccionados, 1, Integer.MAX_VALUE)) {
+			error = true;
+		}
+		
+		if (error) {
+			return;
+		}
+		
 		String nombreNum = tfnombreN.getText();
 		double duracion = spnduracionN.getValue();
 		List<Artista> seleccionados = new ArrayList<>(
@@ -1236,7 +1284,7 @@ public class MenuAdminController implements Initializable {
 			// hay que limpiar para añadir nuevo numero
 			tfnombreN.clear();
 			lvArtistasSeleccionados.getItems().clear();
-			spnduracionN.getValueFactory().setValue(0.5);
+			spnduracionN.getValueFactory().setValue(5.0);
 		}
 
 	}

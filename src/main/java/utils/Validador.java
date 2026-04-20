@@ -15,20 +15,17 @@ public class Validador {
 
 	public static final DateTimeFormatter formFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	
-	public static boolean esFechaValida(String fechaIni, String fechaFin) {
-		LocalDate inicio = LocalDate.parse(fechaIni, formFecha);
-		LocalDate fin = LocalDate.parse(fechaFin, formFecha);
-		
-		if (fin.isBefore(inicio)) {
-			return false; //si inicio es antes que fin
+	public static boolean esFechaValida(LocalDate fechaIni, LocalDate fechaFin) {
+		if (fechaFin.isBefore(fechaIni)) {
+			return false;
 		}
 		
-		long meses = ChronoUnit.MONTHS.between(inicio, fin);
+		long meses = ChronoUnit.MONTHS.between(fechaIni, fechaFin);
 		return meses >=1 && meses <=12 ; //validar entre 1 y 12 meses		
 	}
 	
-	public static boolean esDuracionValida(int duracion) {
-        return duracion > 15; //Yo he decidido la duracion minima
+	public static boolean esDuracionValida(double duracion) {
+        return duracion < 15.0; 
     }
 	
 	/**
