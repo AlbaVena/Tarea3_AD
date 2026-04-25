@@ -19,12 +19,14 @@ import entidades.Numero;
 import entidades.Perfil;
 import entidades.Persona;
 import entidades.Sesion;
+import entidades.TipoOperacion;
 import jakarta.transaction.Transactional;
 import repository.ArtistaRepository;
 import repository.CoordinadorRepository;
 import repository.CredencialesRepository;
 import repository.EspecialidadRepository;
 import repository.PersonaRepository;
+import servicios.ILogService;
 import servicios.IUsuariosService;
 
 @Service
@@ -51,6 +53,8 @@ public class UsuariosService implements IUsuariosService{
 	@Autowired
 	private EspecialidadRepository especialidadRepository;
 	
+	@Autowired
+	private ILogService logService;
 	
 
 	Sesion actual = new Sesion();
@@ -139,6 +143,17 @@ public class UsuariosService implements IUsuariosService{
 	    // al tener CascadeType.ALL, Hibernate guardará primero la Persona,
 	    // cogerásu ID, lo meterá en el objeto credenciales y luego guardará las credenciales.
 	    personaRepository.save(nueva);
+	    
+	    String usuario ;
+	    if (actual.getUsuActual() == null) {
+	        usuario = "sistema";
+	    } else if (actual.getUsuActual().getCredenciales() == null) {
+	        usuario = "admin"; // usuario admin de memoria
+	    } else {
+	        usuario = actual.getUsuActual().getCredenciales().getNombre();
+	    }
+	    
+	    logService.registrarOperacion(usuario, TipoOperacion.NUEVO, nueva.getClass().getSimpleName(), nueva.getId());
 		
 	}
 
@@ -155,12 +170,35 @@ public class UsuariosService implements IUsuariosService{
 	@Transactional
 	public void modificarArtista(Artista artista) {
 		artistaRepository.save(artista);
-		System.out.println("Artista modificado con exito.");
+
+		 String usuario ;
+		    if (actual.getUsuActual() == null) {
+		        usuario = "sistema";
+		    } else if (actual.getUsuActual().getCredenciales() == null) {
+		        usuario = "admin"; // usuario admin de memoria
+		    } else {
+		        usuario = actual.getUsuActual().getCredenciales().getNombre();
+		    }
+		    
+		    logService.registrarOperacion(usuario, TipoOperacion.NUEVO, "artista", artista.getId());
+		
+		
 	}
 
 	@Transactional
 	public void modificarCoordinador(Coordinador coordinador) {
 		coordinadorRepository.save(coordinador);
+		
+		 String usuario ;
+		    if (actual.getUsuActual() == null) {
+		        usuario = "sistema";
+		    } else if (actual.getUsuActual().getCredenciales() == null) {
+		        usuario = "admin"; // usuario admin de memoria
+		    } else {
+		        usuario = actual.getUsuActual().getCredenciales().getNombre();
+		    }
+		    
+		    logService.registrarOperacion(usuario, TipoOperacion.NUEVO, "Coordinador" , coordinador.getId());
 	}
 
 	@Transactional 

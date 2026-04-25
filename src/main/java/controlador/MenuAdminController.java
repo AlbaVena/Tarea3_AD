@@ -19,6 +19,7 @@ import entidades.Coordinador;
 import entidades.Credenciales;
 import entidades.Especialidad;
 import entidades.Espectaculo;
+import entidades.LogOperacion;
 import entidades.Numero;
 import entidades.Perfil;
 import entidades.Persona;
@@ -57,6 +58,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
 import servicios.IEspectaculosService;
+import servicios.ILogService;
 import servicios.IUsuariosService;
 import servicios.implementacion.PaisesService;
 
@@ -270,6 +272,8 @@ public class MenuAdminController implements Initializable {
 	private Persona personaEnEdicion; // null = crear, no null = modificar
 	private ObservableList<Artista> artistasDelNumeroActual = FXCollections
 			.observableArrayList();
+	
+	@Autowired private ILogService logService;
 
 	/**
 	 * METODOS AUXILIARES DE VALIDACION
@@ -741,6 +745,12 @@ public class MenuAdminController implements Initializable {
 
 		ocultarTodo();
 		panelResumenP.setVisible(true);
+		
+		//TODO temporal prueba -CU10
+		for (LogOperacion log : logService.getTodos()) {
+		    System.out.println(log.getFechaHora() + " | " + log.getUsuario() + 
+		        " | " + log.getTipoOperacion() + " | " + log.getResumen());
+		}
 	}
 
 	@FXML
