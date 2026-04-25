@@ -9,85 +9,86 @@ import org.springframework.stereotype.Service;
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
-import com.db4o.query.Query;
 
 import entidades.LogOperacion;
 import entidades.TipoOperacion;
 import servicios.ILogService;
 
 @Service
-public class LogService implements ILogService{
-	
+public class LogService implements ILogService {
+
 	private static final String ruta = "ficheros/log.db4o";
 
 	@Override
 	public void registrarOperacion(String usuario, TipoOperacion tipoOperacion, String nombreEntidad, long idEntidad) {
 		ObjectContainer db = Db4oEmbedded.openFile(ruta);
-		
+
 		try {
 			LogOperacion log = new LogOperacion(usuario, tipoOperacion, nombreEntidad, idEntidad);
 			db.store(log);
 			db.commit();
-		}
-		finally {
+		} finally {
 			db.close();
 		}
-		
+
 	}
 
 	@Override
-	public List<LogOperacion> consultarHistorial(String usuario, TipoOperacion tipoOperacion, LocalDateTime desde, LocalDateTime hasta) {
+	public List<LogOperacion> consultarHistorial(String usuario, TipoOperacion tipo, LocalDateTime desde,
+			LocalDateTime hasta) {
 
 		ObjectContainer db = Db4oEmbedded.openFile(ruta);
-		
-		List<LogOperacion> resultado = new ArrayList<LogOperacion>();
-		
+		List<LogOperacion> resultado = new ArrayList<>();
+
 		try {
-			Query query = db.query();
-			query.constrain(LogOperacion.class);
-			
+			// QBE: objeto de ejemplo
+			LogOperacion ejemplo = new LogOperacion();
 			if (usuario != null && !usuario.isEmpty()) {
-				query.descend("usuario").constrain(usuario);
+				ejemplo.setUsuario(usuario);
 			}
-			
-			if (tipoOperacion != null) {
-				query.descend("tipoOeracion").constrain(tipoOperacion);
+			if (tipo != null) {
+				ejemplo.setTipoOperacion(tipo.name());
 			}
-			
-			if (desde != null) {
-				query.descend("fechaHora").constrain(desde.toString()).greater().equal();
+
+			// consulta por ejemplo (QBE)
+			ObjectSet<LogOperacion> logs = db.queryByExample(ejemplo);
+
+			// filtrar fechas en memoria (QBE no soporta rangos)
+			while (logs.hasNext()) {
+				LogOperacion log = logs.next();
+				boolean incluir = true;
+
+				if (desde != null && log.getFechaHora().compareTo(desde.toString()) < 0) {
+					incluir = false;
+				}
+				if (hasta != null && log.getFechaHora().compareTo(hasta.toString()) > 0) {
+					incluir = false;
+				}
+
+				if (incluir) {
+					resultado.add(log);
+				}
 			}
-			
-			if (hasta != null) {
-				query.descend("fechaHora").constrain(hasta.toString()).smaller().equal();
-			}
-			
-			ObjectSet<LogOperacion> logs = query.execute();
-			
+		} finally {
+			db.close();
+		}
+
+		return resultado;
+	}
+
+	// prueba temporal para ver lo que he guardado
+	public List<LogOperacion> getTodos() {
+		ObjectContainer db = Db4oEmbedded.openFile(ruta);
+		List<LogOperacion> resultado = new ArrayList<>();
+		try {
+			ObjectSet<LogOperacion> logs = db.query(LogOperacion.class);
 			while (logs.hasNext()) {
 				resultado.add(logs.next());
 			}
-			
-		}finally {
+		} finally {
 			db.close();
 		}
-		
 		return resultado;
-	}
-	
-	// prueba temporal para ver lo que he guardado
-	public List<LogOperacion> getTodos() {
-	    ObjectContainer db = Db4oEmbedded.openFile(ruta);
-	    List<LogOperacion> resultado = new ArrayList<>();
-	    try {
-	        ObjectSet<LogOperacion> logs = db.query(LogOperacion.class);
-	        while (logs.hasNext()) {
-	            resultado.add(logs.next());
-	        }
-	    } finally {
-	        db.close();
-	    }
-	    return resultado;
 	}
 
 }

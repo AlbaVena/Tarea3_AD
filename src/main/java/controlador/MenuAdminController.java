@@ -3,6 +3,7 @@ package controlador;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import entidades.LogOperacion;
 import entidades.Numero;
 import entidades.Perfil;
 import entidades.Persona;
+import entidades.TipoOperacion;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -124,7 +126,9 @@ public class MenuAdminController implements Initializable {
 	private GridPane gridCoordinador;
 	@FXML
 	private ScrollPane panelResumenP;
-
+	@FXML
+	private VBox panelHistorial;
+	
 	// form datos
 	@FXML
 	private TextField tfNombre;
@@ -257,6 +261,30 @@ public class MenuAdminController implements Initializable {
 	private Label lblResumenEspA;
 	@FXML
 	private Label lblResumenCoor;
+	
+	//panel Historial operaciones
+	@FXML
+	private Button btnHistorialOperaciones;	
+	@FXML 
+	private TextField tfFiltroUsuario;	
+	@FXML
+	private ComboBox<String> cbFiltroTipo;	
+	@FXML 
+	private DatePicker dpFiltroDesde;	
+	@FXML 
+	private DatePicker dpFiltroHasta;
+	@FXML 
+	private Button btnBuscarLog;
+	@FXML 
+	private TableView<LogOperacion> tablaHistorial;
+	@FXML 
+	private TableColumn<LogOperacion, String> colFechaLog;
+	@FXML 
+	private TableColumn<LogOperacion, String> colUsuarioLog;
+	@FXML 
+	private TableColumn<LogOperacion, String> colTipoLog;
+	@FXML 
+	private TableColumn<LogOperacion, String> colResumenLog;
 
 	@Autowired
 	private IEspectaculosService espectaculoService;
@@ -266,6 +294,8 @@ public class MenuAdminController implements Initializable {
 	private ConfigurableApplicationContext context;
 	@Autowired
 	private PaisesService paisesService;
+    @Autowired 
+    private ILogService logService;
 
 	// temporales
 	private Espectaculo espectaculoEnEdicion;
@@ -273,7 +303,7 @@ public class MenuAdminController implements Initializable {
 	private ObservableList<Artista> artistasDelNumeroActual = FXCollections
 			.observableArrayList();
 	
-	@Autowired private ILogService logService;
+	
 
 	/**
 	 * METODOS AUXILIARES DE VALIDACION
@@ -488,6 +518,20 @@ public class MenuAdminController implements Initializable {
 
 		// habilkitar el datepicker SOLO si el checkbox está marcado
 		dateCoor.disableProperty().bind(chbCoor.selectedProperty().not());
+		
+		// columnas del historial
+		colFechaLog.setCellValueFactory(new PropertyValueFactory<>("fechaHora"));
+		colUsuarioLog.setCellValueFactory(new PropertyValueFactory<>("usuario"));
+		colTipoLog.setCellValueFactory(new PropertyValueFactory<>("tipoOperacion"));
+		colResumenLog.setCellValueFactory(new PropertyValueFactory<>("resumen"));
+
+		tablaHistorial.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+
+		// cargar opciones del combo de tipo
+		cbFiltroTipo.setItems(FXCollections.observableArrayList(
+		    "TODOS", "NUEVO", "ACTUALIZACION", "BORRADO"
+		));
+		cbFiltroTipo.setValue("TODOS");
 
 		// estado inicial
 		ocultarTodo();
@@ -513,6 +557,9 @@ public class MenuAdminController implements Initializable {
 		gridArtista.setVisible(false);
 		gridCoordinador.setVisible(false);
 		panelResumenP.setVisible(false);
+		
+		//de historial
+		panelHistorial.setVisible(false);
 
 	}
 
@@ -1321,6 +1368,41 @@ public class MenuAdminController implements Initializable {
 			spnduracionN.getValueFactory().setValue(5.0);
 		}
 
+	}
+	
+	@FXML
+	private void verHistorial() {
+		ocultarTodo();
+		
+		tablaHistorial.getItems().clear();
+		panelHistorial.setVisible(true);
+	}
+	
+	@FXML
+	private void buscarHistorial() {
+		
+		String usuario = tfFiltroUsuario.getText().trim();
+		String tipoSeleccionado = cbFiltroTipo.getValue();
+		TipoOperacion tipo = null;
+		
+		if (tipoSeleccionado != null && !tipoSeleccionado.equals("TODOS")) {
+			tipo = TipoOperacion.valueOf(tipoSeleccionado);
+		}
+		
+		LocalDateTime desde = null;
+		LocalDateTime hasta = null;
+		
+		if (dpFiltroDesde.getValue() != null) {
+			desde = dpFiltroDesde.getValue().atStartOfDay();
+		}
+		if (dpFiltroHasta.getValue() != null) {
+			hasta = dpFiltroHasta.getValue().atTime(23,59,59);
+		}
+		
+		List <LogOperacion> resultado = logService.consultarHistorial(usuario, tipo, desde, hasta);
+		
+		tablaHistorial.getItems().setAll(resultado);
+		
 	}
 
 }

@@ -14,11 +14,11 @@ import servicios.IEspectaculosService;
 import servicios.ILogService;
 
 @Service
-public class EspectaculosService implements IEspectaculosService{
+public class EspectaculosService implements IEspectaculosService {
 
 	@Autowired
 	private EspectaculoRepository espectaculoRepository;
-	
+
 	@Autowired
 	private Sesion sesion;
 
@@ -40,27 +40,41 @@ public class EspectaculosService implements IEspectaculosService{
 		boolean esNuevo = aGuardar.getId() == 0;
 		espectaculoRepository.save(aGuardar);
 		
-		String usuario = sesion.getUsuActual() != null ?
-		        sesion.getUsuActual().getCredenciales().getNombre() : "sistema";
-		    TipoOperacion tipo = esNuevo ? TipoOperacion.NUEVO : TipoOperacion.ACTUALIZACION;
-		    logService.registrarOperacion(usuario, tipo, "Espectaculo", aGuardar.getId());
+		//TODO temporal prueb
+		System.out.println("Usuario en sesion: " + sesion.getUsuActual());
+		System.out.println("Credenciales: " + (sesion.getUsuActual() != null ? sesion.getUsuActual().getCredenciales() : "null"));
+		
+		String usuario;
+		if (sesion.getUsuActual() == null) {
+		    usuario = "sistema";
+		} else if (sesion.getUsuActual().getCredenciales() == null) {
+		    usuario = "admin"; // usuario admin de memoria
+		} else {
+		    usuario = sesion.getUsuActual().getCredenciales().getNombre();
+		}
+
+		TipoOperacion tipo = esNuevo ? TipoOperacion.NUEVO : TipoOperacion.ACTUALIZACION;
+		logService.registrarOperacion(usuario, tipo, "Espectaculo", aGuardar.getId());
 	}
-	
+
 	@Transactional
 	public Espectaculo getEspectaculo(long id) {
 		return espectaculoRepository.findById(id).orElse(null);
 	}
-	
+
 	@Transactional
 	public void eliminarEspectaculo(long id) {
 		espectaculoRepository.deleteById(id);
-		
-		String usuario = sesion.getUsuActual() != null ?
-		        sesion.getUsuActual().getCredenciales().getNombre() : "sistema";
-		    logService.registrarOperacion(usuario, TipoOperacion.BORRADO, "Espectaculo", id);
+
+		String usuario;
+		if (sesion.getUsuActual() == null) {
+		    usuario = "sistema";
+		} else if (sesion.getUsuActual().getCredenciales() == null) {
+		    usuario = "admin"; // usuario admin de memoria
+		} else {
+		    usuario = sesion.getUsuActual().getCredenciales().getNombre();
+		}
+		logService.registrarOperacion(usuario, TipoOperacion.BORRADO, "Espectaculo", id);
 	}
-	
-	
-	
 
 }

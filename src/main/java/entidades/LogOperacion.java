@@ -24,6 +24,12 @@ public class LogOperacion {
 	        this.resumen = "Se ha borrado el " + nombreEntidad + " con id " + idEntidad;
 	    }
 	}
+	
+
+	public LogOperacion() {
+		super();
+	}
+
 
 	public long getId() {
 		return id;

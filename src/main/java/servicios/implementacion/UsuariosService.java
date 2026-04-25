@@ -56,8 +56,8 @@ public class UsuariosService implements IUsuariosService{
 	@Autowired
 	private ILogService logService;
 	
-
-	Sesion actual = new Sesion();
+	@Autowired
+	private Sesion actual;
 	Scanner leer = new Scanner(System.in);
 
 	public Sesion getSesion() {
@@ -142,6 +142,8 @@ public class UsuariosService implements IUsuariosService{
 	    // guardamos la persona. 
 	    // al tener CascadeType.ALL, Hibernate guardará primero la Persona,
 	    // cogerásu ID, lo meterá en el objeto credenciales y luego guardará las credenciales.
+		boolean esNuevo = nueva.getId() == 0;
+		
 	    personaRepository.save(nueva);
 	    
 	    String usuario ;
@@ -153,7 +155,8 @@ public class UsuariosService implements IUsuariosService{
 	        usuario = actual.getUsuActual().getCredenciales().getNombre();
 	    }
 	    
-	    logService.registrarOperacion(usuario, TipoOperacion.NUEVO, nueva.getClass().getSimpleName(), nueva.getId());
+	    TipoOperacion tipo = esNuevo ? TipoOperacion.NUEVO : TipoOperacion.ACTUALIZACION;
+	    logService.registrarOperacion(usuario, tipo, nueva.getClass().getSimpleName(), nueva.getId());
 		
 	}
 
@@ -180,7 +183,7 @@ public class UsuariosService implements IUsuariosService{
 		        usuario = actual.getUsuActual().getCredenciales().getNombre();
 		    }
 		    
-		    logService.registrarOperacion(usuario, TipoOperacion.NUEVO, "artista", artista.getId());
+		    logService.registrarOperacion(usuario, TipoOperacion.ACTUALIZACION, "artista", artista.getId());
 		
 		
 	}
@@ -198,7 +201,7 @@ public class UsuariosService implements IUsuariosService{
 		        usuario = actual.getUsuActual().getCredenciales().getNombre();
 		    }
 		    
-		    logService.registrarOperacion(usuario, TipoOperacion.NUEVO, "Coordinador" , coordinador.getId());
+		    logService.registrarOperacion(usuario, TipoOperacion.ACTUALIZACION, "Coordinador" , coordinador.getId());
 	}
 
 	@Transactional 
