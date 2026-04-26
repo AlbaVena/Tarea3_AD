@@ -268,7 +268,11 @@ public class MenuAdminController implements Initializable {
 	@FXML 
 	private TextField tfFiltroUsuario;	
 	@FXML
-	private ComboBox<String> cbFiltroTipo;	
+	private CheckBox chbFiltroNuevo;
+	@FXML 
+	private CheckBox chbFiltroActualizacion;
+	@FXML 
+	private CheckBox chbFiltroBorrado;
 	@FXML 
 	private DatePicker dpFiltroDesde;	
 	@FXML 
@@ -527,11 +531,6 @@ public class MenuAdminController implements Initializable {
 
 		tablaHistorial.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
 
-		// cargar opciones del combo de tipo
-		cbFiltroTipo.setItems(FXCollections.observableArrayList(
-		    "TODOS", "NUEVO", "ACTUALIZACION", "BORRADO"
-		));
-		cbFiltroTipo.setValue("TODOS");
 
 		// estado inicial
 		ocultarTodo();
@@ -905,10 +904,14 @@ public class MenuAdminController implements Initializable {
 	@FXML
 	private void handleCrearE() {
 		ocultarTodo();
-		espectaculoEnEdicion = new Espectaculo();
-		lvNumCreados.getItems().clear();
-		btnAccion.setText("Guardar");
-		panelFormularioDatos.setVisible(true);
+	    espectaculoEnEdicion = new Espectaculo();
+	    lvNumCreados.getItems().clear();
+	    tfNombre.clear();
+	    dpFechaIni.setValue(null);
+	    dpFechafin.setValue(null);
+	    cbCoordinadores.setValue(null);
+	    btnAccion.setText("Guardar");
+	    panelFormularioDatos.setVisible(true);
 	}
 
 	@FXML
@@ -1382,12 +1385,18 @@ public class MenuAdminController implements Initializable {
 	private void buscarHistorial() {
 		
 		String usuario = tfFiltroUsuario.getText().trim();
-		String tipoSeleccionado = cbFiltroTipo.getValue();
-		TipoOperacion tipo = null;
 		
-		if (tipoSeleccionado != null && !tipoSeleccionado.equals("TODOS")) {
-			tipo = TipoOperacion.valueOf(tipoSeleccionado);
-		}
+		//checkboxes
+		List<String> tiposSeleccionados = new ArrayList<>();
+	    if (chbFiltroNuevo.isSelected()) {
+	        tiposSeleccionados.add("NUEVO");
+	    }
+	    if (chbFiltroActualizacion.isSelected()) {
+	        tiposSeleccionados.add("ACTUALIZACION");
+	    }
+	    if (chbFiltroBorrado.isSelected()) {
+	        tiposSeleccionados.add("BORRADO");
+	    }
 		
 		LocalDateTime desde = null;
 		LocalDateTime hasta = null;
@@ -1399,7 +1408,10 @@ public class MenuAdminController implements Initializable {
 			hasta = dpFiltroHasta.getValue().atTime(23,59,59);
 		}
 		
-		List <LogOperacion> resultado = logService.consultarHistorial(usuario, tipo, desde, hasta);
+		List<LogOperacion> resultado = logService.consultarHistorial(
+		        usuario.isEmpty() ? null : usuario, 
+		        tiposSeleccionados.isEmpty() ? null : tiposSeleccionados, 
+		        desde, hasta);
 		
 		tablaHistorial.getItems().setAll(resultado);
 		

@@ -535,7 +535,7 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0" GridPane.rowIndex="3">
                      <children>
-                        <Button fx:id="btnAtrasC" onAction="#botonAtrasDesdeCoordinador" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #D6EAF8;" text="Atrás" />
+                        <Button fx:id="btnAtrasC" mnemonicParsing="false" onAction="#botonAtrasDesdeCoordinador" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #D6EAF8;" text="Atrás" />
                         <Button fx:id="btnFinalizarC" disable="false" mnemonicParsing="false" onAction="#finalizarCoordinador" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #85C1E9;" text="Finalizar" />
                      </children>
                   </HBox>
@@ -744,17 +744,22 @@
                            <GridPane.margin>
                               <Insets right="20.0" />
                            </GridPane.margin></TextField>
-                        <ComboBox fx:id="cbFiltroTipo" prefHeight="25.0" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <GridPane.margin>
-                              <Insets left="20.0" />
-                           </GridPane.margin>
-                        </ComboBox>
                         <DatePicker fx:id="dpFiltroDesde" prefWidth="175.0" GridPane.rowIndex="3" />
                         <DatePicker fx:id="dpFiltroHasta" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <GridPane.margin>
                               <Insets left="20.0" />
                            </GridPane.margin>
                         </DatePicker>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <CheckBox fx:id="chbFiltroNuevo" mnemonicParsing="false" text="NUEVO" />
+                              <CheckBox fx:id="chbFiltroActualizacion" mnemonicParsing="false" text="ACTUALIZACIÓN" />
+                              <CheckBox fx:id="chbFiltroBorrado" mnemonicParsing="false" text="BORRADO" />
+                           </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </HBox>
                      </children>
                   </GridPane>
                   <Button fx:id="btnBuscarLog" mnemonicParsing="false" onAction="#buscarHistorial" text="Buscar">

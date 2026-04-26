@@ -40,10 +40,6 @@ public class EspectaculosService implements IEspectaculosService {
 		boolean esNuevo = aGuardar.getId() == 0;
 		espectaculoRepository.save(aGuardar);
 		
-		//TODO temporal prueb
-		System.out.println("Usuario en sesion: " + sesion.getUsuActual());
-		System.out.println("Credenciales: " + (sesion.getUsuActual() != null ? sesion.getUsuActual().getCredenciales() : "null"));
-		
 		String usuario;
 		if (sesion.getUsuActual() == null) {
 		    usuario = "sistema";

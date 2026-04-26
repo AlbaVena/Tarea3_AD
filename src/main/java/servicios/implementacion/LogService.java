@@ -34,33 +34,40 @@ public class LogService implements ILogService {
 	}
 
 	@Override
-	public List<LogOperacion> consultarHistorial(String usuario, TipoOperacion tipo, LocalDateTime desde,
+	public List<LogOperacion> consultarHistorial(String usuario, List<String> tipos, LocalDateTime desde,
 			LocalDateTime hasta) {
 
 		ObjectContainer db = Db4oEmbedded.openFile(ruta);
 		List<LogOperacion> resultado = new ArrayList<>();
 
 		try {
-			// QBE: objeto de ejemplo
+			// QBE: objeto de ejemplo con solo el usuario
 			LogOperacion ejemplo = new LogOperacion();
 			if (usuario != null && !usuario.isEmpty()) {
 				ejemplo.setUsuario(usuario);
-			}
-			if (tipo != null) {
-				ejemplo.setTipoOperacion(tipo.name());
 			}
 
 			// consulta por ejemplo (QBE)
 			ObjectSet<LogOperacion> logs = db.queryByExample(ejemplo);
 
-			// filtrar fechas en memoria (QBE no soporta rangos)
+			// filtrar tipos y fechas en memoria
 			while (logs.hasNext()) {
 				LogOperacion log = logs.next();
 				boolean incluir = true;
 
+				// filtrar por tipos seleccionados
+				if (tipos != null && !tipos.isEmpty()) {
+					if (!tipos.contains(log.getTipoOperacion())) {
+						incluir = false;
+					}
+				}
+
+				// filtrar por fecha desde
 				if (desde != null && log.getFechaHora().compareTo(desde.toString()) < 0) {
 					incluir = false;
 				}
+
+				// filtrar por fecha hasta
 				if (hasta != null && log.getFechaHora().compareTo(hasta.toString()) > 0) {
 					incluir = false;
 				}

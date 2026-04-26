@@ -77,7 +77,7 @@ public class UsuariosService implements IUsuariosService{
 			admin.setNombre("Administrador");
 			admin.setPerfil(Perfil.ADMIN);
 
-			this.actual = new Sesion(admin);
+			actual.setUsuActual(admin); 
 			return admin;
 		}
 
@@ -85,7 +85,7 @@ public class UsuariosService implements IUsuariosService{
 
 		if (cred.isPresent()) {
 			Persona p = cred.get().getPersona(); // recoger la persona actual
-			actual = new Sesion(p);
+			actual.setUsuActual(p);
 			return p;
 		}
 		return null;
