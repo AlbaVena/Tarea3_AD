@@ -35,7 +35,7 @@ public class principalAplicacion extends Application{
         Parent root = loader.load();
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Circo - Menú Invitado");
+        primaryStage.setTitle("Circo");
         primaryStage.show();
     }
 
