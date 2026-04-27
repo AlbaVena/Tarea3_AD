@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-04-2026 a las 22:49:13
+-- Tiempo de generación: 27-04-2026 a las 16:04:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -38,11 +38,11 @@ CREATE TABLE `artistas` (
 --
 
 INSERT INTO `artistas` (`id_persona`, `apodo`, `id_art`) VALUES
-(2, 'Chispas', NULL),
-(4, '', NULL),
-(5, ' ', NULL),
-(6, 'Diego', NULL),
-(12, 'pruebadefx', NULL);
+(6, 'Chispas', NULL),
+(7, 'La Maga', NULL),
+(8, NULL, NULL),
+(9, 'Anitta', NULL),
+(10, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -60,22 +60,22 @@ CREATE TABLE `artistas_numeros` (
 --
 
 INSERT INTO `artistas_numeros` (`id_artista`, `id_numero`) VALUES
-(2, 31),
-(5, 31),
-(2, 32),
-(6, 32),
-(12, 33),
-(12, 34),
-(6, 34),
-(12, 36),
-(6, 36),
-(2, 36),
-(2, 37),
-(5, 37),
-(6, 38),
-(4, 39),
-(5, 39),
-(6, 41);
+(6, 1),
+(8, 1),
+(7, 2),
+(9, 3),
+(10, 3),
+(10, 4),
+(7, 4),
+(7, 5),
+(6, 6),
+(8, 6),
+(9, 7),
+(9, 8),
+(6, 9),
+(10, 9),
+(8, 10),
+(7, 10);
 
 -- --------------------------------------------------------
 
@@ -93,14 +93,16 @@ CREATE TABLE `artista_especialidad` (
 --
 
 INSERT INTO `artista_especialidad` (`id_artista`, `id_especialidad`) VALUES
-(2, 1),
-(2, 4),
-(4, 1),
-(4, 2),
-(5, 1),
-(5, 4),
-(5, 5),
-(6, 3);
+(6, 1),
+(6, 3),
+(7, 2),
+(7, 4),
+(7, 5),
+(8, 1),
+(8, 2),
+(9, 3),
+(9, 4),
+(10, 5);
 
 -- --------------------------------------------------------
 
@@ -120,11 +122,11 @@ CREATE TABLE `coordinadores` (
 --
 
 INSERT INTO `coordinadores` (`id_coordinador`, `senior`, `fechasenior`, `id_persona`) VALUES
-(1, 1, '2025-02-10', 1),
-(2, 1, '2025-01-23', 3),
-(3, 0, NULL, 7),
-(4, 0, NULL, 8),
-(7, 0, NULL, 11);
+(1, 1, '2023-01-15', 1),
+(2, 1, '2022-06-20', 2),
+(3, 0, NULL, 3),
+(4, 0, NULL, 4),
+(5, 0, NULL, 5);
 
 -- --------------------------------------------------------
 
@@ -145,16 +147,16 @@ CREATE TABLE `credenciales` (
 --
 
 INSERT INTO `credenciales` (`id_credenciales`, `id_persona`, `nombre`, `password`, `perfil`) VALUES
-(1, 1, 'albita', 'pass', 'ADMIN'),
-(2, 2, 'pedros', 'pass', 'ARTISTA'),
-(3, 3, 'carlos', 'pass', 'ADMIN'),
-(4, 4, 'martius', 'pass', 'ADMIN'),
-(5, 5, 'peppe', 'pass', 'ADMIN'),
-(6, 6, 'diego', 'diego', 'ARTISTA'),
-(7, 7, 'prueba', 'prueba', 'ADMIN'),
-(8, 8, 'noadmin', 'pass', 'COORDINACION'),
-(9, 11, 'pa_co', 'pass', 'COORDINACION'),
-(11, 12, 'pruebaFX', 'pass', 'ARTISTA');
+(1, 1, 'alba', 'pass', 'COORDINACION'),
+(2, 2, 'carlos', 'pass', 'COORDINACION'),
+(3, 3, 'lucia', 'pass', 'COORDINACION'),
+(4, 4, 'marcos', 'pass', 'COORDINACION'),
+(5, 5, 'elena', 'pass', 'COORDINACION'),
+(6, 6, 'pedro', 'pass', 'ARTISTA'),
+(7, 7, 'marta', 'pass', 'ARTISTA'),
+(8, 8, 'diego', 'pass', 'ARTISTA'),
+(9, 9, 'ana', 'pass', 'ARTISTA'),
+(10, 10, 'luis', 'pass', 'ARTISTA');
 
 -- --------------------------------------------------------
 
@@ -197,12 +199,9 @@ CREATE TABLE `espectaculos` (
 --
 
 INSERT INTO `espectaculos` (`id_espectaculo`, `nombre`, `fecha_inicio`, `fecha_fin`, `id_coordinador_fk`) VALUES
-(1, 'Primer espectaculo', '2025-02-12', '2025-03-12', 3),
-(2, 'Segundo espectaculo', '2025-12-12', '2026-04-12', 1),
-(3, 'Prueba pantallas modificada', '2026-02-23', '2026-03-21', 11),
-(5, 'modificado', '2026-03-11', '2026-04-09', 11),
-(6, 'modificado dos', '2026-02-23', '2026-03-15', 11),
-(7, 'especta', '2010-10-10', '2011-10-11', 11);
+(1, 'Gran Circo de Invierno', '2024-01-10', '2024-06-10', 1),
+(2, 'Magia y Acrobacia 2026', '2026-01-01', '2026-09-30', 2),
+(3, 'El Gran Show del Futuro', '2026-10-01', '2027-03-01', 3);
 
 -- --------------------------------------------------------
 
@@ -213,7 +212,7 @@ INSERT INTO `espectaculos` (`id_espectaculo`, `nombre`, `fecha_inicio`, `fecha_f
 CREATE TABLE `numeros` (
   `id` bigint(20) NOT NULL,
   `nombre` varchar(50) NOT NULL,
-  `duracion` int(11) NOT NULL,
+  `duracion` double NOT NULL,
   `orden` int(11) NOT NULL,
   `id_espectaculo` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -223,23 +222,16 @@ CREATE TABLE `numeros` (
 --
 
 INSERT INTO `numeros` (`id`, `nombre`, `duracion`, `orden`, `id_espectaculo`) VALUES
-(1, 'Numero Uno modificado', 123, 0, 2),
-(2, 'prueba interface', 123, 0, 2),
-(3, 'numero tres', 15, 0, 3),
-(4, 'numero dos', 49, 0, 3),
-(5, 'numero uno', 60, 0, 3),
-(27, 'modificado tres', 32, 0, 3),
-(28, 'modificado uno', 150, 0, 3),
-(29, 'modificado dos', 58, 0, 3),
-(31, 'num dos', 15, 0, 5),
-(32, 'num tres', 150, 0, 5),
-(33, 'num modificado', 55, 0, 5),
-(34, 'numero uno', 15, 0, 6),
-(36, 'numero tres', 45, 0, 6),
-(37, 'num dos modif', 68, 0, 6),
-(38, 'cuatro', 15, 0, 7),
-(39, 'okeeeeeiletsgo', 15, 0, 7),
-(41, 'siuuuu', 15, 0, 7);
+(1, 'Vuelo Acrobatico', 10, 1, 1),
+(2, 'Magia Sorprendente', 7, 2, 1),
+(3, 'Equilibrio Extremo', 12, 3, 1),
+(4, 'Humor y Malabares', 5, 1, 2),
+(5, 'La Gran Ilusion', 15, 2, 2),
+(6, 'Acrobacia Aerea', 10, 3, 2),
+(7, 'Equilibrismo Total', 7, 4, 2),
+(8, 'El Mago Supremo', 12, 1, 3),
+(9, 'Vuelo de Cometas', 5, 2, 3),
+(10, 'Finales de Fuego', 15, 3, 3);
 
 -- --------------------------------------------------------
 
@@ -260,16 +252,16 @@ CREATE TABLE `personas` (
 --
 
 INSERT INTO `personas` (`id_persona`, `email`, `nombre`, `nacionalidad`, `perfil`) VALUES
-(1, 'alba@email.com', 'Alba', 'Korea', 'COORDINACION'),
-(2, 'chispas@email.com', 'Pedro', 'Suiza', 'ARTISTA'),
-(3, 'carlos@email.com', 'Carlos', 'India', 'COORDINACION'),
-(4, 'marta@email.com', 'marta', 'Reino Unido', 'ARTISTA'),
-(5, 'pepemail@correo.es', 'pepe', 'Holanda', 'ARTISTA'),
-(6, 'diegp@doegp.com', 'diego', 'España', 'ARTISTA'),
-(7, 'prueba1@email.bro', 'pruebauno', 'España', 'COORDINACION'),
-(8, 'noEsAdmin@gmail.com', 'no es admin', 'Holanda', 'COORDINACION'),
-(11, 'paco@email.com', 'paco', 'Suecia', 'COORDINACION'),
-(12, 'pruebafx@email.com', 'pruebaFX', 'Suecia', 'ARTISTA');
+(1, 'alba@circo.com', 'Alba Garcia', 'España', 'COORDINACION'),
+(2, 'carlos@circo.com', 'Carlos Lopez', 'Mexico', 'COORDINACION'),
+(3, 'lucia@circo.com', 'Lucia Perez', 'Argentina', 'COORDINACION'),
+(4, 'marcos@circo.com', 'Marcos Ruiz', 'Chile', 'COORDINACION'),
+(5, 'elena@circo.com', 'Elena Torres', 'Colombia', 'COORDINACION'),
+(6, 'pedro@circo.com', 'Pedro Sanchez', 'España', 'ARTISTA'),
+(7, 'marta@circo.com', 'Marta Gomez', 'Francia', 'ARTISTA'),
+(8, 'diego@circo.com', 'Diego Martinez', 'Italia', 'ARTISTA'),
+(9, 'ana@circo.com', 'Ana Fernandez', 'Portugal', 'ARTISTA'),
+(10, 'luis@circo.com', 'Luis Rodriguez', 'Brasil', 'ARTISTA');
 
 --
 -- Índices para tablas volcadas
@@ -344,13 +336,13 @@ ALTER TABLE `personas`
 -- AUTO_INCREMENT de la tabla `coordinadores`
 --
 ALTER TABLE `coordinadores`
-  MODIFY `id_coordinador` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_coordinador` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `credenciales`
 --
 ALTER TABLE `credenciales`
-  MODIFY `id_credenciales` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_credenciales` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `especialidades`
@@ -362,19 +354,19 @@ ALTER TABLE `especialidades`
 -- AUTO_INCREMENT de la tabla `espectaculos`
 --
 ALTER TABLE `espectaculos`
-  MODIFY `id_espectaculo` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_espectaculo` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `numeros`
 --
 ALTER TABLE `numeros`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `personas`
 --
 ALTER TABLE `personas`
-  MODIFY `id_persona` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_persona` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Restricciones para tablas volcadas

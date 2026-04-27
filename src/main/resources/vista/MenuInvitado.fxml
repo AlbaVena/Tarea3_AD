@@ -27,7 +27,7 @@
 		</VBox>
 	</left>
 	<top>
-		<Button fx:id="btnLogIn" onAction="#handleAbrirLogin" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: #D6EAF8;" text="LogIn" BorderPane.alignment="CENTER_RIGHT">
+		<Button fx:id="btnLogIn" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleAbrirLogin" style="-fx-background-color: #D6EAF8;" text="Iniciar sesión" BorderPane.alignment="CENTER_RIGHT">
 			<BorderPane.margin>
 				<Insets bottom="10.0" right="30.0" top="10.0" />
 			</BorderPane.margin>

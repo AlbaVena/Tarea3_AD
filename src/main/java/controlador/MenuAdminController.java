@@ -669,10 +669,6 @@ public class MenuAdminController implements Initializable {
 			error = true;
 		}
 		// comprobar que no use "admin" en ningun campo
-		if (txtNombreU.getText().equalsIgnoreCase("admin")) {
-		    txtNombreU.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
-		    error = true;
-		}
 		if (txtNombre.getText().equalsIgnoreCase("admin")) {
 		    txtNombre.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 		    error = true;
@@ -800,55 +796,58 @@ public class MenuAdminController implements Initializable {
 	}
 
 	@FXML
-	private void finalizarCoordinador() {
-		Coordinador nuevo = new Coordinador();
+private void finalizarCoordinador() {
+    Coordinador nuevo;
 
-		// datos comunes
-		nuevo.setNombre(txtNombre.getText());
-		nuevo.setEmail(txtEmail.getText());
-		nuevo.setNacionalidad(cbNacionalidad.getValue());
-		nuevo.setPerfil(Perfil.COORDINACION);
+    if (personaEnEdicion == null) {
+        // modo crear
+        nuevo = new Coordinador();
+        nuevo.setPerfil(Perfil.COORDINACION);
+        Credenciales cred = new Credenciales(txtNombreU.getText(),
+                txtPass.getText(), Perfil.COORDINACION);
+        nuevo.setCredenciales(cred);
+        cred.setPersona(nuevo);
+    } else {
+        // modo modificar
+        nuevo = (Coordinador) personaEnEdicion;
+        nuevo.getCredenciales().setNombre(txtNombreU.getText());
+        nuevo.getCredenciales().setPassword(txtPass.getText());
+    }
 
-		// credenciales
-		Credenciales cred = new Credenciales(txtNombreU.getText(),
-				txtPass.getText(), Perfil.COORDINACION);
-		nuevo.setCredenciales(cred);
-		cred.setPersona(nuevo);
+    // datos comunes en ambos casos
+    nuevo.setNombre(txtNombre.getText());
+    nuevo.setEmail(txtEmail.getText());
+    nuevo.setNacionalidad(cbNacionalidad.getValue());
+    nuevo.setSenior(chbCoor.isSelected());
+    if (chbCoor.isSelected()) {
+        nuevo.setFechasenior(dateCoor.getValue());
+    }
 
-		// de coordinador
-		nuevo.setSenior(chbCoor.isSelected());
-		if (chbCoor.isSelected()) {
-			nuevo.setFechasenior(dateCoor.getValue());
-		}
+    usuariosService.crearPersona(nuevo);
 
-		usuariosService.crearPersona(nuevo);
+    // mostrar resumen
+    lblResumenNombreP.setText(nuevo.getNombre());
+    lblResumenEmailP.setText(nuevo.getEmail());
+    lblResumenNacionP.setText(nuevo.getNacionalidad());
+    lblResumenUsuarioP.setText(txtNombreU.getText());
+    lblResumenPuestoP.setText("Coordinador");
 
-		// mostrar resumen
-		lblResumenNombreP.setText(nuevo.getNombre());
-		lblResumenEmailP.setText(nuevo.getEmail());
-		lblResumenNacionP.setText(nuevo.getNacionalidad());
-		lblResumenUsuarioP.setText(txtNombreU.getText());
-		lblResumenPuestoP.setText("Coordinador");
+    if (nuevo.isSenior()) {
+        lblTituloSenior.setVisible(true);
+        lblResumenCoor.setText(nuevo.getFechasenior().toString());
+    } else {
+        lblTituloSenior.setVisible(false);
+        lblResumenCoor.setText("No es Senior.");
+    }
 
-		if (nuevo.isSenior()) {
-			lblTituloSenior.setVisible(true);
-			lblResumenCoor.setText(nuevo.getFechasenior().toString());
+    vBResumenArtista.setVisible(false);
+    vBResumenArtista.setManaged(false);
+    vbDatosCoor.setVisible(true);
+    vbDatosCoor.setManaged(true);
 
-		} else {
-			lblTituloSenior.setVisible(false);
-			lblResumenCoor.setText("No es Senior.");
-		}
-
-		// mostrar coordinador, ocultar artista
-		vBResumenArtista.setVisible(false);
-		vBResumenArtista.setManaged(false);
-		vbDatosCoor.setVisible(true);
-		vbDatosCoor.setManaged(true);
-
-		ocultarTodo();
-		panelResumenP.setVisible(true);
-
-	}
+    ocultarTodo();
+    panelResumenP.setVisible(true);
+}
 
 	@FXML
 	private void handleVerEspectaculos() {
@@ -974,6 +973,7 @@ public class MenuAdminController implements Initializable {
 
 	@FXML
 	private void cargarPersonaParaModificar() {
+		
 		personaEnEdicion = cbSelectorP.getValue();
 
 		if (personaEnEdicion == null) {
@@ -990,6 +990,7 @@ public class MenuAdminController implements Initializable {
 			rbArtista.setSelected(true);
 			txtApodo.setText(artista.getApodo());
 			lvArtistaEsp.getItems().setAll(artista.getEspecialidades());
+			
 		} else if (personaEnEdicion instanceof Coordinador) {
 			Coordinador coordinador = (Coordinador) personaEnEdicion;
 			rbCoor.setSelected(true);
