@@ -43,7 +43,7 @@ public class Persona implements Serializable {
 
 	
 	@Enumerated(EnumType.STRING)
-	public Perfil perfil;
+	private Perfil perfil;
 	
 	public Persona() {
 		this.perfil = Perfil.INVITADO;
