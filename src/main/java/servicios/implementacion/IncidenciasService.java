@@ -2,10 +2,13 @@ package servicios.implementacion;
 
 import java.lang.module.ResolutionException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import entidades.objectdb.Incidencia;
@@ -23,12 +26,34 @@ import servicios.IIncidenciasService;
  */
 @Service
 public class IncidenciasService implements IIncidenciasService {
+	
+	@Value("${objectdb.url}")
+    private String url;
 
-	// inyectamos el EntityManagerFactory de ObjectDB, no el de Hibernate, para que no mezclen
-    @Autowired
-    @Qualifier("objectdbEntityManagerFactory")
+    @Value("${objectdb.user}")
+    private String user;
+
+    @Value("${objectdb.password}")
+    private String password;
+
+
     private EntityManagerFactory emf;
 	
+    // se ejecuta despues de inyectar los @Value
+    @jakarta.annotation.PostConstruct
+    private void init() {
+        Map<String, Object> propiedades = new HashMap<>();
+        propiedades.put("jakarta.persistence.jdbc.url", 
+            url + "?user=" + user + "&password=" + password);
+        
+        this.emf = new com.objectdb.jpa.Provider()
+            .createEntityManagerFactory(url, propiedades);
+    }
+
+    private EntityManager getEntityManager() {
+        return emf.createEntityManager();
+    }
+    
 	@Override
 	public void registrarIncidencia(Incidencia incidencia) {
 		EntityManager em = emf.createEntityManager();
