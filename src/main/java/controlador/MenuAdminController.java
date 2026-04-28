@@ -741,7 +741,7 @@ public class MenuAdminController implements Initializable {
 					new HashSet<Especialidad>(lvArtistaEsp.getItems()));
 
 			// credenciales
-			Credenciales cred = new Credenciales(txtNombreU.getText(),
+			Credenciales cred = new Credenciales(txtNombreU.getText().toLowerCase(),
 					txtPass.getText(), Perfil.ARTISTA);
 			nuevo.setCredenciales(cred);
 			cred.setPersona(nuevo);
@@ -749,6 +749,14 @@ public class MenuAdminController implements Initializable {
 			nuevo = (Artista) personaEnEdicion;
 			nuevo.getCredenciales().setNombre(txtNombreU.getText());
 			nuevo.getCredenciales().setPassword(txtPass.getText());
+			//comunes
+			nuevo.setNombre(txtNombre.getText());
+		    nuevo.setEmail(txtEmail.getText());
+		    nuevo.setNacionalidad(cbNacionalidad.getValue());
+		    nuevo.getCredenciales().setNombre(txtNombreU.getText().toLowerCase());
+		    nuevo.getCredenciales().setPassword(txtPass.getText());
+		    nuevo.setApodo(txtApodo.getText());
+		    nuevo.setEspecialidades(new HashSet<Especialidad>(lvArtistaEsp.getItems()));
 			// especificos artista
 			nuevo.setApodo(txtApodo.getText());
 			nuevo.setEspecialidades(
@@ -788,11 +796,6 @@ public class MenuAdminController implements Initializable {
 		ocultarTodo();
 		panelResumenP.setVisible(true);
 		
-		//TODO temporal prueba -CU10
-		for (LogOperacion log : logService.getTodos()) {
-		    System.out.println(log.getFechaHora() + " | " + log.getUsuario() + 
-		        " | " + log.getTipoOperacion() + " | " + log.getResumen());
-		}
 	}
 
 	@FXML
@@ -803,14 +806,14 @@ private void finalizarCoordinador() {
         // modo crear
         nuevo = new Coordinador();
         nuevo.setPerfil(Perfil.COORDINACION);
-        Credenciales cred = new Credenciales(txtNombreU.getText(),
+        Credenciales cred = new Credenciales(txtNombreU.getText().toLowerCase(),
                 txtPass.getText(), Perfil.COORDINACION);
         nuevo.setCredenciales(cred);
         cred.setPersona(nuevo);
     } else {
         // modo modificar
         nuevo = (Coordinador) personaEnEdicion;
-        nuevo.getCredenciales().setNombre(txtNombreU.getText());
+        nuevo.getCredenciales().setNombre(txtNombreU.getText().toLowerCase());
         nuevo.getCredenciales().setPassword(txtPass.getText());
     }
 
