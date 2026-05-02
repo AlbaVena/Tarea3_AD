@@ -355,185 +355,129 @@ public class MenuAdminController implements Initializable {
 	/**
 	 * MÉTODOS:
 	 */
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		log.info("Sesion iniciada como Admin");
-		// configuracion de la tabla como en Invitadp
-		columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-		columnFechaIniE
-				.setCellValueFactory(new PropertyValueFactory<>("fechaini"));
-		columnFechaFinE
-				.setCellValueFactory(new PropertyValueFactory<>("fechafin"));
+	    log.info("Sesion iniciada como Admin");
+	    configurarTablaEspectaculos();
+	    configurarTablaArtistas();
+	    configurarTablaHistorial();
+	    configurarSpinner();
+	    configurarConversores();
+	    configurarCombos();
+	    configurarBindings();
+	    configurarFecha();
+	    ocultarTodo();
+	}
+	
+	
+	private void configurarTablaEspectaculos() {
+	    columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+	    columnFechaIniE.setCellValueFactory(new PropertyValueFactory<>("fechaini"));
+	    columnFechaFinE.setCellValueFactory(new PropertyValueFactory<>("fechafin"));
+	    tablaEspectaculos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+	    tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles."));
+	}
 
-		tablaEspectaculos.setColumnResizePolicy(
-				TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
-		tablaEspectaculos.setPlaceholder(
-				new Label("No hay espectáculos disponibles en este momento."));
+	private void configurarTablaArtistas() {
+	    columnNombreA.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+	    columnApodoA.setCellValueFactory(new PropertyValueFactory<>("apodo"));
+	    columnEspecA.setCellValueFactory(cellData -> {
+	        Artista artista = cellData.getValue();
+	        String especialidades = "";
+	        if (artista.getEspecialidades() != null) {
+	            for (Especialidad e : artista.getEspecialidades()) {
+	                if (!especialidades.isEmpty()) especialidades += ", ";
+	                especialidades += e.getNombre();
+	            }
+	        }
+	        return new javafx.beans.property.SimpleStringProperty(especialidades);
+	    });
+	    tablaArtistas.setPlaceholder(new Label("No hay artistas registrados."));
+	    tablaArtistas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+	}
 
-		// cargar el spinner de duracion
-		SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 15.5, 5.0, 0.5);
-		
-		spnduracionN.setValueFactory(valueFactory);
+	private void configurarTablaHistorial() {
+	    colFechaLog.setCellValueFactory(new PropertyValueFactory<>("fechaHora"));
+	    colUsuarioLog.setCellValueFactory(new PropertyValueFactory<>("usuario"));
+	    colTipoLog.setCellValueFactory(new PropertyValueFactory<>("tipoOperacion"));
+	    colResumenLog.setCellValueFactory(new PropertyValueFactory<>("resumen"));
+	    tablaHistorial.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+	}
 
-		// conversor del buscador de espectaculos
-		cbSelectorE.setConverter(new StringConverter<Espectaculo>() {
-			@Override
-			public String toString(Espectaculo esp) {
-				return (esp == null) ? "" : esp.getNombre();
-			}
+	private void configurarSpinner() {
+	    SpinnerValueFactory<Double> valueFactory = 
+	        new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 15.5, 5.0, 0.5);
+	    spnduracionN.setValueFactory(valueFactory);
+	}
 
-			// conversor en direccion contraria
-			@Override
-			public Espectaculo fromString(String string) {
-				return null;
-			}
-		});
+	private void configurarConversores() {
+	    cbSelectorE.setConverter(new StringConverter<Espectaculo>() {
+	        @Override public String toString(Espectaculo esp) {
+	            return (esp == null) ? "" : esp.getNombre();
+	        }
+	        @Override public Espectaculo fromString(String string) { return null; }
+	    });
+	    cbCoordinadores.setConverter(new StringConverter<Coordinador>() {
+	        @Override public String toString(Coordinador c) {
+	            return (c == null) ? "" : c.getNombre();
+	        }
+	        @Override public Coordinador fromString(String string) {
+	            for (Coordinador c : cbCoordinadores.getItems()) {
+	                if (c.getNombre().equals(string)) return c;
+	            }
+	            return null;
+	        }
+	    });
+	    cbSelectorP.setConverter(new StringConverter<Persona>() {
+	        @Override public String toString(Persona p) {
+	            return (p == null) ? "" : p.getNombre() + " (" + p.getPerfil() + ")";
+	        }
+	        @Override public Persona fromString(String string) { return null; }
+	    });
+	    cbArtistaEsp.setConverter(new StringConverter<Especialidad>() {
+	        @Override public String toString(Especialidad e) {
+	            return (e == null) ? "" : e.getNombre();
+	        }
+	        @Override public Especialidad fromString(String string) { return null; }
+	    });
+	    conversorArtistasCombo();
+	    conversorArtistasSeleccionados();
+	    conversorEspecialidadArtista();
+	    conversorNumeros();
+	}
 
-		
-		cbCoordinadores.setConverter(new StringConverter<Coordinador>() {
-		    @Override
-		    public String toString(Coordinador c) {
-		        return (c == null) ? "" : c.getNombre();
-		    }
-		    @Override
-		    public Coordinador fromString(String string) { 
-		    	for (Coordinador c : cbCoordinadores.getItems()) {
-		            if (c.getNombre().equals(string)) {
-		                return c;
-		            }
-		        }
-		    	return null; 
-		    	}
-		});
+	private void configurarCombos() {
+	    // paises ordenados
+	    List<String> paises = new ArrayList<>(paisesService.getPaises().values());
+	    Collections.sort(paises);
+	    cbNacionalidad.setItems(FXCollections.observableArrayList(paises));
+	    // especialidades
+	    cbArtistaEsp.setItems(FXCollections.observableArrayList(usuariosService.getEspecialidades()));
+	    // artistas y lista temporal
+	    cbartistasN.setItems(FXCollections.observableArrayList(usuariosService.getArtistas()));
+	    lvArtistasSeleccionados.setItems(artistasDelNumeroActual);
+	    // coordinadores
+	    cbCoordinadores.setItems(FXCollections.observableArrayList(usuariosService.getCoordinadores()));
+	}
 
-		cbCoordinadores.setItems(FXCollections.observableArrayList(
-		    usuariosService.getCoordinadores()));
-		
-		conversorArtistasCombo();
-		conversorArtistasSeleccionados();
-		conversorEspecialidadArtista();
-		conversorNumeros();
+	private void configurarBindings() {
+	    btnAccion.disableProperty().bind(
+	        tfNombre.textProperty().isEmpty()
+	        .or(dpFechaIni.valueProperty().isNull())
+	        .or(dpFechafin.valueProperty().isNull())
+	        .or(cbCoordinadores.valueProperty().isNull())
+	    );
+	    btnCargarE.disableProperty().bind(cbSelectorE.valueProperty().isNull());
+	    btnEliminar.disableProperty().bind(cbSelectorE.valueProperty().isNull());
+	    btnFinalizarTodo.disableProperty().bind(Bindings.size(lvNumCreados.getItems()).lessThan(3));
+	    btnCargarP.disableProperty().bind(cbSelectorP.valueProperty().isNull());
+	    btnEliminarP.disableProperty().bind(cbSelectorP.valueProperty().isNull());
+	    btnFinalizarA.disableProperty().bind(Bindings.size(lvArtistaEsp.getItems()).lessThan(1));
+	    btnAgregarEsp.disableProperty().bind(Bindings.size(lvArtistaEsp.getItems()).greaterThanOrEqualTo(5));
+	}
 
-		// cargar artistas
-		cbartistasN.setItems(FXCollections
-				.observableArrayList(usuariosService.getArtistas()));
-		lvArtistasSeleccionados.setItems(artistasDelNumeroActual);
-
-		// BINDING = condiciones
-		// condicion: si algun campo no esta bien relleno
-
-		// panel 1: si faltan datos
-		btnAccion.disableProperty()
-				.bind(tfNombre.textProperty().isEmpty()
-						.or(dpFechaIni.valueProperty().isNull())
-						.or(dpFechafin.valueProperty().isNull()));
-
-		// buscador, si no se selecciona nada
-		btnCargarE.disableProperty().bind(cbSelectorE.valueProperty().isNull());
-
-		btnEliminar.disableProperty()
-				.bind(cbSelectorE.valueProperty().isNull());
-
-		// boton finalizar, con menos de 3 numeros
-		btnFinalizarTodo.disableProperty()
-				.bind(Bindings.size(lvNumCreados.getItems()).lessThan(3));
-
-		// boton de cargar o eliminar persona
-		btnCargarP.disableProperty().bind(cbSelectorP.valueProperty().isNull());
-		btnEliminarP.disableProperty()
-				.bind(cbSelectorP.valueProperty().isNull());
-
-		// finalizar artista: habilitado solo si hay entre 1 y 5 especialidades
-		btnFinalizarA.disableProperty()
-				.bind(Bindings.size(lvArtistaEsp.getItems()).lessThan(1));
-		btnAgregarEsp.disableProperty().bind(
-				Bindings.size(lvArtistaEsp.getItems()).greaterThanOrEqualTo(5));
-
-		columnNombreA.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-		columnApodoA.setCellValueFactory(new PropertyValueFactory<>("apodo"));
-		
-		
-		btnAccion.disableProperty().bind(
-			    tfNombre.textProperty().isEmpty()
-			    .or(dpFechaIni.valueProperty().isNull())
-			    .or(dpFechafin.valueProperty().isNull())
-			    .or(cbCoordinadores.valueProperty().isNull())
-			);
-
-		// especialidades necesita conversor especial
-		columnEspecA.setCellValueFactory(cellData -> {
-			Artista artista = cellData.getValue();
-			String especialidades = "";
-			if (artista.getEspecialidades() != null) {
-				for (Especialidad e : artista.getEspecialidades()) {
-					if (!especialidades.isEmpty()) {
-						especialidades += ", ";
-					}
-					especialidades += e.getNombre();
-				}
-			}
-			return new javafx.beans.property.SimpleStringProperty(
-					especialidades);
-		});
-
-		tablaArtistas.setPlaceholder(new Label("No hay artistas registrados."));
-		tablaArtistas.setColumnResizePolicy(
-				TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
-
-		// cargar el combo de paises
-		List<String> paises = new ArrayList<>(
-				paisesService.getPaises().values());
-		Collections.sort(paises);
-		cbNacionalidad.setItems(FXCollections.observableArrayList(paises));
-
-		// Cargar especialidades en el combo de aritsta
-		cbArtistaEsp.setItems(FXCollections
-				.observableArrayList(usuariosService.getEspecialidades()));
-
-		// TODO conversor de especialidades
-		cbArtistaEsp.setConverter(new StringConverter<Especialidad>() {
-			@Override
-			public String toString(Especialidad e) {
-				return (e == null) ? "" : e.getNombre();
-			}
-
-			@Override
-			public Especialidad fromString(String string) {
-				return null;
-			}
-		});
-
-		// conversor del combobox de personas
-		cbSelectorP.setConverter(new StringConverter<Persona>() {
-			@Override
-			public String toString(Persona p) {
-				return (p == null) ? ""
-						: p.getNombre() + " (" + p.getPerfil() + ")";
-			}
-
-			@Override
-			public Persona fromString(String string) {
-				return null;
-			}
-		});
-		//TODO comprobacion temporal
-		System.out.println("Coordinadores cargados: " + usuariosService.getCoordinadores().size());
-
-		// habilkitar el datepicker SOLO si el checkbox está marcado
-		dateCoor.disableProperty().bind(chbCoor.selectedProperty().not());
-		
-		// columnas del historial
-		colFechaLog.setCellValueFactory(new PropertyValueFactory<>("fechaHora"));
-		colUsuarioLog.setCellValueFactory(new PropertyValueFactory<>("usuario"));
-		colTipoLog.setCellValueFactory(new PropertyValueFactory<>("tipoOperacion"));
-		colResumenLog.setCellValueFactory(new PropertyValueFactory<>("resumen"));
-
-		tablaHistorial.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
-
-
-		// estado inicial
-		ocultarTodo();
+	private void configurarFecha() {
+	    dateCoor.disableProperty().bind(chbCoor.selectedProperty().not());
 	}
 
 	/**
