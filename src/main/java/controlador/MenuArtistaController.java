@@ -98,48 +98,6 @@ public class MenuArtistaController implements Initializable{
 		}
 		
 		@FXML
-<<<<<<< HEAD
-		private void handleVerFicha() {
-		    tablaEspectaculos.setVisible(false);
-
-		    Persona p = usuariosService.getSesion().getUsuActual();
-
-		    if (p instanceof Artista) {
-		        Artista artista = (Artista) p;
-
-		        // datos personales
-		        lblnombreFicha.setText(artista.getNombre());
-		        lblEmailFicha.setText(artista.getEmail());
-		        lblNacionalidadFicha.setText(artista.getNacionalidad());
-
-		        // apodo
-		        if (artista.getApodo() != null && !artista.getApodo().isBlank()) {
-		            lblapodoFicha.setText(artista.getApodo());
-		        } else {
-		            lblapodoFicha.setText("Sin apodo");
-		        }
-
-		        // especialidades
-		        String especs = "";
-		        for (Especialidad e : artista.getEspecialidades()) {
-		            if (!especs.isEmpty()) especs += ", ";
-		            especs += e.getNombre();
-		        }
-		        lblespecialidadesFicha.setText(especs.isEmpty() ? "Sin especialidades" : especs);
-
-		        // trayectoria: id espectaculo, nombre espectaculo, id numero, nombre numero
-		        String nums = "";
-		        for (Numero n : artista.getNumeros()) {
-		            if (!nums.isEmpty()) nums += "\n";
-		            nums += "- Número: "+ n.getNombre() + ",con id "+n.getId() +
-		                    " - Del espectáculo "+n.getEspectaculo().getNombre() + ", con id "+n.getEspectaculo().getId();
-		        }
-		        txtAreaNumeros.setText(nums.isEmpty() ? "No participa en ningún número aún." : nums);
-		    }
-
-		    fichaArtista.setVisible(true);
-		}
-=======
 	    private void handleVerFicha() {
 	        tablaEspectaculos.setVisible(false);
 
@@ -181,7 +139,6 @@ public class MenuArtistaController implements Initializable{
 
 	        fichaArtista.setVisible(true);
 	    }
->>>>>>> branch 'main' of https://github.com/AlbaVena/Tarea3_AD.git
 		
 		@FXML
 		private void handleLogOut(ActionEvent event) {
