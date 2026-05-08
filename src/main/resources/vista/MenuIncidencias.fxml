@@ -3,7 +3,14 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -13,7 +20,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 
 <BorderPane fx:id="panelMenuIncidencias" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <left>
@@ -53,7 +59,7 @@
    <center>
       <StackPane fx:id="stkPaneIncidencias" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox prefHeight="200.0" prefWidth="100.0">
+            <VBox fx:id="panelRegistrarIncidencia" prefHeight="200.0" prefWidth="100.0" visible="false">
                <children>
                   <Label alignment="CENTER" prefHeight="17.0" prefWidth="610.0" text="Registrar incidencia">
                      <font>
@@ -63,28 +69,56 @@
                         <Insets bottom="20.0" />
                      </padding>
                   </Label>
-                  <GridPane>
+                  <GridPane prefHeight="358.0" prefWidth="579.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="48.799993896484374" minHeight="10.0" prefHeight="48.799993896484374" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="67.19999160766602" minHeight="10.0" prefHeight="66.80000610351563" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="76.60001220703124" minHeight="10.0" prefHeight="51.599993896484364" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="132.60001220703123" minHeight="10.0" prefHeight="128.60001220703123" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="56.800024414062506" minHeight="10.0" prefHeight="30.399987792968773" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="25.600012207031227" minHeight="3.9999755859374773" prefHeight="23.999975585937477" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1">
                            <children>
-                              <CheckBox mnemonicParsing="false" text="Técnica" />
-                              <CheckBox mnemonicParsing="false" text="Artística" />
-                              <CheckBox mnemonicParsing="false" text="Organizativa" />
+                              <RadioButton fx:id="rbTecnica" mnemonicParsing="false" text="Técnica">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="tipoIncidencia" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="rbArtistica" mnemonicParsing="false" text="Artística" toggleGroup="$tipoIncidencia" />
+                              <RadioButton fx:id="rbOrganizativa" mnemonicParsing="false" text="Organizativa" toggleGroup="$tipoIncidencia" />
                            </children>
                         </HBox>
-                        <Label text="Tipo de incidencia:" />
+                        <Label text="Tipo de incidencia:">
+                           <GridPane.margin>
+                              <Insets left="40.0" />
+                           </GridPane.margin></Label>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                           <children>
+                              <Label text="Opcional">
+                                 <font>
+                                    <Font name="System Italic" size="10.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="cbEspectaculoIncidencia" prefWidth="150.0" promptText="Espectáculo" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                           <children>
+                              <Label text="Opcional">
+                                 <font>
+                                    <Font name="System Italic" size="10.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="cbNumeroIncidencia" prefWidth="150.0" promptText="Número" />
+                           </children>
+                        </HBox>
+                        <TextArea fx:id="txtDescripcionIncidencia" prefHeight="200.0" prefWidth="200.0" promptText="Descripción de la incidencia..." GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.rowSpan="2" />
                      </children>
                      <VBox.margin>
                         <Insets left="10.0" right="10.0" />
@@ -97,6 +131,59 @@
                      </children>
                   </HBox>
                </children>
+            </VBox>
+            <VBox fx:id="panelConsultarIncidencias" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
+               <children>
+                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="613.0" text="Consultar Incidencias">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <GridPane prefHeight="191.0" prefWidth="579.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="45.59999389648438" minHeight="10.0" prefHeight="45.59999389648438" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="66.40001831054688" minHeight="10.0" prefHeight="49.399981689453135" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="105.60001525878906" minHeight="10.0" prefHeight="48.999999999999986" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="64.59998168945313" minHeight="10.0" prefHeight="53.80000000000001" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                           <children>
+                              <CheckBox fx:id="chbFiltroTecnica" mnemonicParsing="false" text="Técnica" />
+                              <CheckBox fx:id="chbFiltroArtistica" mnemonicParsing="false" text="Artística" />
+                              <CheckBox fx:id="chbFiltroOrganizativa" mnemonicParsing="false" text="Organizativa" />
+                           </children>
+                        </HBox>
+                        <ComboBox fx:id="cbFiltroEstado" prefWidth="150.0" promptText="Estado incidencia" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                        <ComboBox fx:id="cbFiltroEspectaculo" prefWidth="150.0" promptText="Espectáculo" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="cbFiltroNumero" prefWidth="150.0" promptText="Número" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                        <DatePicker fx:id="dpFiltroDesde" promptText="Desde" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                        <DatePicker fx:id="dpFiltroHasta" promptText="Hasta" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <Button fx:id="btnFiltroLimpiar" mnemonicParsing="false" text="Limpiar" />
+                              <Button fx:id="btnFiltroBuscar" mnemonicParsing="false" text="Buscar" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </GridPane>
+                  <TableView fx:id="tablaIncidencias" prefHeight="200.0" prefWidth="200.0">
+                    <columns>
+                        <TableColumn fx:id="colIdIncidencia" prefWidth="75.0" text="ID" />
+                      <TableColumn fx:id="colFechaIncidencia" prefWidth="75.0" text="Fecha" />
+                      <TableColumn fx:id="colTipoIncidencia" prefWidth="75.0" text="Tipo" />
+                        <TableColumn fx:id="colEstadoIncidencia" prefWidth="75.0" text="Estado" />
+                        <TableColumn fx:id="colDescripcionIncidencia" prefWidth="75.0" text="Descripción" />
+                    </columns>
+                  </TableView>
+               </children>
+               <StackPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
+               </StackPane.margin>
             </VBox>
          </children>
       </StackPane>
