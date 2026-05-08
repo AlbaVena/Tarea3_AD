@@ -7,6 +7,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
@@ -21,7 +22,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="panelMenuIncidencias" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="panelMenuIncidencias" fx:controller="controlador.MenuIncidenciasnController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <left>
       <VBox fx:id="vbMenuIncidenciasLateral" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: #85C1E9;" BorderPane.alignment="CENTER">
          <children>
@@ -59,6 +60,62 @@
    <center>
       <StackPane fx:id="stkPaneIncidencias" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
+            <VBox fx:id="panelPrincipalIncidencias" prefHeight="200.0" prefWidth="100.0" spacing="20.0" visible="false">
+               <children>
+                  <Label alignment="CENTER" prefHeight="35.0" prefWidth="633.0" text="Gestión de Incidencias">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblBienvenidaIncidencias" wrapText="true">
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Separator prefWidth="200.0" />
+                  <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="580.0" spacing="10.0">
+                     <children>
+                        <Label prefHeight="17.0" prefWidth="186.0" text="Registrar nueva incidencia" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label text="Registrar nueva incidencia - Comunica un problema técnico, artístico u organizativo" wrapText="true" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="40.0" layoutY="125.0" prefHeight="50.0" prefWidth="580.0" spacing="10.0">
+                     <children>
+                        <Label prefHeight="17.0" prefWidth="139.0" text="Consultar incidencias" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label text="Revisa el historial con filtros" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="195.0" prefHeight="50.0" prefWidth="580.0" spacing="10.0">
+                     <children>
+                        <Label prefHeight="17.0" prefWidth="139.0" text="Resolver incidencia" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label text="Marca una incidencia como resuelta" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Label fx:id="lblNotaRolIncidencias" prefHeight="21.0" prefWidth="488.0" wrapText="true">
+                     <font>
+                        <Font name="System Italic" size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets left="10.0" right="10.0" />
+               </padding>
+            </VBox>
             <VBox fx:id="panelRegistrarIncidencia" prefHeight="200.0" prefWidth="100.0" visible="false">
                <children>
                   <Label alignment="CENTER" prefHeight="17.0" prefWidth="610.0" text="Registrar incidencia">
@@ -132,7 +189,7 @@
                   </HBox>
                </children>
             </VBox>
-            <VBox fx:id="panelConsultarIncidencias" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
+            <VBox fx:id="panelConsultarIncidencias" prefHeight="200.0" prefWidth="100.0" spacing="20.0" visible="false">
                <children>
                   <Label alignment="CENTER" prefHeight="18.0" prefWidth="613.0" text="Consultar Incidencias">
                      <font>
@@ -183,6 +240,34 @@
                </children>
                <StackPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" />
+               </StackPane.margin>
+            </VBox>
+            <VBox fx:id="panelResolverIncidencia" prefHeight="200.0" prefWidth="100.0" spacing="20.0" visible="false">
+               <children>
+                  <Label alignment="CENTER" prefHeight="17.0" prefWidth="621.0" text="Resolver incidencia">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label text="Selecciona la incidencia a resolver (doble click)" />
+                  <TableView fx:id="tablaIncidenciasNoResueltas" prefHeight="150.0" prefWidth="580.0">
+                    <columns>
+                      <TableColumn fx:id="colIdResolver" prefWidth="75.0" text="ID" />
+                      <TableColumn fx:id="colFechaResolver" prefWidth="75.0" text="Fecha" />
+                        <TableColumn fx:id="colTipoResolver" prefWidth="75.0" text="Tipo" />
+                        <TableColumn fx:id="colDescripcionResolver" prefWidth="75.0" text="Descripción" />
+                    </columns>
+                  </TableView>
+                  <TextArea fx:id="txtAccionesResolver" prefHeight="117.0" prefWidth="580.0" promptText="Describe las acciones realizadas..." />
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                     <children>
+                        <Button fx:id="btnCancelarResolucion" mnemonicParsing="false" text="Cancelar" />
+                        <Button fx:id="btnConfirmarResolucion" mnemonicParsing="false" text="Confirmar" />
+                     </children>
+                  </HBox>
+               </children>
+               <StackPane.margin>
+                  <Insets left="10.0" right="10.0" />
                </StackPane.margin>
             </VBox>
          </children>
