@@ -22,6 +22,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.TextArea?>
 
 <BorderPane fx:id="brdPaneCoor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controlador.MenuCoordinadorController">
 	<left>
@@ -65,16 +66,21 @@
 	<center>
 		<StackPane fx:id="stkpaneCoor" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<children>
-				<TableView fx:id="tablaEspectaculos" visible="false">
-					<columns>
-						<TableColumn fx:id="columnNombreE" minWidth="200.0" prefWidth="250.0" text="Nombre" />
-						<TableColumn fx:id="columnFechaIniE" prefWidth="75.0" text="Fecha inicio" />
-						<TableColumn fx:id="columnFechaFinE" prefWidth="75.0" text="Fecha fin" />
-					</columns>
-               <StackPane.margin>
-                  <Insets bottom="20.0" right="10.0" />
-               </StackPane.margin>
-				</TableView>
+				<VBox fx:id="panelEspectaculos" prefHeight="200.0" prefWidth="100.0" spacing="30.0" visible="false">
+               <children>
+      				<TableView fx:id="tablaEspectaculos" prefHeight="217.0" prefWidth="630.0">
+      					<columns>
+      						<TableColumn fx:id="columnNombreE" minWidth="200.0" prefWidth="250.0" text="Nombre" />
+      						<TableColumn fx:id="columnFechaIniE" prefWidth="75.0" text="Fecha inicio" />
+      						<TableColumn fx:id="columnFechaFinE" prefWidth="75.0" text="Fecha fin" />
+      					</columns>
+      				</TableView>
+                  <TextArea fx:id="txtAreaDetalleEspectaculo" prefHeight="231.0" prefWidth="630.0" />
+               </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </VBox>
             <GridPane fx:id="panelFormularioDatos" visible="false">
               <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" maxWidth="210.20001220703125" minWidth="10.0" prefWidth="119.99999237060547" />

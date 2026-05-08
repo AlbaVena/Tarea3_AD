@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 
 import entidades.Artista;
 import entidades.Coordinador;
+import entidades.Especialidad;
 import entidades.Espectaculo;
 import entidades.Numero;
 import entidades.Persona;
@@ -40,6 +41,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
@@ -61,6 +63,8 @@ public class MenuCoordinadorController implements Initializable{
     @FXML private TableColumn<Espectaculo, String> columnNombreE;
     @FXML private TableColumn<Espectaculo, LocalDate> columnFechaIniE;
     @FXML private TableColumn<Espectaculo, LocalDate> columnFechaFinE;
+    @FXML private VBox panelEspectaculos;
+    @FXML private TextArea txtAreaDetalleEspectaculo;
    
     //botones
     @FXML private Button btnVerEspectaculos;
@@ -216,6 +220,7 @@ public class MenuCoordinadorController implements Initializable{
                 Bindings.size(lvNumCreados.getItems()).lessThan(3)
             );
         
+        dobleClickEsp();
         
         //estado inicial
         ocultarTodo();
@@ -231,7 +236,7 @@ public class MenuCoordinadorController implements Initializable{
         panelGestionNumeros.setVisible(false);
         panelResumen.setVisible(false);
         panelBuscadorE.setVisible(false);
-        
+        panelEspectaculos.setVisible(false);        
    
     }
     
@@ -241,7 +246,7 @@ public class MenuCoordinadorController implements Initializable{
 		List<Espectaculo> lista = espectaculoService.getEspectaculos();
 		tablaEspectaculos.getItems().setAll(lista);
 
-		tablaEspectaculos.setVisible(true);
+		panelEspectaculos.setVisible(true);
 	}
     
     @FXML
@@ -637,6 +642,55 @@ public class MenuCoordinadorController implements Initializable{
          }
     	
     }
+    
+    private void dobleClickEsp() {
+		tablaEspectaculos.setOnMouseClicked(event -> {
+		    if (event.getClickCount() == 2) {
+		        Espectaculo seleccionado = tablaEspectaculos.getSelectionModel().getSelectedItem();
+		        if (seleccionado != null) {
+		            mostrarDetalleCompleto(seleccionado);
+		        }
+		    }
+		});
+	}
+	
+	@FXML
+	private void mostrarDetalleCompleto(Espectaculo e) {
+	    String detalle = "*** ESPECTÁCULO ***\n" +
+	                     "Id: " + e.getId() + "\n" +
+	                     "Nombre: " + e.getNombre() + "\n" +
+	                     "Inicio: " + e.getFechaini() + "\n" +
+	                     "Fin: " + e.getFechafin() + "\n\n";
+
+	    if (e.getEncargadoCoor() != null) {
+	        detalle += "*** COORDINADOR ***\n" +
+	                   "Nombre: " + e.getEncargadoCoor().getNombre() + "\n" +
+	                   "Email: " + e.getEncargadoCoor().getEmail() + "\n" +
+	                   "Senior: " + (e.getEncargadoCoor().isSenior() ? "Sí" : "No") + "\n\n";
+	    }
+
+	    detalle += "*** NÚMEROS Y ARTISTAS ***\n";
+	    for (Numero n : e.getNumeros()) {
+	        detalle += "- Id:" + n.getId() + " '" + n.getNombre() +
+	                   "' | Duración: " + n.getDuracion() + " min\n";
+	        detalle += "  Artistas:\n";
+	        for (Artista a : n.getArtistas()) {
+	            String especialidades = "";
+	            for (Especialidad esp : a.getEspecialidades()) {
+	                if (!especialidades.isEmpty()) especialidades += ", ";
+	                especialidades += esp.getNombre();
+	            }
+	            detalle += "    · " + a.getNombre() +
+	                       " (" + a.getNacionalidad() + ")" +
+	                       " | Especialidades: " + especialidades;
+	            if (a.getApodo() != null && !a.getApodo().isBlank()) {
+	                detalle += " | Apodo: " + a.getApodo();
+	            }
+	            detalle += "\n";
+	        }
+	    }
+	    txtAreaDetalleEspectaculo.setText(detalle);
+	}
     
    
     

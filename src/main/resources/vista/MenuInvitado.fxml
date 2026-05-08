@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -12,7 +13,7 @@
 	<left>
 		<VBox fx:id="vboxMenu" prefHeight="364.0" prefWidth="160.0" spacing="20.0" style="-fx-background-color: #85C1E9;" BorderPane.alignment="CENTER">
 			<children>
-				<Button fx:id="btnVerEspectaculos" alignment="CENTER" mnemonicParsing="false" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Ver espectáculos">
+				<Button fx:id="btnVerEspectaculos" onAction="#handleVerEspectaculos" alignment="CENTER" mnemonicParsing="false" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Ver espectáculos">
 					<opaqueInsets>
 						<Insets />
 					</opaqueInsets>
@@ -36,16 +37,21 @@
 	<center>
 		<StackPane fx:id="stkpaneInvitado" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<children>
-				<TableView fx:id="tablaEspectaculos" visible="false">
-					<columns>
-						<TableColumn fx:id="columnNombreE" minWidth="200.0" prefWidth="250.0" text="Nombre" />
-						<TableColumn fx:id="columnFechaIniE" prefWidth="75.0" text="Fecha inicio" />
-						<TableColumn fx:id="columnFechaFinE" prefWidth="75.0" text="Fecha fin" />
-					</columns>
-               <StackPane.margin>
-                  <Insets bottom="20.0" right="10.0" />
-               </StackPane.margin>
-				</TableView>
+            <VBox fx:id="panelEspectaculos" prefHeight="200.0" prefWidth="100.0" spacing="30.0" visible="false">
+               <children>
+      				<TableView fx:id="tablaEspectaculos" prefHeight="217.0" prefWidth="630.0">
+      					<columns>
+      						<TableColumn fx:id="columnNombreE" minWidth="200.0" prefWidth="250.0" text="Nombre" />
+      						<TableColumn fx:id="columnFechaIniE" prefWidth="75.0" text="Fecha inicio" />
+      						<TableColumn fx:id="columnFechaFinE" prefWidth="75.0" text="Fecha fin" />
+      					</columns>
+      				</TableView>
+                  <TextArea fx:id="txtAreaDetalleEspectaculo" prefHeight="231.0" prefWidth="630.0" />
+               </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </VBox>
 			</children>
 		</StackPane>
 	</center>

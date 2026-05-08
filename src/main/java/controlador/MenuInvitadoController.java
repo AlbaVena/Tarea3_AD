@@ -22,7 +22,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import servicios.IEspectaculosService;
 
@@ -39,6 +41,12 @@ public class MenuInvitadoController implements Initializable {
 	private TableColumn<Espectaculo, LocalDate> columnFechaFinE;
 	@FXML
 	private Button btnVerEspectaculos;
+	
+	@FXML
+	private VBox panelEspectaculos;
+	
+	@FXML
+	private TextArea txtAreaDetalleEspectaculo;
 
 	@Autowired
 	private IEspectaculosService espectaculoService;
@@ -62,16 +70,24 @@ public class MenuInvitadoController implements Initializable {
 
 		// esto por si no hay datos (mensaje error personalizado)
 		tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles en este momento."));
-
-		btnVerEspectaculos.setOnAction(event -> handleVerEspectaculos());
+		
+		tablaEspectaculos.setOnMouseClicked(event -> {
+		    if (event.getClickCount() == 2) {
+		        Espectaculo seleccionado = tablaEspectaculos.getSelectionModel().getSelectedItem();
+		        if (seleccionado != null) {
+		            mostrarDetalleBasico(seleccionado);
+		        }
+		    }
+		});
 	}
 
+	@FXML
 	private void handleVerEspectaculos() {
 		// Cargamos los datos de la BD
 		List<Espectaculo> lista = espectaculoService.getEspectaculos();
 		tablaEspectaculos.getItems().setAll(lista);
 
-		tablaEspectaculos.setVisible(true);
+		panelEspectaculos.setVisible(true);
 	}
 
 	// Método para cambiar la escena completa
@@ -96,5 +112,13 @@ public class MenuInvitadoController implements Initializable {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private void mostrarDetalleBasico(Espectaculo e) {
+	    String detalle = "Id: " + e.getId() + "\n" +
+	                     "Nombre: " + e.getNombre() + "\n" +
+	                     "Inicio: " + e.getFechaini() + "\n" +
+	                     "Fin: " + e.getFechafin();
+	    txtAreaDetalleEspectaculo.setText(detalle);
 	}
 }
