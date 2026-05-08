@@ -5,7 +5,6 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -27,6 +26,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -52,7 +52,10 @@ public class MenuArtistaController implements Initializable{
 	    @FXML private Label lblnombreFicha;
 	    @FXML private Label lblapodoFicha;
 	    @FXML private Label lblespecialidadesFicha;
-	    @FXML private Label lblnumerosFicha;
+	    @FXML private Label lblEmailFicha;
+	    @FXML private Label lblNacionalidadFicha;
+	    
+	    @FXML private TextArea txtAreaNumeros;
 	    
 	    @FXML private Button btnVerEspectaculos;
 	    @FXML private Button btnVerFicha;
@@ -89,31 +92,46 @@ public class MenuArtistaController implements Initializable{
 		}
 		
 		@FXML
-	    private void handleVerFicha() {
-	        tablaEspectaculos.setVisible(false);
-	        
-	        // Obtenemos el artista logueado (necesitarás un método en tu servicio que lo devuelva)
-	        Persona p = usuariosService.getSesion().getUsuActual();
-	        
-	        if (p instanceof Artista artista) {
-	            lblnombreFicha.setText(artista.getNombre());
-	            lblapodoFicha.setText(artista.getApodo());
-	            
-	            // Convertimos las listas a texto bonito para los labels
-	            String especs = artista.getEspecialidades().stream()
-	                                   .map(Especialidad::getNombre)
-	                                   .collect(Collectors.joining(", "));
-	            lblespecialidadesFicha.setText(especs);
-	            
-	            String nums = artista.getNumeros().stream()
-	                                 .map(Numero::getNombre)
-	                                 .collect(Collectors.joining(", "));
-	            lblnumerosFicha.setText(nums);
-	        }
-	        
-	        fichaArtista.setVisible(true);
-	        
-	    }
+		private void handleVerFicha() {
+		    tablaEspectaculos.setVisible(false);
+
+		    Persona p = usuariosService.getSesion().getUsuActual();
+
+		    if (p instanceof Artista) {
+		        Artista artista = (Artista) p;
+
+		        // datos personales
+		        lblnombreFicha.setText(artista.getNombre());
+		        lblEmailFicha.setText(artista.getEmail());
+		        lblNacionalidadFicha.setText(artista.getNacionalidad());
+
+		        // apodo
+		        if (artista.getApodo() != null && !artista.getApodo().isBlank()) {
+		            lblapodoFicha.setText(artista.getApodo());
+		        } else {
+		            lblapodoFicha.setText("Sin apodo");
+		        }
+
+		        // especialidades
+		        String especs = "";
+		        for (Especialidad e : artista.getEspecialidades()) {
+		            if (!especs.isEmpty()) especs += ", ";
+		            especs += e.getNombre();
+		        }
+		        lblespecialidadesFicha.setText(especs.isEmpty() ? "Sin especialidades" : especs);
+
+		        // trayectoria: id espectaculo, nombre espectaculo, id numero, nombre numero
+		        String nums = "";
+		        for (Numero n : artista.getNumeros()) {
+		            if (!nums.isEmpty()) nums += "\n";
+		            nums += "- Número: "+ n.getNombre() + ",con id "+n.getId() +
+		                    " - Del espectáculo "+n.getEspectaculo().getNombre() + ", con id "+n.getEspectaculo().getId();
+		        }
+		        txtAreaNumeros.setText(nums.isEmpty() ? "No participa en ningún número aún." : nums);
+		    }
+
+		    fichaArtista.setVisible(true);
+		}
 		
 		@FXML
 		private void handleLogOut(ActionEvent event) {

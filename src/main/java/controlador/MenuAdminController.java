@@ -857,6 +857,8 @@ private void finalizarCoordinador() {
 	    dpFechafin.setValue(null);
 	    cbCoordinadores.setValue(null);
 	    btnAccion.setText("Guardar");
+	 // recargar coordinadores por si se han añadido nuevos
+	    cbCoordinadores.setItems(FXCollections.observableArrayList(usuariosService.getCoordinadores()));
 	    panelFormularioDatos.setVisible(true);
 	}
 
@@ -882,6 +884,8 @@ private void finalizarCoordinador() {
 
 			btnAccion.setText("Siguiente");
 			ocultarTodo();
+			// recargar coordinadores por si se han añadido nuevos
+			cbCoordinadores.setItems(FXCollections.observableArrayList(usuariosService.getCoordinadores()));
 			panelFormularioDatos.setVisible(true);
 		}
 	}
@@ -1203,6 +1207,9 @@ private void finalizarCoordinador() {
 		espectaculoEnEdicion.setFechafin(dpFechafin.getValue());
 
 		ocultarTodo();
+		// recargar artistas por si se han añadido nuevos
+		cbartistasN.setItems(FXCollections.observableArrayList(usuariosService.getArtistas()));
+		
 		panelGestionNumeros.setVisible(true);
 	}
 

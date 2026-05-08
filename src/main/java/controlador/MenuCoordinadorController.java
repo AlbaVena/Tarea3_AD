@@ -518,6 +518,8 @@ public class MenuCoordinadorController implements Initializable{
         espectaculoEnEdicion.setFechafin(dpFechafin.getValue());
 
         ocultarTodo();
+     // recargar artistas por si se han añadido nuevos
+        cbartistasN.setItems(FXCollections.observableArrayList(usuariosService.getArtistas()));
         panelGestionNumeros.setVisible(true);
     }
     
