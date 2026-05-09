@@ -24,7 +24,6 @@ import entidades.LogOperacion;
 import entidades.Numero;
 import entidades.Perfil;
 import entidades.Persona;
-import entidades.TipoOperacion;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -50,6 +49,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Alert.AlertType;
@@ -293,6 +293,11 @@ public class MenuAdminController implements Initializable {
 	private TableColumn<LogOperacion, String> colTipoLog;
 	@FXML 
 	private TableColumn<LogOperacion, String> colResumenLog;
+	
+	@FXML
+	private VBox panelEspectaculos;
+	@FXML 
+	private TextArea txtAreaDetalleEspectaculo;
 
 	@Autowired
 	private IEspectaculosService espectaculoService;
@@ -395,6 +400,15 @@ public class MenuAdminController implements Initializable {
 	    });
 	    tablaEspectaculos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
 	    tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles."));
+	    
+	    tablaEspectaculos.setOnMouseClicked(event -> {
+	        if (event.getClickCount() == 2) {
+	            Espectaculo seleccionado = tablaEspectaculos.getSelectionModel().getSelectedItem();
+	            if (seleccionado != null) {
+	                mostrarDetalleCompleto(seleccionado);
+	            }
+	        }
+	    });
 	}
 
 	private void configurarTablaArtistas() {
@@ -522,6 +536,8 @@ public class MenuAdminController implements Initializable {
 		
 		//de historial
 		panelHistorial.setVisible(false);
+		
+		panelEspectaculos.setVisible(false);
 
 	}
 
@@ -820,8 +836,8 @@ private void finalizarCoordinador() {
 		ocultarTodo();
 		List<Espectaculo> lista = espectaculoService.getEspectaculos();
 		tablaEspectaculos.getItems().setAll(lista);
-
 		tablaEspectaculos.setVisible(true);
+		panelEspectaculos.setVisible(true);
 	}
 
 	@FXML
@@ -1400,7 +1416,7 @@ private void finalizarCoordinador() {
 	        
 	        // pasamos la pantalla de origen para el boton atras
 	        MenuIncidenciasController controller = loader.getController();
-	        controller.setPantallaOrigen("Artista"); // o "Coordinador" o "Admin"
+	        controller.setPantallaOrigen("Admin"); 
 	        controller.configurarBienvenida();
 	        
 	        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -1409,6 +1425,44 @@ private void finalizarCoordinador() {
 	    } catch (IOException e) {
 	        System.err.println("Error al abrir incidencias: " + e.getMessage());
 	    }
+	}
+	
+	@FXML
+	private void mostrarDetalleCompleto(Espectaculo e) {
+	    String detalle = "*** ESPECTÁCULO ***\n" +
+	                     "Id: " + e.getId() + "\n" +
+	                     "Nombre: " + e.getNombre() + "\n" +
+	                     "Inicio: " + Validador.formatearFecha(e.getFechaini()) + "\n" +
+	                     "Fin: " + Validador.formatearFecha(e.getFechafin()) + "\n\n";
+
+	    if (e.getEncargadoCoor() != null) {
+	        detalle += "*** COORDINADOR ***\n" +
+	                   "Nombre: " + e.getEncargadoCoor().getNombre() + "\n" +
+	                   "Email: " + e.getEncargadoCoor().getEmail() + "\n" +
+	                   "Senior: " + (e.getEncargadoCoor().isSenior() ? "Sí" : "No") + "\n\n";
+	    }
+
+	    detalle += "*** NÚMEROS Y ARTISTAS ***\n";
+	    for (Numero n : e.getNumeros()) {
+	        detalle += "- Id:" + n.getId() + " '" + n.getNombre() +
+	                   "' | Duración: " + n.getDuracion() + " min\n";
+	        detalle += "  Artistas:\n";
+	        for (Artista a : n.getArtistas()) {
+	            String especialidades = "";
+	            for (Especialidad esp : a.getEspecialidades()) {
+	                if (!especialidades.isEmpty()) especialidades += ", ";
+	                especialidades += esp.getNombre();
+	            }
+	            detalle += "    · " + a.getNombre() +
+	                       " (" + a.getNacionalidad() + ")" +
+	                       " | Especialidades: " + especialidades;
+	            if (a.getApodo() != null && !a.getApodo().isBlank()) {
+	                detalle += " | Apodo: " + a.getApodo();
+	            }
+	            detalle += "\n";
+	        }
+	    }
+	    txtAreaDetalleEspectaculo.setText(detalle);
 	}
 
 }

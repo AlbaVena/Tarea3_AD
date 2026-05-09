@@ -265,7 +265,7 @@ public class MenuCoordinadorController implements Initializable{
 		ocultarTodo();
 		List<Espectaculo> lista = espectaculoService.getEspectaculos();
 		tablaEspectaculos.getItems().setAll(lista);
-
+		tablaEspectaculos.setVisible(true);
 		panelEspectaculos.setVisible(true);
 	}
     
@@ -721,7 +721,7 @@ public class MenuCoordinadorController implements Initializable{
 	        
 	        // pasamos la pantalla de origen para el boton atras
 	        MenuIncidenciasController controller = loader.getController();
-	        controller.setPantallaOrigen("Artista"); // o "Coordinador" o "Admin"
+	        controller.setPantallaOrigen("Coordinador");
 	        controller.configurarBienvenida();
 	        
 	        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -732,6 +732,7 @@ public class MenuCoordinadorController implements Initializable{
 	    }
 	}
    
+	
     
     
     
