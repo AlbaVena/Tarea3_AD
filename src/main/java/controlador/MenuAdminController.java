@@ -47,6 +47,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -376,7 +377,22 @@ public class MenuAdminController implements Initializable {
 	private void configurarTablaEspectaculos() {
 	    columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
 	    columnFechaIniE.setCellValueFactory(new PropertyValueFactory<>("fechaini"));
+	    columnFechaIniE.setCellFactory(col -> new TableCell<Espectaculo, LocalDate>() {
+	        @Override
+	        protected void updateItem(LocalDate item, boolean empty) {
+	            super.updateItem(item, empty);
+	            setText(empty || item == null ? "" : Validador.formatearFecha(item));
+	        }
+	    });
+	    
 	    columnFechaFinE.setCellValueFactory(new PropertyValueFactory<>("fechafin"));
+	    columnFechaFinE.setCellFactory(col -> new TableCell<Espectaculo, LocalDate>() {
+	        @Override
+	        protected void updateItem(LocalDate item, boolean empty) {
+	            super.updateItem(item, empty);
+	            setText(empty || item == null ? "" : Validador.formatearFecha(item));
+	        }
+	    });
 	    tablaEspectaculos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
 	    tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles."));
 	}

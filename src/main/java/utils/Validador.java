@@ -1,6 +1,7 @@
 package utils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
@@ -36,6 +37,18 @@ public class Validador {
 	 */
 	public static boolean esCadenaValida(String cadena, String regex) {
 		return cadena != null && cadena.matches(regex);
+	}
+	
+	// formatea LocalDate a dd/MM/yyyy
+	public static String formatearFecha(LocalDate fecha) {
+	    if (fecha == null) return "";
+	    return fecha.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+	}
+
+	// formatea LocalDateTime a dd/MM/yyyy HH:mm:ss
+	public static String formatearFechaHora(LocalDateTime fechaHora) {
+	    if (fechaHora == null) return "";
+	    return fechaHora.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
 	}
 
 }

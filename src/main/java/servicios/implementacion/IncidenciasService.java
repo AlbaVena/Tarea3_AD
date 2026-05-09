@@ -129,9 +129,6 @@ public class IncidenciasService implements IIncidenciasService {
 				jpql += " AND i.tipo = :tipo";
 			}
 			
-			if (resuelta != null) {
-				jpql += " AND i.isResuelta = :resuelta";
-			}
 			if ( idEspectaculo != null) {
 				jpql += " AND i.idEspectaculo = :idEspectaculo";
 			}
@@ -152,9 +149,6 @@ public class IncidenciasService implements IIncidenciasService {
 			if ( tipo != null) {
 				query.setParameter("tipo", tipo);
 			}
-			if (resuelta != null) {
-				query.setParameter("resuelta", resuelta);
-			}
 			if (idEspectaculo != null) {
 				query.setParameter("idEspectaculo", idEspectaculo);
 			}
@@ -168,11 +162,39 @@ public class IncidenciasService implements IIncidenciasService {
 				query.setParameter("hasta", hasta);
 			}
 			
-			return query.getResultList();
+			List<Incidencia> resultado = query.getResultList();
+
+			// filtrar por resuelta en memoria porque ObjectDB no lo reconoce en JPQL
+			if (resuelta != null) {
+			    final Boolean filtro = resuelta;
+			    resultado = resultado.stream()
+			        .filter(i -> filtro.equals(i.isResuelta()))
+			        .collect(java.util.stream.Collectors.toList());
+			}
+
+			return resultado;
+			
 			
 		} finally {
 			em.close();
 		}
+		
+	}
+
+	@Override
+	public ResolucionIncidencia getResolucionIncidencia(Long idIncidencia) {
+		
+		EntityManager em = getEntityManager();
+	    try {
+	        TypedQuery<ResolucionIncidencia> query = em.createQuery(
+	            "SELECT r FROM ResolucionIncidencia r WHERE r.incidencia.id = :idIncidencia",
+	            ResolucionIncidencia.class);
+	        query.setParameter("idIncidencia", idIncidencia);
+	        List<ResolucionIncidencia> resultados = query.getResultList();
+	        return resultados.isEmpty() ? null : resultados.get(0);
+	    } finally {
+	        em.close();
+	    }
 		
 	}
 	

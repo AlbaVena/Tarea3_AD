@@ -20,6 +20,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -27,6 +28,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import servicios.IEspectaculosService;
+import utils.Validador;
 
 @Controller
 public class MenuInvitadoController implements Initializable {
@@ -60,16 +62,7 @@ public class MenuInvitadoController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-		columnFechaIniE.setCellValueFactory(new PropertyValueFactory<>("fechaini"));
-		columnFechaFinE.setCellValueFactory(new PropertyValueFactory<>("fechafin"));
-
-		// esto para ajustar automaticamente el tamaño d elas columnas a lo ancho (ESTA
-		// ajusta a la ultima)
-		tablaEspectaculos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
-
-		// esto por si no hay datos (mensaje error personalizado)
-		tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles en este momento."));
+		configurarTablaEspectaculos();
 		
 		tablaEspectaculos.setOnMouseClicked(event -> {
 		    if (event.getClickCount() == 2) {
@@ -79,6 +72,29 @@ public class MenuInvitadoController implements Initializable {
 		        }
 		    }
 		});
+	}
+	
+	private void configurarTablaEspectaculos() {
+	    columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+	    columnFechaIniE.setCellValueFactory(new PropertyValueFactory<>("fechaini"));
+	    columnFechaIniE.setCellFactory(col -> new TableCell<Espectaculo, LocalDate>() {
+	        @Override
+	        protected void updateItem(LocalDate item, boolean empty) {
+	            super.updateItem(item, empty);
+	            setText(empty || item == null ? "" : Validador.formatearFecha(item));
+	        }
+	    });
+	    
+	    columnFechaFinE.setCellValueFactory(new PropertyValueFactory<>("fechafin"));
+	    columnFechaFinE.setCellFactory(col -> new TableCell<Espectaculo, LocalDate>() {
+	        @Override
+	        protected void updateItem(LocalDate item, boolean empty) {
+	            super.updateItem(item, empty);
+	            setText(empty || item == null ? "" : Validador.formatearFecha(item));
+	        }
+	    });
+	    tablaEspectaculos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+	    tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles."));
 	}
 
 	@FXML

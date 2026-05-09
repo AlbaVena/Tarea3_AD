@@ -39,6 +39,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -165,13 +166,8 @@ public class MenuCoordinadorController implements Initializable{
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-    	//configuracion de la tabla como en Invitadp
-		columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-	    columnFechaIniE.setCellValueFactory(new PropertyValueFactory<>("fechaini"));
-	    columnFechaFinE.setCellValueFactory(new PropertyValueFactory<>("fechafin"));
 
-	    tablaEspectaculos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
-	    tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles en este momento."));
+    	configurarTablaEspectaculos();
 
 	    //cargar el spinner de duracion
 	    SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 15.5, 5.0, 0.5);
@@ -226,6 +222,29 @@ public class MenuCoordinadorController implements Initializable{
         //estado inicial
         ocultarTodo();
     }
+    
+    private void configurarTablaEspectaculos() {
+	    columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+	    columnFechaIniE.setCellValueFactory(new PropertyValueFactory<>("fechaini"));
+	    columnFechaIniE.setCellFactory(col -> new TableCell<Espectaculo, LocalDate>() {
+	        @Override
+	        protected void updateItem(LocalDate item, boolean empty) {
+	            super.updateItem(item, empty);
+	            setText(empty || item == null ? "" : Validador.formatearFecha(item));
+	        }
+	    });
+	    
+	    columnFechaFinE.setCellValueFactory(new PropertyValueFactory<>("fechafin"));
+	    columnFechaFinE.setCellFactory(col -> new TableCell<Espectaculo, LocalDate>() {
+	        @Override
+	        protected void updateItem(LocalDate item, boolean empty) {
+	            super.updateItem(item, empty);
+	            setText(empty || item == null ? "" : Validador.formatearFecha(item));
+	        }
+	    });
+	    tablaEspectaculos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+	    tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles."));
+	}
     
     /**
      * para ocultar todos los paneles a la vez

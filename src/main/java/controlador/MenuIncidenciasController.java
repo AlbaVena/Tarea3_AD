@@ -16,6 +16,7 @@ import entidades.Numero;
 import entidades.Perfil;
 import entidades.Persona;
 import entidades.objectdb.Incidencia;
+import entidades.objectdb.ResolucionIncidencia;
 import entidades.objectdb.TipoIncidencia;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -25,12 +26,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -41,6 +44,7 @@ import javafx.stage.Stage;
 import servicios.IEspectaculosService;
 import servicios.IIncidenciasService;
 import servicios.IUsuariosService;
+import utils.Validador;
 
 @Controller
 public class MenuIncidenciasController implements Initializable {
@@ -117,6 +121,8 @@ public class MenuIncidenciasController implements Initializable {
 
     // pantalla de origen para el boton atras
     private String pantallaOrigen;
+    
+
 
 	
 	
@@ -136,6 +142,13 @@ public class MenuIncidenciasController implements Initializable {
 	private void configurarTablas() {
 		colIdIncidencia.setCellValueFactory(new PropertyValueFactory<>("id"));
 		colFechaIncidencia.setCellValueFactory(new PropertyValueFactory<>("fechaHora"));
+		colFechaIncidencia.setCellFactory(col -> new TableCell<Incidencia, LocalDateTime>(){
+				@Override
+				protected void updateItem(LocalDateTime item, boolean empty) {
+			super.updateItem(item, empty);
+			setText(empty || item == null ? "" : Validador.formatearFechaHora(item));
+		}
+		});
         colTipoIncidencia.setCellValueFactory(new PropertyValueFactory<>("tipo"));
         colDescripcionIncidencia.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
         colEstadoIncidencia.setCellValueFactory(cellData ->
@@ -147,21 +160,39 @@ public class MenuIncidenciasController implements Initializable {
         // tabla resolver
         colIdResolver.setCellValueFactory(new PropertyValueFactory<>("id"));
         colFechaResolver.setCellValueFactory(new PropertyValueFactory<>("fechaHora"));
+
+        colFechaResolver.setCellFactory(col -> new TableCell<Incidencia, LocalDateTime>() {
+            @Override
+            protected void updateItem(LocalDateTime item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : Validador.formatearFechaHora(item));
+            }
+        });
+        
         colTipoResolver.setCellValueFactory(new PropertyValueFactory<>("tipo"));
         colDescripcionResolver.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
         tablaIncidenciasNoResueltas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
         
-        //doble click para ir a resolver
-        tablaIncidencias.setOnMouseClicked(event ->{
-        	if (event.getClickCount() == 2) {
-        		Incidencia seleccionada = tablaIncidencias.getSelectionModel().getSelectedItem();
-        		if (seleccionada != null && !seleccionada.isResuelta()) {
-        			llegadoDesdeConsultar = true;
-        			incidenciaAResolver = seleccionada;
-        			mostrarPanelResolver();
-        		}
-        	}
+        //doble click para ir a resolver o mostrar contenido(excepto si es artista
+        tablaIncidencias.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                Incidencia seleccionada = tablaIncidencias.getSelectionModel().getSelectedItem();
+                if (seleccionada != null) {
+                    if (seleccionada.isResuelta()) {
+                        mostrarDetalleIncidencia(seleccionada);
+                    } else {
+                        // solo coordinador y admin pueden resolver
+                        Perfil perfil = usuariosService.getSesion().getUsuActual().getPerfil();
+                        if (perfil == Perfil.COORDINACION || perfil == Perfil.ADMIN) {
+                            llegadoDesdeConsultar = true;
+                            incidenciaAResolver = seleccionada;
+                            mostrarPanelResolver();
+                        }
+                        // si es artista, no hace nada
+                    }
+                }
+            }
         });
         
         //doble click desde resolver para cargar incidencia
@@ -311,6 +342,12 @@ public class MenuIncidenciasController implements Initializable {
 		}
 		
 		incidenciasService.registrarIncidencia(nueva);
+		
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.setTitle("Éxito");
+		alert.setHeaderText(null);
+		alert.setContentText("Incidencia registrada correctamente.");
+		alert.showAndWait();
 		
 		limpiarIncidencia();
 		ocultarTodo();
@@ -480,7 +517,9 @@ public class MenuIncidenciasController implements Initializable {
 	}
 	
 	public void configurarBienvenida() {
+		System.out.println("configurarBienvenida llamado");
 		Persona p = usuariosService.getSesion().getUsuActual();
+		System.out.println("perfil: " + (p != null ? p.getPerfil() : "null"));
 		
 		if (p != null) {
 			lblBienvenidaIncidencias.setText(p.getNombre()+", bienvenido/a al menú de incidencias.");
@@ -491,6 +530,36 @@ public class MenuIncidenciasController implements Initializable {
 				lblNotaRolIncidencias.setText("Como Artista, puedes registrar y consultar incidencias, pero no resolverlas.");
 			}
 		}
+	}
+	
+	private void mostrarDetalleIncidencia(Incidencia i) {
+	    String detalle = "Id: " + i.getId() + "\n" +
+	                     "Fecha: " + Validador.formatearFechaHora(i.getFechaHora()) + "\n" +
+	                     "Tipo: " + i.getTipo() + "\n" +
+	                     "Descripción: " + i.getDescripcion() + "\n" +
+	                     "Estado: Resuelta";
+	    
+	    ResolucionIncidencia resolucion = incidenciasService.getResolucionIncidencia(i.getId());
+	    
+	    if (resolucion != null) {
+	        detalle += "\n=== RESOLUCIÓN ===\n" +
+	        		"Fecha resolución: " + Validador.formatearFechaHora(resolucion.getFechaHoraResolucion()) + "\n" +
+	                   "Acciones realizadas: " + resolucion.getAccionesRealizadas();
+	    }
+
+	    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	    alert.setTitle("Detalle de incidencia");
+	    alert.setHeaderText("Incidencia Nº" + i.getId());
+	    
+	    // TextArea para que no se corte el texto
+	    TextArea textArea = new TextArea(detalle);
+	    textArea.setEditable(false);
+	    textArea.setWrapText(true);
+	    textArea.setPrefSize(400, 200);
+
+	    alert.getDialogPane().setContent(textArea);
+	    alert.showAndWait();
+	    
 	}
 	
 	
