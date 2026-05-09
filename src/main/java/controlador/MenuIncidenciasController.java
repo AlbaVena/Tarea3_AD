@@ -1,5 +1,7 @@
 package controlador;
 
+
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,11 +13,18 @@ import org.springframework.stereotype.Controller;
 
 import entidades.Espectaculo;
 import entidades.Numero;
+import entidades.Perfil;
+import entidades.Persona;
 import entidades.objectdb.Incidencia;
 import entidades.objectdb.TipoIncidencia;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -28,6 +37,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import servicios.IEspectaculosService;
 import servicios.IIncidenciasService;
 import servicios.IUsuariosService;
@@ -115,7 +125,11 @@ public class MenuIncidenciasController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
+	
+		configurarTablas();
+		configurarCombos();
+		ocultarTodo();
+		panelPrincipalIncidencias.setVisible(true);
 		
 	}
 	
@@ -316,8 +330,168 @@ public class MenuIncidenciasController implements Initializable {
         cbNumeroIncidencia.getItems().clear();
 	}
 	
+	@FXML
+	private void buscarIncidencia() {
+		TipoIncidencia tipo = null;
+		
+		int marcados = (chbFiltroTecnica.isSelected() ? 1 : 0) + (chbFiltroArtistica.isSelected() ? 1 :0)+ (chbFiltroOrganizativa.isSelected() ? 1 : 0);
+		
+		if (marcados == 1) {
+			if (chbFiltroTecnica.isSelected()) {
+				tipo = TipoIncidencia.TECNICA;
+			} else if (chbFiltroArtistica.isSelected()) {
+				tipo = TipoIncidencia.ARTISTICA;
+			} else {
+				tipo = TipoIncidencia.ORGANIZATIVA;
+			}
+		}
+		
+		Boolean resuelta = null;
+		
+		if (cbFiltroEstado.getValue() != null) {
+			if (cbFiltroEstado.getValue().equals("Resueltas")) {
+				resuelta = true;
+			} else if (cbFiltroEstado.getValue().equals("No resueltas")) {
+				resuelta = false;
+			}
+		}
+		
+		Long idEsp = cbFiltroEspectaculo.getValue() != null ? cbFiltroEspectaculo.getValue().getId() : null;
+		
+		Long idNum = cbFiltroNumero.getValue() != null ? cbFiltroNumero.getValue().getId() : null;
+		
+		LocalDateTime desde = dpFiltroDesde.getValue() != null ? dpFiltroDesde.getValue().atStartOfDay() : null;
+		
+		LocalDateTime hasta  = dpFiltroHasta.getValue() != null ? dpFiltroHasta.getValue().atTime(23,59,59) : null;
+		
+		
+		List <Incidencia> encontradas = incidenciasService.consultarIncidencias(tipo, resuelta, idEsp, idNum, desde, hasta);
+		
+		tablaIncidencias.setItems(FXCollections.observableArrayList(encontradas));
+		
+		
+	}
+	
+	@FXML
+	private void limpiarFiltros() {
+		chbFiltroTecnica.setSelected(false);
+        chbFiltroArtistica.setSelected(false);
+        chbFiltroOrganizativa.setSelected(false);
+        cbFiltroEstado.setValue(null);
+        cbFiltroEspectaculo.setValue(null);
+        cbFiltroNumero.getItems().clear();
+        dpFiltroDesde.setValue(null);
+        dpFiltroHasta.setValue(null);
+        tablaIncidencias.getItems().clear();
+	}
+	
+	@FXML
+	private void confirmarResolucion() {
+		
+		if (incidenciaAResolver == null) {
+			return;
+		}
+		
+		if (txtAccionesResolver.getText().isBlank()){
+			txtAccionesResolver.setStyle("-fx-border-color: red;");
+			return;
+		}
+		
+		
+		
+		incidenciasService.resolverIncidencia(incidenciaAResolver.getId(), txtAccionesResolver.getText(), usuariosService.getSesion().getUsuActual().getId());
+		
+		txtAccionesResolver.clear();
+		txtAccionesResolver.setStyle("");
+		incidenciaAResolver = null;
+		
+		//volver segun de donde vengamos
+		if (llegadoDesdeConsultar) {
+			handleConsultar();
+		} else {
+			ocultarTodo();
+			panelPrincipalIncidencias.setVisible(true);
+		}
+		
+		
+	}
+	
+	@FXML
+	private void cancelarResolucion() {
+		
+		txtAccionesResolver.clear();
+		txtAccionesResolver.setStyle("");
+		incidenciaAResolver = null;
+		
+		//volver segun de donde vengamos
+				if (llegadoDesdeConsultar) {
+					handleConsultar();
+				} else {
+					ocultarTodo();
+					panelPrincipalIncidencias.setVisible(true);
+				}
+	}
 	
 	
+	public void setPantallaOrigen(String pantalla) {
+		this.pantallaOrigen = pantalla;
+	}
+	
+	
+	@FXML
+	private void atras(ActionEvent event) {
+		try {
+			String fxml = "/vista/Menu" + pantallaOrigen + ".fxml";
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
+			loader.setControllerFactory(context::getBean);
+			Parent root = loader.load();
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.setScene(new Scene(root));
+			stage.show();
+		} catch (IOException e) {
+			System.out.println("Error a resolver"+ e.getMessage());
+		}
+	}
+	
+	@FXML
+	private void handleLogOut(ActionEvent event) {
+		try {
+			// limpiamos la sesion
+			usuariosService.getSesion().setUsuActual(null);
+
+			// cargamos de nuevo el FXML de invitado
+			FXMLLoader loader = new FXMLLoader(
+					getClass().getResource("/vista/MenuInvitado.fxml"));
+			loader.setControllerFactory(context::getBean); // Para que Spring
+															// gestione el
+															// controlador
+
+			Parent root = loader.load();
+
+			// cambio ala escena de invitado
+			Stage stage = (Stage) ((Node) event.getSource()).getScene()
+					.getWindow();
+			stage.setScene(new Scene(root));
+			stage.show();
+
+		} catch (IOException e) {
+			System.err.println("Error al cerrar sesión: " + e.getMessage());
+		}
+	}
+	
+	public void configurarBienvenida() {
+		Persona p = usuariosService.getSesion().getUsuActual();
+		
+		if (p != null) {
+			lblBienvenidaIncidencias.setText(p.getNombre()+", bienvenido/a al menú de incidencias.");
+			
+			if (p.getPerfil().name().equals(Perfil.ARTISTA.name())) {
+				btnResolver.setVisible(false);
+				btnResolver.setManaged(false);
+				lblNotaRolIncidencias.setText("Como Artista, puedes registrar y consultar incidencias, pero no resolverlas.");
+			}
+		}
+	}
 	
 	
 	

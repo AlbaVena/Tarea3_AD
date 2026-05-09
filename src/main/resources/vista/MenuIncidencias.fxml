@@ -22,19 +22,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="panelMenuIncidencias" fx:controller="controlador.MenuIncidenciasnController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="panelMenuIncidencias" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controlador.MenuIncidenciasController">
    <left>
       <VBox fx:id="vbMenuIncidenciasLateral" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: #85C1E9;" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="btnRegistrar" mnemonicParsing="false" prefHeight="50.0" prefWidth="211.0" style="-fx-background-color: #D6EAF8;" text="Registrar nueva incidencia" />
-            <Button fx:id="btnConsultar" mnemonicParsing="false" prefHeight="50.0" prefWidth="215.0" style="-fx-background-color: #D6EAF8;" text="Consultar incidencias" />
-            <Button fx:id="btnResolver" mnemonicParsing="false" prefHeight="50.0" prefWidth="209.0" style="-fx-background-color: #D6EAF8;" text="Resolver incidencias" />
+            <Button fx:id="btnRegistrar" mnemonicParsing="false" onAction="#handleRegistrar" prefHeight="50.0" prefWidth="211.0" style="-fx-background-color: #D6EAF8;" text="Registrar nueva incidencia" />
+            <Button fx:id="btnConsultar" mnemonicParsing="false" onAction="#handleConsultar" prefHeight="50.0" prefWidth="215.0" style="-fx-background-color: #D6EAF8;" text="Consultar incidencias" />
+            <Button fx:id="btnResolver" mnemonicParsing="false" onAction="#handleResolver" prefHeight="50.0" prefWidth="209.0" style="-fx-background-color: #D6EAF8;" text="Resolver incidencias" />
             <Region prefHeight="200.0" prefWidth="200.0">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Region>
-            <Button fx:id="btnAtras" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="251.0" style="-fx-background-color: #D6EAF8;" text="Atrás" />
+            <Button fx:id="btnAtras" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#atras" prefHeight="30.0" prefWidth="251.0" style="-fx-background-color: #D6EAF8;" text="Atrás" />
          </children>
          <BorderPane.margin>
             <Insets />
@@ -47,7 +47,7 @@
    <top>
       <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="btnCerrarSesion" mnemonicParsing="false" style="-fx-background-color: #D6EAF8;" text="Cerrar sesión" />
+            <Button fx:id="btnCerrarSesion" mnemonicParsing="false" onAction="#handleLogOut" style="-fx-background-color: #D6EAF8;" text="Cerrar sesión" />
          </children>
          <BorderPane.margin>
             <Insets />
@@ -183,8 +183,8 @@
                   </GridPane>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="600.0" spacing="30.0">
                      <children>
-                        <Button fx:id="btnLimpiarIncidencia" mnemonicParsing="false" text="Limpiar" />
-                        <Button fx:id="btnRegistrarIncidencia" mnemonicParsing="false" text="Registrar" />
+                        <Button fx:id="btnLimpiarIncidencia" mnemonicParsing="false" onAction="#limpiarIncidencia" text="Limpiar" />
+                        <Button fx:id="btnRegistrarIncidencia" mnemonicParsing="false" onAction="#registrarIncidencia" text="Registrar" />
                      </children>
                   </HBox>
                </children>
@@ -222,8 +222,8 @@
                         <DatePicker fx:id="dpFiltroHasta" promptText="Hasta" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
-                              <Button fx:id="btnFiltroLimpiar" mnemonicParsing="false" text="Limpiar" />
-                              <Button fx:id="btnFiltroBuscar" mnemonicParsing="false" text="Buscar" />
+                              <Button fx:id="btnFiltroLimpiar" mnemonicParsing="false" onAction="#limpiarFiltros" text="Limpiar" />
+                              <Button fx:id="btnFiltroBuscar" mnemonicParsing="false" onAction="#buscarIncidencia" text="Buscar" />
                            </children>
                         </HBox>
                      </children>
@@ -261,8 +261,8 @@
                   <TextArea fx:id="txtAccionesResolver" prefHeight="117.0" prefWidth="580.0" promptText="Describe las acciones realizadas..." />
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
                      <children>
-                        <Button fx:id="btnCancelarResolucion" mnemonicParsing="false" text="Cancelar" />
-                        <Button fx:id="btnConfirmarResolucion" mnemonicParsing="false" text="Confirmar" />
+                        <Button fx:id="btnCancelarResolucion" mnemonicParsing="false" onAction="#cancelarResolucion" text="Cancelar" />
+                        <Button fx:id="btnConfirmarResolucion" mnemonicParsing="false" onAction="#confirmarResolucion" text="Confirmar" />
                      </children>
                   </HBox>
                </children>
