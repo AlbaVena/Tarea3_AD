@@ -76,6 +76,7 @@
                   <Insets />
                </VBox.margin>
             </Button>
+            <Button fx:id="btnIncidencias" alignment="CENTER" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#handleIncidencias" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Incidencias" />
 			</children>
 			<BorderPane.margin>
 				<Insets right="10.0" />

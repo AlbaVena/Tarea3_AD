@@ -11,6 +11,7 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -22,7 +23,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.TextArea?>
 
 <BorderPane fx:id="brdPaneCoor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controlador.MenuCoordinadorController">
 	<left>
@@ -50,6 +50,11 @@
                   </VBox>
                </content>
             </TitledPane>
+            <Button fx:id="btnIncidencias" alignment="CENTER" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleIncidencias" prefWidth="200.0" style="-fx-background-color: #D6EAF8;" text="Incidencias">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Button>
 			</children>
 			<BorderPane.margin>
 				<Insets right="10.0" />

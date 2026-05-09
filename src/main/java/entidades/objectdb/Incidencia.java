@@ -4,13 +4,14 @@ package entidades.objectdb;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-
+@Entity
 public class Incidencia {
 
 	@Id
@@ -28,7 +29,7 @@ public class Incidencia {
 	private String descripcion;
 	
 	@Column(nullable = false)
-	private boolean resuelta;
+	private Boolean resuelta;
 	
 	@Column(nullable = false)
 	private Long idPersonaReporta;
@@ -41,7 +42,7 @@ public class Incidencia {
 	
 	public Incidencia() {
 		this.fechaHora = LocalDateTime.now();
-		this.resuelta = false;
+		this.resuelta = Boolean.FALSE;
 	}
 
 	public Long getId() {
@@ -76,11 +77,11 @@ public class Incidencia {
 		this.descripcion = descripcion;
 	}
 
-	public boolean isResuelta() {
+	public Boolean isResuelta() {
 		return resuelta;
 	}
 
-	public void setResuelta(boolean resuelta) {
+	public void setResuelta(Boolean resuelta) {
 		this.resuelta = resuelta;
 	}
 

@@ -108,6 +108,9 @@ public class MenuAdminController implements Initializable {
 	private Button btnmodificarP;
 	@FXML
 	private Button btnEliminarPLateral;
+	
+	@FXML
+	private Button btnIncidencias;
 
 	// paneles de vistas
 	@FXML
@@ -1370,6 +1373,26 @@ private void finalizarCoordinador() {
 		
 		tablaHistorial.getItems().setAll(resultado);
 		
+	}
+	
+	@FXML
+	private void handleIncidencias(ActionEvent event) {
+	    try {
+	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vista/MenuIncidencias.fxml"));
+	        loader.setControllerFactory(context::getBean);
+	        Parent root = loader.load();
+	        
+	        // pasamos la pantalla de origen para el boton atras
+	        MenuIncidenciasController controller = loader.getController();
+	        controller.setPantallaOrigen("Artista"); // o "Coordinador" o "Admin"
+	        controller.configurarBienvenida();
+	        
+	        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+	        stage.setScene(new Scene(root));
+	        stage.show();
+	    } catch (IOException e) {
+	        System.err.println("Error al abrir incidencias: " + e.getMessage());
+	    }
 	}
 
 }

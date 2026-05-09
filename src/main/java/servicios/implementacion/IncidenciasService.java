@@ -16,6 +16,7 @@ import entidades.objectdb.ResolucionIncidencia;
 import entidades.objectdb.TipoIncidencia;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
 import servicios.IIncidenciasService;
 
@@ -43,20 +44,29 @@ public class IncidenciasService implements IIncidenciasService {
     @jakarta.annotation.PostConstruct
     private void init() {
         Map<String, Object> propiedades = new HashMap<>();
-        propiedades.put("jakarta.persistence.jdbc.url", 
-            url + "?user=" + user + "&password=" + password);
+        //propiedades.put("jakarta.persistence.jdbc.url", 
+        //    url + "?user=" + user + "&password=" + password);
         
-        this.emf = new com.objectdb.jpa.Provider()
-            .createEntityManagerFactory(url, propiedades);
+        propiedades.put("jakarta.persistence.jdbc.user", user);
+        propiedades.put("jakarta.persistence.jdbc.password", password);
+        
+        this.emf = Persistence.createEntityManagerFactory(
+        			url, propiedades);
+        
+        //this.emf = new com.objectdb.jpa.Provider()
+        //    .createEntityManagerFactory(url, propiedades);
     }
 
     private EntityManager getEntityManager() {
+    	//Map<String, Object> props = new HashMap<>();
+    	//props.put("jakarta.persistence.jdbc.user", user);
+    	//props.put("jakarta.persistence.jdbc.password", password);
         return emf.createEntityManager();
     }
     
 	@Override
 	public void registrarIncidencia(Incidencia incidencia) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = getEntityManager();
 		
 		try {
 			em.getTransaction().begin();
@@ -73,7 +83,7 @@ public class IncidenciasService implements IIncidenciasService {
 
 	@Override
 	public void resolverIncidencia(Long idIncidencia, String accionesRealizadas, Long idPersonaResuelve) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = getEntityManager();
 		
 		try {
 			em.getTransaction().begin();
@@ -109,7 +119,7 @@ public class IncidenciasService implements IIncidenciasService {
 	public List<Incidencia> consultarIncidencias(TipoIncidencia tipo, Boolean resuelta, Long idEspectaculo,
 			Long idNumero, LocalDateTime desde, LocalDateTime hasta) {
 		
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = getEntityManager();
 		
 		try {
 			
@@ -120,7 +130,7 @@ public class IncidenciasService implements IIncidenciasService {
 			}
 			
 			if (resuelta != null) {
-				jpql += " AND i.resuelta = :resuelta";
+				jpql += " AND i.isResuelta = :resuelta";
 			}
 			if ( idEspectaculo != null) {
 				jpql += " AND i.idEspectaculo = :idEspectaculo";
