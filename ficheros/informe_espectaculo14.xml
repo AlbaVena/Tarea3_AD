@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><informe>
+<nombre>Notas musicales nueva</nombre>
+<fechaInicio>2026-05-12</fechaInicio>
+<fechaFin>2026-06-19</fechaFin>
+<coordinador>Luis de Blas</coordinador>
+<numeros>
+<numero>
+<nombre>nota re</nombre>
+<duracion>15.5 min</duracion>
+<artistas>
+<artista>Grom Garcia</artista>
+<artista>Pedro</artista>
+</artistas>
+</numero>
+<numero>
+<nombre>nota mi</nombre>
+<duracion>5.5 min</duracion>
+<artistas>
+<artista>Grom Garcia</artista>
+<artista>Pedro</artista>
+<artista>Marcos</artista>
+</artistas>
+</numero>
+<numero>
+<nombre>NOta fa</nombre>
+<duracion>5.0 min</duracion>
+<artistas>
+<artista>Grom Garcia</artista>
+</artistas>
+</numero>
+</numeros>
+</informe>

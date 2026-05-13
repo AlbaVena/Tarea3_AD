@@ -62,6 +62,14 @@
       					</columns>
       				</TableView>
                   <TextArea fx:id="txtAreaDetalleEspectaculo" prefHeight="231.0" prefWidth="630.0" />
+                  <Button fx:id="btnExportarXML" mnemonicParsing="false"
+							onAction="#handleExportarInforme" prefWidth="160.0"
+							style="-fx-background-color: #85C1E9;" text="Exportar a XML"
+							StackPane.alignment="BOTTOM_CENTER">
+							<StackPane.margin>
+								<Insets bottom="25.0" />
+							</StackPane.margin>
+						</Button>
                </children>
                <padding>
                   <Insets right="10.0" />

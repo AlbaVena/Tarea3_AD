@@ -64,9 +64,11 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
 import servicios.IEspectaculosService;
+import servicios.IInformeService;
 import servicios.ILogService;
 import servicios.IUsuariosService;
 import servicios.implementacion.PaisesService;
+import utils.EspectaculoXMLWriter;
 
 import utils.Validador;
 
@@ -314,6 +316,8 @@ public class MenuAdminController implements Initializable {
 	private PaisesService paisesService;
     @Autowired 
     private ILogService logService;
+    @Autowired
+    private IInformeService informeService;
 
 	// temporales
 	private Espectaculo espectaculoEnEdicion;
@@ -381,8 +385,7 @@ public class MenuAdminController implements Initializable {
 	    configurarBindings();
 	    configurarFecha();
 	    ocultarTodo();
-	}
-	
+	}	
 	
 	private void configurarTablaEspectaculos() {
 	    columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -405,7 +408,7 @@ public class MenuAdminController implements Initializable {
 	    });
 	    tablaEspectaculos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
 	    tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles."));
-	    
+
 	    tablaEspectaculos.setOnMouseClicked(event -> {
 	        if (event.getClickCount() == 2) {
 	            Espectaculo seleccionado = tablaEspectaculos.getSelectionModel().getSelectedItem();
@@ -1488,4 +1491,12 @@ private void finalizarCoordinador() {
 	    txtAreaDetalleEspectaculo.setText(detalle);
 	}
 
+    @FXML
+    private void handleExportarInforme() {
+        Espectaculo seleccionado = tablaEspectaculos.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            informeService.generarYGuardarInforme(seleccionado);
+            System.out.println("Informe exportado para: " + seleccionado.getNombre());
+        }
+    }
 }

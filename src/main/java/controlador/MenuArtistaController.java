@@ -34,6 +34,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import servicios.IEspectaculosService;
+import servicios.IInformeService;
 import servicios.IUsuariosService;
 import utils.Validador;
 
@@ -71,6 +72,7 @@ public class MenuArtistaController implements Initializable{
 
 	    @Autowired private IEspectaculosService espectaculoService;
 	    @Autowired private IUsuariosService usuariosService;
+    	@Autowired private IInformeService informeService;
 	    
 	    @Autowired private ConfigurableApplicationContext context;
 		
@@ -255,5 +257,12 @@ public class MenuArtistaController implements Initializable{
 		    }
 		}
 	
-
+    @FXML
+    private void handleExportarInforme() {
+        Espectaculo seleccionado = tablaEspectaculos.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            informeService.generarYGuardarInforme(seleccionado);
+            System.out.println("Informe exportado para: " + seleccionado.getNombre());
+        }
+    }
 }
