@@ -143,7 +143,10 @@
                         <Insets left="20.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextArea fx:id="txtAreaNumeros" prefHeight="187.0" prefWidth="313.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <TextArea fx:id="txtAreaNumeros" prefHeight="187.0" prefWidth="313.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                     <GridPane.margin>
+                        <Insets right="20.0" />
+                     </GridPane.margin></TextArea>
                </children>
             </GridPane>
 			</children>

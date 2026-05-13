@@ -146,13 +146,13 @@ public class MenuArtistaController implements Initializable{
 	            }
 	            lblespecialidadesFicha.setText(especs.isEmpty() ? "Sin especialidades" : especs);
 
-	            // trayectoria: id y nombre del numero, id y nombre del espectaculo
+	            //id y nombre del numero, id y nombre del espectaculo
 	            String nums = "";
 	            for (Numero n : artista.getNumeros()) {
 	                if (!nums.isEmpty()) nums += "\n";
-	                nums += "- Número con id: " + n.getId() + " '" + n.getNombre() + "'" +
-	                        " — del espectáculo con id: " + n.getEspectaculo().getId() +
-	                        " '" + n.getEspectaculo().getNombre() + "'";
+	                nums += "- Número con id " + n.getId() + ": '" + n.getNombre() + "'" +
+	                        " — del espectáculo con id " + n.getEspectaculo().getId() +
+	                        ": '" + n.getEspectaculo().getNombre() + "'";
 	            }
 	            txtAreaNumeros.setText(nums.isEmpty() ? "No participa en ningún número aún." : nums);
 	        }
@@ -193,6 +193,10 @@ public class MenuArtistaController implements Initializable{
 			});
 		}
 		
+		/**
+		 * Muestra los detalles relevantes de un espectaculo
+		 * @param e objeto de tipo {@link Espectaculo}
+		 */
 		@FXML
 		private void mostrarDetalleCompleto(Espectaculo e) {
 		    String detalle = "*** ESPECTÁCULO ***\n" +

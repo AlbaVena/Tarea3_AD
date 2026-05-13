@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -31,6 +32,9 @@ public class LoginController {
 	private Button btnLogin;
 	@FXML
 	private Button btnCancelar;
+	
+	@FXML
+	private Label infoLogin;
 
 	@Autowired
 	private IUsuariosService usuariosService;
@@ -73,10 +77,10 @@ public class LoginController {
 			}
 
 		} else {
-			// Si falla, damos feedback visual en los campos [cite: 29, 30]
+			// Si falla
 			tfUsuario.setStyle("-fx-border-color: red;");
 			tfPass.setStyle("-fx-border-color: red;");
-			System.out.println("Usuario o contraseña incorrecto");
+			infoLogin.setText("Usuario o contraseña incorrectos");
 		}
 
 	}

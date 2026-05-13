@@ -39,13 +39,24 @@ public class Validador {
 		return cadena != null && cadena.matches(regex);
 	}
 	
-	// formatea LocalDate a dd/MM/yyyy
+	
+	
+	/**
+	 * Formatea una fecha
+	 * @param fecha tipo yyyy-mm-dd
+	 * @return fechat tipo dd/mm/aaaa
+	 */
 	public static String formatearFecha(LocalDate fecha) {
 	    if (fecha == null) return "";
 	    return fecha.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 	}
 
-	// formatea LocalDateTime a dd/MM/yyyy HH:mm:ss
+	
+	/**
+	 * Formatea una fecha y hora
+	 * @param fechaHora tipo yyyy-mm-dd:HH:mm:ss
+	 * @return fecha y hora tipo dd/mm/aaaa HH:mm:ss
+	 */
 	public static String formatearFechaHora(LocalDateTime fechaHora) {
 	    if (fechaHora == null) return "";
 	    return fechaHora.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));

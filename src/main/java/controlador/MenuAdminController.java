@@ -1,6 +1,9 @@
 package controlador;
 
 import java.io.IOException;
+
+import org.slf4j.LoggerFactory;
+
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -70,6 +73,8 @@ import utils.Validador;
 @Slf4j
 @Controller
 public class MenuAdminController implements Initializable {
+	
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MenuAdminController.class);
 
 	@FXML
 	private StackPane stkpaneCoor;
@@ -431,6 +436,24 @@ public class MenuAdminController implements Initializable {
 
 	private void configurarTablaHistorial() {
 	    colFechaLog.setCellValueFactory(new PropertyValueFactory<>("fechaHora"));
+	    
+	    colFechaLog.setCellFactory(col -> new TableCell<LogOperacion, String>() {
+	        @Override
+	        protected void updateItem(String item, boolean empty) {
+	            super.updateItem(item, empty);
+	            if (empty || item == null) {
+	                setText("");
+	            } else {
+	                try {	                    
+	                    LocalDateTime fechaReal = LocalDateTime.parse(item); 
+	                    setText(Validador.formatearFechaHora(fechaReal));
+	                } catch (Exception e) {
+	                    setText(item);
+	                }
+	            }
+	        }
+	    });
+	    
 	    colUsuarioLog.setCellValueFactory(new PropertyValueFactory<>("usuario"));
 	    colTipoLog.setCellValueFactory(new PropertyValueFactory<>("tipoOperacion"));
 	    colResumenLog.setCellValueFactory(new PropertyValueFactory<>("resumen"));
