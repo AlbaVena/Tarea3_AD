@@ -1,32 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?><informe>
-<nombre>Notas musicales nueva</nombre>
-<fechaInicio>2026-05-12</fechaInicio>
-<fechaFin>2026-06-19</fechaFin>
-<coordinador>Luis de Blas</coordinador>
-<numeros>
-<numero>
-<nombre>nota re</nombre>
-<duracion>15.5 min</duracion>
-<artistas>
-<artista>Grom Garcia</artista>
-<artista>Pedro</artista>
-</artistas>
-</numero>
-<numero>
-<nombre>nota mi</nombre>
-<duracion>5.5 min</duracion>
-<artistas>
-<artista>Grom Garcia</artista>
-<artista>Pedro</artista>
-<artista>Marcos</artista>
-</artistas>
-</numero>
-<numero>
-<nombre>NOta fa</nombre>
-<duracion>5.0 min</duracion>
-<artistas>
-<artista>Grom Garcia</artista>
-</artistas>
-</numero>
-</numeros>
+    <fechahora>13/05/2026 20:39:02</fechahora>
+    <espectaculo>
+        <id>14</id>
+        <nombre>Notas musicales nueva</nombre>
+        <fechaini>12/05/2026</fechaini>
+        <fechafin>19/06/2026</fechafin>
+        <coordinacion>
+            <nombre>Luis de Blas</nombre>
+            <email>luisdbb@educastur.org</email>
+        </coordinacion>
+        <numeros>
+            <numero>
+                <nombre>nota mi</nombre>
+                <duracion>5.5</duracion>
+                <artistas>
+                    <artista>
+                        <nombre>Grom Garcia</nombre>
+                        <nacionalidad>Australia</nacionalidad>
+                        <email>grom@email.com</email>
+                        <especialidades>ACROBACIA,HUMOR,MAGIA,EQUILIBRISMO,MALABARISMO</especialidades>
+                        <apodo>Gromchi</apodo>
+                    </artista>
+                    <artista>
+                        <nombre>Pedro</nombre>
+                        <nacionalidad>Suiza</nacionalidad>
+                        <email>chispas@email.com</email>
+                        <especialidades>ACROBACIA,EQUILIBRISMO</especialidades>
+                        <apodo>Chispas</apodo>
+                    </artista>
+                    <artista>
+                        <nombre>Marcos</nombre>
+                        <nacionalidad>Arabia Saudí</nacionalidad>
+                        <email>marcos@circo.es</email>
+                        <especialidades>HUMOR</especialidades>
+                    </artista>
+                </artistas>
+            </numero>
+            <numero>
+                <nombre>nota re</nombre>
+                <duracion>15.5</duracion>
+                <artistas>
+                    <artista>
+                        <nombre>Grom Garcia</nombre>
+                        <nacionalidad>Australia</nacionalidad>
+                        <email>grom@email.com</email>
+                        <especialidades>ACROBACIA,HUMOR,MAGIA,EQUILIBRISMO,MALABARISMO</especialidades>
+                        <apodo>Gromchi</apodo>
+                    </artista>
+                    <artista>
+                        <nombre>Pedro</nombre>
+                        <nacionalidad>Suiza</nacionalidad>
+                        <email>chispas@email.com</email>
+                        <especialidades>ACROBACIA,EQUILIBRISMO</especialidades>
+                        <apodo>Chispas</apodo>
+                    </artista>
+                </artistas>
+            </numero>
+            <numero>
+                <nombre>NOta fa</nombre>
+                <duracion>5.0</duracion>
+                <artistas>
+                    <artista>
+                        <nombre>Grom Garcia</nombre>
+                        <nacionalidad>Australia</nacionalidad>
+                        <email>grom@email.com</email>
+                        <especialidades>ACROBACIA,HUMOR,MAGIA,EQUILIBRISMO,MALABARISMO</especialidades>
+                        <apodo>Gromchi</apodo>
+                    </artista>
+                </artistas>
+            </numero>
+        </numeros>
+    </espectaculo>
 </informe>

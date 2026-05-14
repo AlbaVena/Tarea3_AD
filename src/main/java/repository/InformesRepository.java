@@ -1,5 +1,8 @@
 package repository;
 
+import java.io.File;
+import java.io.FileWriter;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.xmldb.api.DatabaseManager;
@@ -8,7 +11,7 @@ import org.xmldb.api.base.Database;
 import org.xmldb.api.modules.XMLResource;
 
 /**
- * Clase dedicada exclusivamente al manejo de eXistDB.
+ * Persistencia de informes: disco local y eXistDB
  */
 @Repository
 public class InformesRepository {
@@ -25,28 +28,33 @@ public class InformesRepository {
     @Value("${existdb.password}")
     private String password;
 
-    private void inicializarDriver() throws Exception {
-        Class<?> cl = Class.forName("org.exist.xmldb.DatabaseImpl");
-        Database database = (Database) cl.getDeclaredConstructor().newInstance();
-        database.setProperty("create-database", "true");
-        DatabaseManager.registerDatabase(database);
+    /**
+     * Guarda el XML en la carpeta ficheros/ del disco local
+     */
+    public void guardarEnDisco(String nombreFichero, String contenidoXML) throws Exception {
+        File dir = new File("ficheros");
+        if (!dir.exists()) dir.mkdirs();
+        try (FileWriter fw = new FileWriter("ficheros/" + nombreFichero)) {
+            fw.write(contenidoXML);
+        }
+        System.out.println("XML guardado en disco: ficheros/" + nombreFichero);
     }
 
     /**
-     * Guarda un documento XML en eXistDB en la coleccion /db/informes
+     * Guarda el XML en la coleccion /db/informes de eXistDB
      */
     public void guardarDocumento(String nombreFichero, String contenidoXML) {
         Collection col = null;
         XMLResource res = null;
         try {
             inicializarDriver();
-            col = DatabaseManager.getCollection(url + collectionPath, user, password);
+            col = DatabaseManager.getCollection(url + collectionPath, user, password); //conecta con la coleccion donde se guarda
             if (col == null) {
                 throw new RuntimeException("No se pudo conectar con la coleccion eXistDB: " + collectionPath);
             }
-            res = (XMLResource) col.createResource(nombreFichero, "XMLResource");
-            res.setContent(contenidoXML);
-            col.storeResource(res);
+            res = (XMLResource) col.createResource(nombreFichero, "XMLResource"); //crea el XML
+            res.setContent(contenidoXML); //le añade el contenido
+            col.storeResource(res); //lo guarda en ExistDB
             System.out.println("Documento guardado en eXistDB: " + nombreFichero);
         } catch (Exception e) {
             System.err.println("Error al guardar en eXistDB: " + e.getMessage());
@@ -55,5 +63,13 @@ public class InformesRepository {
             try { if (res != null) ((org.exist.xmldb.EXistResource) res).freeResources(); } catch (Exception ignored) {}
             try { if (col != null) col.close(); } catch (Exception ignored) {}
         }
+    }
+
+    private void inicializarDriver() throws Exception {
+        Class<?> cl = Class.forName("org.exist.xmldb.DatabaseImpl"); //parecido a import
+        															//carga una clase (que no esta) en tiempo de ejecucion por su nombre.
+        Database database = (Database) cl.getDeclaredConstructor().newInstance();
+        database.setProperty("create-database", "true");
+        DatabaseManager.registerDatabase(database);
     }
 }

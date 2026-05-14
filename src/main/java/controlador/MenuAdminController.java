@@ -68,7 +68,6 @@ import servicios.IInformeService;
 import servicios.ILogService;
 import servicios.IUsuariosService;
 import servicios.implementacion.PaisesService;
-import utils.EspectaculoXMLWriter;
 
 import utils.Validador;
 
@@ -1496,7 +1495,7 @@ private void finalizarCoordinador() {
         Espectaculo seleccionado = tablaEspectaculos.getSelectionModel().getSelectedItem();
         if (seleccionado != null) {
             informeService.generarYGuardarInforme(seleccionado);
-            System.out.println("Informe exportado para: " + seleccionado.getNombre());
+            System.out.println("Informe exportado para: " + seleccionado.getNombre()); //pruebas
         }
     }
 }

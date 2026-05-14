@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><informe>
+    <fechahora>13/05/2026 20:37:49</fechahora>
+    <espectaculo>
+        <id>13</id>
+        <nombre>La danza de las Frutas</nombre>
+        <fechaini>06/04/2026</fechaini>
+        <fechafin>22/05/2026</fechafin>
+        <coordinacion>
+            <nombre>Alba</nombre>
+            <email>alba@email.com</email>
+        </coordinacion>
+        <numeros>
+            <numero>
+                <nombre>Kiwi</nombre>
+                <duracion>11.0</duracion>
+                <artistas>
+                    <artista>
+                        <nombre>Marcos</nombre>
+                        <nacionalidad>Arabia Saudí</nacionalidad>
+                        <email>marcos@circo.es</email>
+                        <especialidades>HUMOR</especialidades>
+                    </artista>
+                    <artista>
+                        <nombre>diego</nombre>
+                        <nacionalidad>España</nacionalidad>
+                        <email>diegp@doegp.com</email>
+                        <especialidades>MAGIA</especialidades>
+                        <apodo>Diego</apodo>
+                    </artista>
+                    <artista>
+                        <nombre>marta</nombre>
+                        <nacionalidad>Reino Unido</nacionalidad>
+                        <email>marta@email.com</email>
+                        <especialidades>ACROBACIA,HUMOR</especialidades>
+                    </artista>
+                </artistas>
+            </numero>
+            <numero>
+                <nombre>Pera</nombre>
+                <duracion>7.0</duracion>
+                <artistas>
+                    <artista>
+                        <nombre>Grom Garcia</nombre>
+                        <nacionalidad>Australia</nacionalidad>
+                        <email>grom@email.com</email>
+                        <especialidades>ACROBACIA,HUMOR,MAGIA,EQUILIBRISMO,MALABARISMO</especialidades>
+                        <apodo>Gromchi</apodo>
+                    </artista>
+                </artistas>
+            </numero>
+            <numero>
+                <nombre>Manzana</nombre>
+                <duracion>5.0</duracion>
+                <artistas>
+                    <artista>
+                        <nombre>Grom Garcia</nombre>
+                        <nacionalidad>Australia</nacionalidad>
+                        <email>grom@email.com</email>
+                        <especialidades>ACROBACIA,HUMOR,MAGIA,EQUILIBRISMO,MALABARISMO</especialidades>
+                        <apodo>Gromchi</apodo>
+                    </artista>
+                    <artista>
+                        <nombre>Leon</nombre>
+                        <nacionalidad>Australia</nacionalidad>
+                        <email>leonidas@email.com</email>
+                        <especialidades>MAGIA,EQUILIBRISMO</especialidades>
+                        <apodo>Leonchu</apodo>
+                    </artista>
+                </artistas>
+            </numero>
+        </numeros>
+    </espectaculo>
+</informe>
