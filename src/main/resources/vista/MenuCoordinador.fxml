@@ -55,6 +55,9 @@
                   <Insets />
                </opaqueInsets>
             </Button>
+            <Button mnemonicParsing="false" onAction="#handleBotonDossier"
+            prefWidth="200.0" style="-fx-background-color: #D6EAF8;"
+            text="Actualizar dossier" />
 			</children>
 			<BorderPane.margin>
 				<Insets right="10.0" />
@@ -361,6 +364,26 @@
                   </HBox>
                </children>
             </VBox>
+            <VBox fx:id="panelDossier" prefHeight="500.0" prefWidth="600.0" spacing="15.0" visible="false">
+            <padding><Insets top="20.0" left="20.0" right="20.0" /></padding>
+            <Label text="Actualizar Dossier" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
+            <ComboBox fx:id="cbArtistasDossier" prefWidth="300.0" promptText="Selecciona artista"
+                      style="-fx-background-color: #D6EAF8;" />
+            <Separator />
+            <Label text="Nueva evaluación" style="-fx-font-weight: bold;" />
+            <TextArea fx:id="taComentario" promptText="Comentario..." prefHeight="80.0"
+                      style="-fx-background-color: #D6EAF8;" />
+            <ComboBox fx:id="cbNivel" prefWidth="200.0" promptText="Nivel"
+                      style="-fx-background-color: #D6EAF8;" />
+            <Button mnemonicParsing="false" onAction="#handleGuardarEvaluacion"
+                    style="-fx-background-color: #85C1E9;" text="Guardar evaluación" />
+            <Separator />
+            <Label text="Nueva observación" style="-fx-font-weight: bold;" />
+            <TextArea fx:id="taObservacion" promptText="Observación..." prefHeight="80.0"
+                      style="-fx-background-color: #D6EAF8;" />
+            <Button mnemonicParsing="false" onAction="#handleGuardarObservacion"
+                    style="-fx-background-color: #85C1E9;" text="Guardar observación" />
+</VBox>
 			</children>
 		</StackPane>
 	</center>

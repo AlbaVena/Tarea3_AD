@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import entidades.Artista;
 import entidades.Numero;
 import jakarta.transaction.Transactional;
 import repository.NumeroRepository;
@@ -17,6 +18,9 @@ public class NumeroService implements INumeroService{
 
 	@Autowired
 	private NumeroRepository numeroRepository;
+
+	@Autowired
+	private DossierService dossierService;
 	
 	
 	 @Transactional
@@ -26,7 +30,12 @@ public class NumeroService implements INumeroService{
 	
 	 @Transactional
 	public void guardarNumero(Numero nuevo) {
+		System.out.println("Guardamos Numeros:" + nuevo.getNombre() + " para los artistas:");
 		numeroRepository.save(nuevo);
+		for (Artista artista : nuevo.getArtistas()) {
+			System.out.println("Artista a incluir: "+artista.getNombre());
+        	dossierService.actualizarTrayectoria(artista, nuevo);
+    }
 	}
 	
 	 @Transactional

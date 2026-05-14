@@ -27,6 +27,9 @@ import entidades.LogOperacion;
 import entidades.Numero;
 import entidades.Perfil;
 import entidades.Persona;
+import entidades.mongodb.Evaluacion;
+import entidades.mongodb.Evaluador;
+import entidades.mongodb.Observacion;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -64,6 +67,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
+import servicios.IDossierService;
 import servicios.IEspectaculosService;
 import servicios.IInformeService;
 import servicios.ILogService;
@@ -75,7 +79,7 @@ import utils.Validador;
 @Slf4j
 @Controller
 public class MenuAdminController implements Initializable {
-	
+
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MenuAdminController.class);
 
 	@FXML
@@ -116,7 +120,7 @@ public class MenuAdminController implements Initializable {
 	private Button btnmodificarP;
 	@FXML
 	private Button btnEliminarPLateral;
-	
+
 	@FXML
 	private Button btnIncidencias;
 
@@ -139,7 +143,7 @@ public class MenuAdminController implements Initializable {
 	private ScrollPane panelResumenP;
 	@FXML
 	private VBox panelHistorial;
-	
+
 	// form datos
 	@FXML
 	private TextField tfNombre;
@@ -161,7 +165,7 @@ public class MenuAdminController implements Initializable {
 	private ListView<Numero> lvNumCreados;
 	@FXML
 	private ListView<Artista> lvArtistasSeleccionados;
-	
+
 	@FXML
 	private ComboBox<Coordinador> cbCoordinadores;
 
@@ -272,39 +276,51 @@ public class MenuAdminController implements Initializable {
 	private Label lblResumenEspA;
 	@FXML
 	private Label lblResumenCoor;
-	
-	//panel Historial operaciones
+
+	// panel Historial operaciones
 	@FXML
-	private Button btnHistorialOperaciones;	
-	@FXML 
-	private TextField tfFiltroUsuario;	
+	private Button btnHistorialOperaciones;
+	@FXML
+	private TextField tfFiltroUsuario;
 	@FXML
 	private CheckBox chbFiltroNuevo;
-	@FXML 
+	@FXML
 	private CheckBox chbFiltroActualizacion;
-	@FXML 
+	@FXML
 	private CheckBox chbFiltroBorrado;
-	@FXML 
-	private DatePicker dpFiltroDesde;	
-	@FXML 
+	@FXML
+	private DatePicker dpFiltroDesde;
+	@FXML
 	private DatePicker dpFiltroHasta;
-	@FXML 
+	@FXML
 	private Button btnBuscarLog;
-	@FXML 
+	@FXML
 	private TableView<LogOperacion> tablaHistorial;
-	@FXML 
+	@FXML
 	private TableColumn<LogOperacion, String> colFechaLog;
-	@FXML 
+	@FXML
 	private TableColumn<LogOperacion, String> colUsuarioLog;
-	@FXML 
+	@FXML
 	private TableColumn<LogOperacion, String> colTipoLog;
-	@FXML 
+	@FXML
 	private TableColumn<LogOperacion, String> colResumenLog;
-	
+
 	@FXML
 	private VBox panelEspectaculos;
-	@FXML 
+	@FXML
 	private TextArea txtAreaDetalleEspectaculo;
+
+	// para los dossieres
+	@FXML
+	private VBox panelDossier;
+	@FXML
+	private ComboBox<Artista> cbArtistasDossier;
+	@FXML
+	private TextArea taComentario;
+	@FXML
+	private ComboBox<String> cbNivel;
+	@FXML
+	private TextArea taObservacion;
 
 	@Autowired
 	private IEspectaculosService espectaculoService;
@@ -314,18 +330,17 @@ public class MenuAdminController implements Initializable {
 	private ConfigurableApplicationContext context;
 	@Autowired
 	private PaisesService paisesService;
-    @Autowired 
-    private ILogService logService;
-    @Autowired
-    private IInformeService informeService;
+	@Autowired
+	private ILogService logService;
+	@Autowired
+	private IInformeService informeService;
+	@Autowired
+	private IDossierService dossierService;
 
 	// temporales
 	private Espectaculo espectaculoEnEdicion;
 	private Persona personaEnEdicion; // null = crear, no null = modificar
-	private ObservableList<Artista> artistasDelNumeroActual = FXCollections
-			.observableArrayList();
-	
-	
+	private ObservableList<Artista> artistasDelNumeroActual = FXCollections.observableArrayList();
 
 	/**
 	 * METODOS AUXILIARES DE VALIDACION
@@ -333,18 +348,16 @@ public class MenuAdminController implements Initializable {
 
 	private boolean validarCampo(TextField campo, String regex) {
 		if (!Validador.esCadenaValida(campo.getText(), regex)) {
-			campo.setStyle(
-					"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			campo.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 			return true;
 		}
 		campo.setStyle("-fx-background-color: #D6EAF8;");
 		return false;
 	}
-	
+
 	private boolean validarCombo(ComboBox<?> combo) {
 		if (combo.getValue() == null) {
-			combo.setStyle(
-					"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			combo.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 			return true;
 		}
 		combo.setStyle("-fx-background-color: #D6EAF8;");
@@ -353,8 +366,7 @@ public class MenuAdminController implements Initializable {
 
 	private boolean validarFecha(DatePicker fecha) {
 		if (fecha.getValue() == null) {
-			fecha.setStyle(
-					"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			fecha.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 			return true;
 		}
 		fecha.setStyle("-fx-background-color: #D6EAF8;");
@@ -375,202 +387,219 @@ public class MenuAdminController implements Initializable {
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-	    log.info("Sesion iniciada como Admin");
-	    configurarTablaEspectaculos();
-	    configurarTablaArtistas();
-	    configurarTablaHistorial();
-	    configurarModificacion();
-	    configurarSpinner();
-	    configurarConversores();
-	    configurarCombos();
-	    configurarBindings();
-	    configurarFecha();
-	    ocultarTodo();
-	}	
-	
-	private void configurarTablaEspectaculos() {
-	    columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-	    columnFechaIniE.setCellValueFactory(new PropertyValueFactory<>("fechaini"));
-	    columnFechaIniE.setCellFactory(col -> new TableCell<Espectaculo, LocalDate>() {
-	        @Override
-	        protected void updateItem(LocalDate item, boolean empty) {
-	            super.updateItem(item, empty);
-	            setText(empty || item == null ? "" : Validador.formatearFecha(item));
-	        }
-	    });
-	    
-	    columnFechaFinE.setCellValueFactory(new PropertyValueFactory<>("fechafin"));
-	    columnFechaFinE.setCellFactory(col -> new TableCell<Espectaculo, LocalDate>() {
-	        @Override
-	        protected void updateItem(LocalDate item, boolean empty) {
-	            super.updateItem(item, empty);
-	            setText(empty || item == null ? "" : Validador.formatearFecha(item));
-	        }
-	    });
-	    tablaEspectaculos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
-	    tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles."));
-
-	    tablaEspectaculos.setOnMouseClicked(event -> {
-	        if (event.getClickCount() == 2) {
-	            Espectaculo seleccionado = tablaEspectaculos.getSelectionModel().getSelectedItem();
-	            if (seleccionado != null) {
-	                mostrarDetalleCompleto(seleccionado);
-	            }
-	        }
-	    });
+		log.info("Sesion iniciada como Admin");
+		configurarTablaEspectaculos();
+		configurarTablaArtistas();
+		configurarTablaHistorial();
+		configurarModificacion();
+		configurarSpinner();
+		configurarConversores();
+		configurarCombos();
+		configurarBindings();
+		configurarFecha();
+		ocultarTodo();
 	}
-	
+
+	private void configurarTablaEspectaculos() {
+		columnNombreE.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+		columnFechaIniE.setCellValueFactory(new PropertyValueFactory<>("fechaini"));
+		columnFechaIniE.setCellFactory(col -> new TableCell<Espectaculo, LocalDate>() {
+			@Override
+			protected void updateItem(LocalDate item, boolean empty) {
+				super.updateItem(item, empty);
+				setText(empty || item == null ? "" : Validador.formatearFecha(item));
+			}
+		});
+
+		columnFechaFinE.setCellValueFactory(new PropertyValueFactory<>("fechafin"));
+		columnFechaFinE.setCellFactory(col -> new TableCell<Espectaculo, LocalDate>() {
+			@Override
+			protected void updateItem(LocalDate item, boolean empty) {
+				super.updateItem(item, empty);
+				setText(empty || item == null ? "" : Validador.formatearFecha(item));
+			}
+		});
+		tablaEspectaculos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+		tablaEspectaculos.setPlaceholder(new Label("No hay espectáculos disponibles."));
+
+		tablaEspectaculos.setOnMouseClicked(event -> {
+			if (event.getClickCount() == 2) {
+				Espectaculo seleccionado = tablaEspectaculos.getSelectionModel().getSelectedItem();
+				if (seleccionado != null) {
+					mostrarDetalleCompleto(seleccionado);
+				}
+			}
+		});
+	}
+
 	public void configurarModificacion() {
 		lvNumCreados.setOnMouseClicked(event -> {
-		    if (event.getClickCount() == 2) {
-		        Numero seleccionado = lvNumCreados.getSelectionModel().getSelectedItem();
-		        if (seleccionado != null) {
-		            abrirVentanaModificarNumero(seleccionado);
-		        }
-		    }
+			if (event.getClickCount() == 2) {
+				Numero seleccionado = lvNumCreados.getSelectionModel().getSelectedItem();
+				if (seleccionado != null) {
+					abrirVentanaModificarNumero(seleccionado);
+				}
+			}
 		});
 	}
 
 	private void abrirVentanaModificarNumero(Numero seleccionado) {
-		 try {
-		        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vista/ModificarNumero.fxml"));
-		        loader.setControllerFactory(context::getBean);
-		        Parent root = loader.load();
-		        
-		        ModificarNumeroController controller = loader.getController();
-		        controller.setDatos(seleccionado, usuariosService.getArtistas());
-		        
-		        Stage stage = new Stage();
-		        stage.setScene(new Scene(root));
-		        stage.initModality(Modality.APPLICATION_MODAL); //bloquea ventana principal
-		        stage.showAndWait();
-		        
-		        lvNumCreados.refresh();
-		        
-		    } catch (IOException e) {
-		        System.err.println("Error al abrir ventana modificar número: " + e.getMessage());
-		    }
-		
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/vista/ModificarNumero.fxml"));
+			loader.setControllerFactory(context::getBean);
+			Parent root = loader.load();
+
+			ModificarNumeroController controller = loader.getController();
+			controller.setDatos(seleccionado, usuariosService.getArtistas());
+
+			Stage stage = new Stage();
+			stage.setScene(new Scene(root));
+			stage.initModality(Modality.APPLICATION_MODAL); // bloquea ventana principal
+			stage.showAndWait();
+
+			lvNumCreados.refresh();
+
+		} catch (IOException e) {
+			System.err.println("Error al abrir ventana modificar número: " + e.getMessage());
+		}
+
 	}
 
 	private void configurarTablaArtistas() {
-	    columnNombreA.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-	    columnApodoA.setCellValueFactory(new PropertyValueFactory<>("apodo"));
-	    columnEspecA.setCellValueFactory(cellData -> {
-	        Artista artista = cellData.getValue();
-	        String especialidades = "";
-	        if (artista.getEspecialidades() != null) {
-	            for (Especialidad e : artista.getEspecialidades()) {
-	                if (!especialidades.isEmpty()) especialidades += ", ";
-	                especialidades += e.getNombre();
-	            }
-	        }
-	        return new javafx.beans.property.SimpleStringProperty(especialidades);
-	    });
-	    tablaArtistas.setPlaceholder(new Label("No hay artistas registrados."));
-	    tablaArtistas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+		columnNombreA.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+		columnApodoA.setCellValueFactory(new PropertyValueFactory<>("apodo"));
+		columnEspecA.setCellValueFactory(cellData -> {
+			Artista artista = cellData.getValue();
+			String especialidades = "";
+			if (artista.getEspecialidades() != null) {
+				for (Especialidad e : artista.getEspecialidades()) {
+					if (!especialidades.isEmpty())
+						especialidades += ", ";
+					especialidades += e.getNombre();
+				}
+			}
+			return new javafx.beans.property.SimpleStringProperty(especialidades);
+		});
+		tablaArtistas.setPlaceholder(new Label("No hay artistas registrados."));
+		tablaArtistas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
 	}
 
 	private void configurarTablaHistorial() {
-	    colFechaLog.setCellValueFactory(new PropertyValueFactory<>("fechaHora"));
-	    
-	    colFechaLog.setCellFactory(col -> new TableCell<LogOperacion, String>() {
-	        @Override
-	        protected void updateItem(String item, boolean empty) {
-	            super.updateItem(item, empty);
-	            if (empty || item == null) {
-	                setText("");
-	            } else {
-	                try {	                    
-	                    LocalDateTime fechaReal = LocalDateTime.parse(item); 
-	                    setText(Validador.formatearFechaHora(fechaReal));
-	                } catch (Exception e) {
-	                    setText(item);
-	                }
-	            }
-	        }
-	    });
-	    
-	    colUsuarioLog.setCellValueFactory(new PropertyValueFactory<>("usuario"));
-	    colTipoLog.setCellValueFactory(new PropertyValueFactory<>("tipoOperacion"));
-	    colResumenLog.setCellValueFactory(new PropertyValueFactory<>("resumen"));
-	    tablaHistorial.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+		colFechaLog.setCellValueFactory(new PropertyValueFactory<>("fechaHora"));
+
+		colFechaLog.setCellFactory(col -> new TableCell<LogOperacion, String>() {
+			@Override
+			protected void updateItem(String item, boolean empty) {
+				super.updateItem(item, empty);
+				if (empty || item == null) {
+					setText("");
+				} else {
+					try {
+						LocalDateTime fechaReal = LocalDateTime.parse(item);
+						setText(Validador.formatearFechaHora(fechaReal));
+					} catch (Exception e) {
+						setText(item);
+					}
+				}
+			}
+		});
+
+		colUsuarioLog.setCellValueFactory(new PropertyValueFactory<>("usuario"));
+		colTipoLog.setCellValueFactory(new PropertyValueFactory<>("tipoOperacion"));
+		colResumenLog.setCellValueFactory(new PropertyValueFactory<>("resumen"));
+		tablaHistorial.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
 	}
 
 	private void configurarSpinner() {
-	    SpinnerValueFactory<Double> valueFactory = 
-	        new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 15.5, 5.0, 0.5);
-	    spnduracionN.setValueFactory(valueFactory);
+		SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 15.5, 5.0,
+				0.5);
+		spnduracionN.setValueFactory(valueFactory);
 	}
 
 	private void configurarConversores() {
-	    cbSelectorE.setConverter(new StringConverter<Espectaculo>() {
-	        @Override public String toString(Espectaculo esp) {
-	            return (esp == null) ? "" : esp.getNombre();
-	        }
-	        @Override public Espectaculo fromString(String string) { return null; }
-	    });
-	    cbCoordinadores.setConverter(new StringConverter<Coordinador>() {
-	        @Override public String toString(Coordinador c) {
-	            return (c == null) ? "" : c.getNombre();
-	        }
-	        @Override public Coordinador fromString(String string) {
-	            for (Coordinador c : cbCoordinadores.getItems()) {
-	                if (c.getNombre().equals(string)) return c;
-	            }
-	            return null;
-	        }
-	    });
-	    cbSelectorP.setConverter(new StringConverter<Persona>() {
-	        @Override public String toString(Persona p) {
-	            return (p == null) ? "" : p.getNombre() + " (" + p.getPerfil() + ")";
-	        }
-	        @Override public Persona fromString(String string) { return null; }
-	    });
-	    cbArtistaEsp.setConverter(new StringConverter<Especialidad>() {
-	        @Override public String toString(Especialidad e) {
-	            return (e == null) ? "" : e.getNombre();
-	        }
-	        @Override public Especialidad fromString(String string) { return null; }
-	    });
-	    conversorArtistasCombo();
-	    conversorArtistasSeleccionados();
-	    conversorEspecialidadArtista();
-	    conversorNumeros();
+		cbSelectorE.setConverter(new StringConverter<Espectaculo>() {
+			@Override
+			public String toString(Espectaculo esp) {
+				return (esp == null) ? "" : esp.getNombre();
+			}
+
+			@Override
+			public Espectaculo fromString(String string) {
+				return null;
+			}
+		});
+		cbCoordinadores.setConverter(new StringConverter<Coordinador>() {
+			@Override
+			public String toString(Coordinador c) {
+				return (c == null) ? "" : c.getNombre();
+			}
+
+			@Override
+			public Coordinador fromString(String string) {
+				for (Coordinador c : cbCoordinadores.getItems()) {
+					if (c.getNombre().equals(string))
+						return c;
+				}
+				return null;
+			}
+		});
+		cbSelectorP.setConverter(new StringConverter<Persona>() {
+			@Override
+			public String toString(Persona p) {
+				return (p == null) ? "" : p.getNombre() + " (" + p.getPerfil() + ")";
+			}
+
+			@Override
+			public Persona fromString(String string) {
+				return null;
+			}
+		});
+		cbArtistaEsp.setConverter(new StringConverter<Especialidad>() {
+			@Override
+			public String toString(Especialidad e) {
+				return (e == null) ? "" : e.getNombre();
+			}
+
+			@Override
+			public Especialidad fromString(String string) {
+				return null;
+			}
+		});
+		conversorArtistasCombo();
+		conversorArtistasSeleccionados();
+		conversorEspecialidadArtista();
+		conversorNumeros();
+		conversorDossieres();
 	}
 
 	private void configurarCombos() {
-	    // paises ordenados
-	    List<String> paises = new ArrayList<>(paisesService.getPaises().values());
-	    Collections.sort(paises);
-	    cbNacionalidad.setItems(FXCollections.observableArrayList(paises));
-	    // especialidades
-	    cbArtistaEsp.setItems(FXCollections.observableArrayList(usuariosService.getEspecialidades()));
-	    // artistas y lista temporal
-	    cbartistasN.setItems(FXCollections.observableArrayList(usuariosService.getArtistas()));
-	    lvArtistasSeleccionados.setItems(artistasDelNumeroActual);
-	    // coordinadores
-	    cbCoordinadores.setItems(FXCollections.observableArrayList(usuariosService.getCoordinadores()));
+		// paises ordenados
+		List<String> paises = new ArrayList<>(paisesService.getPaises().values());
+		Collections.sort(paises);
+		cbNacionalidad.setItems(FXCollections.observableArrayList(paises));
+		// especialidades
+		cbArtistaEsp.setItems(FXCollections.observableArrayList(usuariosService.getEspecialidades()));
+		// artistas y lista temporal
+		cbartistasN.setItems(FXCollections.observableArrayList(usuariosService.getArtistas()));
+		lvArtistasSeleccionados.setItems(artistasDelNumeroActual);
+		// coordinadores
+		cbCoordinadores.setItems(FXCollections.observableArrayList(usuariosService.getCoordinadores()));
 	}
 
 	private void configurarBindings() {
-	    btnAccion.disableProperty().bind(
-	        tfNombre.textProperty().isEmpty()
-	        .or(dpFechaIni.valueProperty().isNull())
-	        .or(dpFechafin.valueProperty().isNull())
-	        .or(cbCoordinadores.valueProperty().isNull())
-	    );
-	    btnCargarE.disableProperty().bind(cbSelectorE.valueProperty().isNull());
-	    btnEliminar.disableProperty().bind(cbSelectorE.valueProperty().isNull());
-	    btnFinalizarTodo.disableProperty().bind(Bindings.size(lvNumCreados.getItems()).lessThan(3));
-	    btnCargarP.disableProperty().bind(cbSelectorP.valueProperty().isNull());
-	    btnEliminarP.disableProperty().bind(cbSelectorP.valueProperty().isNull());
-	    btnFinalizarA.disableProperty().bind(Bindings.size(lvArtistaEsp.getItems()).lessThan(1));
-	    btnAgregarEsp.disableProperty().bind(Bindings.size(lvArtistaEsp.getItems()).greaterThanOrEqualTo(5));
+		btnAccion.disableProperty().bind(tfNombre.textProperty().isEmpty().or(dpFechaIni.valueProperty().isNull())
+				.or(dpFechafin.valueProperty().isNull()).or(cbCoordinadores.valueProperty().isNull()));
+		btnCargarE.disableProperty().bind(cbSelectorE.valueProperty().isNull());
+		btnEliminar.disableProperty().bind(cbSelectorE.valueProperty().isNull());
+		btnFinalizarTodo.disableProperty().bind(Bindings.size(lvNumCreados.getItems()).lessThan(3));
+		btnCargarP.disableProperty().bind(cbSelectorP.valueProperty().isNull());
+		btnEliminarP.disableProperty().bind(cbSelectorP.valueProperty().isNull());
+		btnFinalizarA.disableProperty().bind(Bindings.size(lvArtistaEsp.getItems()).lessThan(1));
+		btnAgregarEsp.disableProperty().bind(Bindings.size(lvArtistaEsp.getItems()).greaterThanOrEqualTo(5));
 	}
 
 	private void configurarFecha() {
-	    dateCoor.disableProperty().bind(chbCoor.selectedProperty().not());
+		dateCoor.disableProperty().bind(chbCoor.selectedProperty().not());
 	}
 
 	/**
@@ -593,12 +622,12 @@ public class MenuAdminController implements Initializable {
 		gridArtista.setVisible(false);
 		gridCoordinador.setVisible(false);
 		panelResumenP.setVisible(false);
-		
-		//de historial
-		panelHistorial.setVisible(false);
-		
-		panelEspectaculos.setVisible(false);
 
+		// de historial
+		panelHistorial.setVisible(false);
+
+		panelEspectaculos.setVisible(false);
+		panelDossier.setVisible(false);
 	}
 
 	@FXML
@@ -670,16 +699,14 @@ public class MenuAdminController implements Initializable {
 	}
 
 	/**
-	 * muestra datos para artista o coordinador dependiendo de lo que este
-	 * marcado
+	 * muestra datos para artista o coordinador dependiendo de lo que este marcado
 	 */
 	@FXML
 	private void botonSiguientePersona() {
 		boolean error = false;
 		// ocultarTodo();
 		System.out.println("validando nombre: " + txtNombre.getText());
-		System.out.println("Resultado: " + Validador.esCadenaValida(
-				txtNombre.getText(), Validador.nombreGeneralRegex));
+		System.out.println("Resultado: " + Validador.esCadenaValida(txtNombre.getText(), Validador.nombreGeneralRegex));
 
 		// limpiar estilos
 		txtNombre.setStyle("-fx-background-color: #D6EAF8;");
@@ -709,24 +736,22 @@ public class MenuAdminController implements Initializable {
 		}
 		// comprobar que no use "admin" en ningun campo
 		if (txtNombre.getText().equalsIgnoreCase("admin")) {
-		    txtNombre.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
-		    error = true;
-		} //admin
+			txtNombre.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			error = true;
+		} // admin
 		if (txtNombreU.getText().equalsIgnoreCase("admin")) {
-		    txtNombreU.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
-		    error = true;
+			txtNombreU.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			error = true;
 		}
 
 		if (!error && personaEnEdicion == null) {
 			if (usuariosService.comprobarEmail(txtEmail.getText())) {
-				txtEmail.setStyle(
-						"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+				txtEmail.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 				log.info("email ya registrado");
 				error = true;
 			}
 			if (usuariosService.comprobarNombreUsuario(txtNombreU.getText())) {
-				txtNombreU.setStyle(
-						"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+				txtNombreU.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 				log.info("nombre de usuario ya registrado");
 				error = true;
 			}
@@ -773,36 +798,31 @@ public class MenuAdminController implements Initializable {
 			nuevo.setEmail(txtEmail.getText());
 			nuevo.setNacionalidad(cbNacionalidad.getValue());
 			nuevo.setPerfil(Perfil.ARTISTA);
-			
+
 			// especificos artista
 			nuevo.setApodo(txtApodo.getText());
-			nuevo.setEspecialidades(
-					new HashSet<Especialidad>(lvArtistaEsp.getItems()));
+			nuevo.setEspecialidades(new HashSet<Especialidad>(lvArtistaEsp.getItems()));
 
 			// credenciales
-			Credenciales cred = new Credenciales(txtNombreU.getText().toLowerCase(),
-					txtPass.getText(), Perfil.ARTISTA);
+			Credenciales cred = new Credenciales(txtNombreU.getText().toLowerCase(), txtPass.getText(), Perfil.ARTISTA);
 			nuevo.setCredenciales(cred);
 			cred.setPersona(nuevo);
 		} else {
 			nuevo = (Artista) personaEnEdicion;
 			nuevo.getCredenciales().setNombre(txtNombreU.getText());
 			nuevo.getCredenciales().setPassword(txtPass.getText());
-			//comunes
+			// comunes
 			nuevo.setNombre(txtNombre.getText());
-		    nuevo.setEmail(txtEmail.getText());
-		    nuevo.setNacionalidad(cbNacionalidad.getValue());
-		    nuevo.getCredenciales().setNombre(txtNombreU.getText().toLowerCase());
-		    nuevo.getCredenciales().setPassword(txtPass.getText());
-		    nuevo.setApodo(txtApodo.getText());
-		    nuevo.setEspecialidades(new HashSet<Especialidad>(lvArtistaEsp.getItems()));
+			nuevo.setEmail(txtEmail.getText());
+			nuevo.setNacionalidad(cbNacionalidad.getValue());
+			nuevo.getCredenciales().setNombre(txtNombreU.getText().toLowerCase());
+			nuevo.getCredenciales().setPassword(txtPass.getText());
+			nuevo.setApodo(txtApodo.getText());
+			nuevo.setEspecialidades(new HashSet<Especialidad>(lvArtistaEsp.getItems()));
 			// especificos artista
 			nuevo.setApodo(txtApodo.getText());
-			nuevo.setEspecialidades(
-					new HashSet<Especialidad>(lvArtistaEsp.getItems()));
+			nuevo.setEspecialidades(new HashSet<Especialidad>(lvArtistaEsp.getItems()));
 		}
-
-		
 
 		// se guarda:
 		usuariosService.crearPersona(nuevo);
@@ -834,62 +854,62 @@ public class MenuAdminController implements Initializable {
 
 		ocultarTodo();
 		panelResumenP.setVisible(true);
-		
+
 	}
 
 	@FXML
-private void finalizarCoordinador() {
-    Coordinador nuevo;
+	private void finalizarCoordinador() {
+		Coordinador nuevo;
 
-    if (personaEnEdicion == null) {
-        // modo crear
-        nuevo = new Coordinador();
-        nuevo.setPerfil(Perfil.COORDINACION);
-        Credenciales cred = new Credenciales(txtNombreU.getText().toLowerCase(),
-                txtPass.getText(), Perfil.COORDINACION);
-        nuevo.setCredenciales(cred);
-        cred.setPersona(nuevo);
-    } else {
-        // modo modificar
-        nuevo = (Coordinador) personaEnEdicion;
-        nuevo.getCredenciales().setNombre(txtNombreU.getText().toLowerCase());
-        nuevo.getCredenciales().setPassword(txtPass.getText());
-    }
+		if (personaEnEdicion == null) {
+			// modo crear
+			nuevo = new Coordinador();
+			nuevo.setPerfil(Perfil.COORDINACION);
+			Credenciales cred = new Credenciales(txtNombreU.getText().toLowerCase(), txtPass.getText(),
+					Perfil.COORDINACION);
+			nuevo.setCredenciales(cred);
+			cred.setPersona(nuevo);
+		} else {
+			// modo modificar
+			nuevo = (Coordinador) personaEnEdicion;
+			nuevo.getCredenciales().setNombre(txtNombreU.getText().toLowerCase());
+			nuevo.getCredenciales().setPassword(txtPass.getText());
+		}
 
-    // datos comunes en ambos casos
-    nuevo.setNombre(txtNombre.getText());
-    nuevo.setEmail(txtEmail.getText());
-    nuevo.setNacionalidad(cbNacionalidad.getValue());
-    nuevo.setSenior(chbCoor.isSelected());
-    if (chbCoor.isSelected()) {
-        nuevo.setFechasenior(dateCoor.getValue());
-    }
+		// datos comunes en ambos casos
+		nuevo.setNombre(txtNombre.getText());
+		nuevo.setEmail(txtEmail.getText());
+		nuevo.setNacionalidad(cbNacionalidad.getValue());
+		nuevo.setSenior(chbCoor.isSelected());
+		if (chbCoor.isSelected()) {
+			nuevo.setFechasenior(dateCoor.getValue());
+		}
 
-    usuariosService.crearPersona(nuevo);
+		usuariosService.crearPersona(nuevo);
 
-    // mostrar resumen
-    lblResumenNombreP.setText(nuevo.getNombre());
-    lblResumenEmailP.setText(nuevo.getEmail());
-    lblResumenNacionP.setText(nuevo.getNacionalidad());
-    lblResumenUsuarioP.setText(txtNombreU.getText());
-    lblResumenPuestoP.setText("Coordinador");
+		// mostrar resumen
+		lblResumenNombreP.setText(nuevo.getNombre());
+		lblResumenEmailP.setText(nuevo.getEmail());
+		lblResumenNacionP.setText(nuevo.getNacionalidad());
+		lblResumenUsuarioP.setText(txtNombreU.getText());
+		lblResumenPuestoP.setText("Coordinador");
 
-    if (nuevo.isSenior()) {
-        lblTituloSenior.setVisible(true);
-        lblResumenCoor.setText(nuevo.getFechasenior().toString());
-    } else {
-        lblTituloSenior.setVisible(false);
-        lblResumenCoor.setText("No es Senior.");
-    }
+		if (nuevo.isSenior()) {
+			lblTituloSenior.setVisible(true);
+			lblResumenCoor.setText(nuevo.getFechasenior().toString());
+		} else {
+			lblTituloSenior.setVisible(false);
+			lblResumenCoor.setText("No es Senior.");
+		}
 
-    vBResumenArtista.setVisible(false);
-    vBResumenArtista.setManaged(false);
-    vbDatosCoor.setVisible(true);
-    vbDatosCoor.setManaged(true);
+		vBResumenArtista.setVisible(false);
+		vBResumenArtista.setManaged(false);
+		vbDatosCoor.setVisible(true);
+		vbDatosCoor.setManaged(true);
 
-    ocultarTodo();
-    panelResumenP.setVisible(true);
-}
+		ocultarTodo();
+		panelResumenP.setVisible(true);
+	}
 
 	@FXML
 	private void handleVerEspectaculos() {
@@ -945,16 +965,16 @@ private void finalizarCoordinador() {
 	@FXML
 	private void handleCrearE() {
 		ocultarTodo();
-	    espectaculoEnEdicion = new Espectaculo();
-	    lvNumCreados.getItems().clear();
-	    tfNombre.clear();
-	    dpFechaIni.setValue(null);
-	    dpFechafin.setValue(null);
-	    cbCoordinadores.setValue(null);
-	    btnAccion.setText("Guardar");
-	 // recargar coordinadores por si se han añadido nuevos
-	    cbCoordinadores.setItems(FXCollections.observableArrayList(usuariosService.getCoordinadores()));
-	    panelFormularioDatos.setVisible(true);
+		espectaculoEnEdicion = new Espectaculo();
+		lvNumCreados.getItems().clear();
+		tfNombre.clear();
+		dpFechaIni.setValue(null);
+		dpFechafin.setValue(null);
+		cbCoordinadores.setValue(null);
+		btnAccion.setText("Guardar");
+		// recargar coordinadores por si se han añadido nuevos
+		cbCoordinadores.setItems(FXCollections.observableArrayList(usuariosService.getCoordinadores()));
+		panelFormularioDatos.setVisible(true);
 	}
 
 	@FXML
@@ -991,12 +1011,10 @@ private void finalizarCoordinador() {
 		boolean error = false;
 
 		if (seleccionada == null) {
-			cbArtistaEsp.setStyle(
-					"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			cbArtistaEsp.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 			error = true;
 		} else if (lvArtistaEsp.getItems().contains(seleccionada)) {
-			cbArtistaEsp.setStyle(
-					"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			cbArtistaEsp.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 			error = true;
 		}
 
@@ -1010,8 +1028,7 @@ private void finalizarCoordinador() {
 
 	@FXML
 	private void eliminarEspecialidad() {
-		Especialidad seleccionada = lvArtistaEsp.getSelectionModel()
-				.getSelectedItem();
+		Especialidad seleccionada = lvArtistaEsp.getSelectionModel().getSelectedItem();
 		if (seleccionada != null) {
 			lvArtistaEsp.getItems().remove(seleccionada);
 		}
@@ -1019,7 +1036,7 @@ private void finalizarCoordinador() {
 
 	@FXML
 	private void cargarPersonaParaModificar() {
-		
+
 		personaEnEdicion = cbSelectorP.getValue();
 
 		if (personaEnEdicion == null) {
@@ -1036,7 +1053,7 @@ private void finalizarCoordinador() {
 			rbArtista.setSelected(true);
 			txtApodo.setText(artista.getApodo());
 			lvArtistaEsp.getItems().setAll(artista.getEspecialidades());
-			
+
 		} else if (personaEnEdicion instanceof Coordinador) {
 			Coordinador coordinador = (Coordinador) personaEnEdicion;
 			rbCoor.setSelected(true);
@@ -1051,8 +1068,7 @@ private void finalizarCoordinador() {
 
 	@FXML
 	private void handleEliminarArtista() {
-		Artista seleccionado = lvArtistasSeleccionados.getSelectionModel()
-				.getSelectedItem();
+		Artista seleccionado = lvArtistasSeleccionados.getSelectionModel().getSelectedItem();
 		if (seleccionado != null) {
 			lvArtistasSeleccionados.getItems().remove(seleccionado);
 		}
@@ -1060,8 +1076,7 @@ private void finalizarCoordinador() {
 
 	@FXML
 	private void handleEliminarNumero() {
-		Numero seleccionado = lvNumCreados.getSelectionModel()
-				.getSelectedItem();
+		Numero seleccionado = lvNumCreados.getSelectionModel().getSelectedItem();
 		if (seleccionado != null) {
 			lvNumCreados.getItems().remove(seleccionado);
 		}
@@ -1071,8 +1086,7 @@ private void finalizarCoordinador() {
 	public void handleModificarE() {
 		ocultarTodo();
 		// [NUEVO] Cargar lista de la BD para el ComboBox
-		cbSelectorE.setItems(FXCollections
-				.observableArrayList(espectaculoService.getEspectaculos()));
+		cbSelectorE.setItems(FXCollections.observableArrayList(espectaculoService.getEspectaculos()));
 		panelBuscadorE.setVisible(true);
 
 	}
@@ -1084,8 +1098,7 @@ private void finalizarCoordinador() {
 			usuariosService.getSesion().setUsuActual(null);
 
 			// cargamos de nuevo el FXML de invitado
-			FXMLLoader loader = new FXMLLoader(
-					getClass().getResource("/vista/MenuInvitado.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/vista/MenuInvitado.fxml"));
 			loader.setControllerFactory(context::getBean); // Para que Spring
 															// gestione el
 															// controlador
@@ -1093,8 +1106,7 @@ private void finalizarCoordinador() {
 			Parent root = loader.load();
 
 			// cambio ala escena de invitado
-			Stage stage = (Stage) ((Node) event.getSource()).getScene()
-					.getWindow();
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			stage.setScene(new Scene(root));
 			stage.show();
 
@@ -1149,15 +1161,26 @@ private void finalizarCoordinador() {
 				if (empty || item == null) {
 					setText(null);
 				} else {
-					setText(item.getNombre() + " (" + item.getDuracion()
-							+ " min) - "
-							+ (item.getArtistas() != null
-									? item.getArtistas().size()
-									: 0)
-							+ " artistas");
+					setText(item.getNombre() + " (" + item.getDuracion() + " min) - "
+							+ (item.getArtistas() != null ? item.getArtistas().size() : 0) + " artistas");
 				}
 			}
 		});
+	}
+
+	private void conversorDossieres() {
+		cbArtistasDossier.setConverter(new StringConverter<Artista>() {
+			@Override
+			public String toString(Artista a) {
+				return (a == null) ? "" : a.getNombre();
+			}
+
+			@Override
+			public Artista fromString(String s) {
+				return null;
+			}
+		});
+		cbNivel.setItems(FXCollections.observableArrayList("ALTO", "MEDIO", "BAJO"));
 	}
 
 	@FXML
@@ -1170,19 +1193,17 @@ private void finalizarCoordinador() {
 	private void handleAnadirArtistaAListaTemporal() {
 
 		Artista seleccionado = cbartistasN.getValue();
-		if (seleccionado != null
-				&& !artistasDelNumeroActual.contains(seleccionado)) {// TODO
-																		// peude
-																		// estar
-																		// mal
+		if (seleccionado != null && !artistasDelNumeroActual.contains(seleccionado)) {// TODO
+																						// peude
+																						// estar
+																						// mal
 			artistasDelNumeroActual.add(seleccionado);
 			cbartistasN.setStyle("-fx-background-color: #D6EAF8;"); // Quitamos
 																	// error si
 																	// lo
 																	// hubiera
 		} else {
-			cbartistasN.setStyle(
-					"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			cbartistasN.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 		}
 	}
 
@@ -1194,16 +1215,14 @@ private void finalizarCoordinador() {
 		// Nombre del Número
 		String nombreN = tfnombreN.getText();
 		if (nombreN == null || nombreN.trim().isEmpty()) {
-			tfnombreN.setStyle(
-					"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			tfnombreN.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 			error = true;
 		}
 
 		// validar Artista seleccionado
 		Artista artistaSeleccionado = cbartistasN.getValue();
 		if (artistaSeleccionado == null) {
-			cbartistasN.setStyle(
-					"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+			cbartistasN.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 			error = true;
 		}
 
@@ -1252,8 +1271,8 @@ private void finalizarCoordinador() {
 	// navegacion de continuar en creacion/modificacion
 	@FXML
 	private void handleContinuar() {
-		
-		  System.out.println("handleContinuar llamado");
+
+		System.out.println("handleContinuar llamado");
 		boolean error = false;
 
 		tfNombre.setStyle("-fx-background-color: #D6EAF8;");
@@ -1267,27 +1286,25 @@ private void finalizarCoordinador() {
 		if (validarCombo(cbCoordinadores)) {
 			System.out.println("error en coordinador");
 			error = true;
-			
+
 		}
 
 		if (dpFechaIni.getValue() == null || dpFechafin.getValue() == null) {
 			if (dpFechaIni.getValue() == null) {
-				dpFechaIni.setStyle(
-						"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+				dpFechaIni.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 				System.out.println("error en fechas nulas");
 			}
 			if (dpFechafin.getValue() == null) {
-				dpFechafin.setStyle(
-						"-fx-border-color: red; -fx-background-color: #D6EAF8;");
+				dpFechafin.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
 				System.out.println("error en rango fechas");
 			}
 			error = true;
 		} else {
-			
+
 			if (!Validador.esFechaValida(dpFechaIni.getValue(), dpFechafin.getValue())) {
-			    dpFechafin.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
-			    System.out.println("error en fechas");
-			    error = true;
+				dpFechafin.setStyle("-fx-border-color: red; -fx-background-color: #D6EAF8;");
+				System.out.println("error en fechas");
+				error = true;
 			}
 		}
 
@@ -1304,7 +1321,7 @@ private void finalizarCoordinador() {
 		ocultarTodo();
 		// recargar artistas por si se han añadido nuevos
 		cbartistasN.setItems(FXCollections.observableArrayList(usuariosService.getArtistas()));
-		
+
 		panelGestionNumeros.setVisible(true);
 	}
 
@@ -1321,30 +1338,26 @@ private void finalizarCoordinador() {
 
 		// mostrar resumen
 		lblResumenNombre.setText(espectaculoEnEdicion.getNombre());
-		lblResumenFechas
-				.setText("Disponible de " + espectaculoEnEdicion.getFechaini()
-						+ " a " + espectaculoEnEdicion.getFechafin());
+		lblResumenFechas.setText(
+				"Disponible de " + espectaculoEnEdicion.getFechaini() + " a " + espectaculoEnEdicion.getFechafin());
 		lblResumenCoordinadr.setText(cbCoordinadores.getValue().getNombre());
 
 		// listview:
-		ObservableList<String> itemsResumen = FXCollections
-				.observableArrayList();
+		ObservableList<String> itemsResumen = FXCollections.observableArrayList();
 		for (Numero n : espectaculoEnEdicion.getNumeros()) {
 			String artistas = "";
 			for (Artista a : n.getArtistas()) {
-		        if (!artistas.isEmpty()) {
-		            artistas += ", ";
-		        }
-		        artistas += a.getNombre();
-		    }
-			itemsResumen.add(
-					n.getNombre() + " | Duración: " + n.getDuracion() + " min | Artistas: "+artistas);
+				if (!artistas.isEmpty()) {
+					artistas += ", ";
+				}
+				artistas += a.getNombre();
+			}
+			itemsResumen.add(n.getNombre() + " | Duración: " + n.getDuracion() + " min | Artistas: " + artistas);
 
 		}
 		lvResumenNumeros.setItems(itemsResumen);
 		btnFinalizarTodo.disableProperty().unbind();
-		btnFinalizarTodo.disableProperty()
-				.bind(Bindings.size(lvNumCreados.getItems()).lessThan(3));
+		btnFinalizarTodo.disableProperty().bind(Bindings.size(lvNumCreados.getItems()).lessThan(3));
 
 		// cuando trodo cargado, mostrar
 		ocultarTodo();
@@ -1368,8 +1381,7 @@ private void finalizarCoordinador() {
 				lvArtistasSeleccionados.getItems().add(seleccionado);
 
 				// TODO prueba temporal
-				System.out.println("Artista añadido a la lista: "
-						+ seleccionado.getNombre());
+				System.out.println("Artista añadido a la lista: " + seleccionado.getNombre());
 
 				// forzar que refresque al añadir
 				lvArtistasSeleccionados.refresh();
@@ -1383,30 +1395,28 @@ private void finalizarCoordinador() {
 	@FXML
 	private void handleRegistrarNumero() {
 		boolean error = false;
-		
-		//limpiar previos
+
+		// limpiar previos
 		tfnombreN.setStyle("-fx-background-color: #D6EAF8;");
 		lvArtistasSeleccionados.setStyle(null);
-		
-		//validaciones
-		if(validarCampo(tfnombreN, Validador.nombreEspectaculoRegex)) {
+
+		// validaciones
+		if (validarCampo(tfnombreN, Validador.nombreEspectaculoRegex)) {
 			error = true;
 		}
 		if (validarLista(lvArtistasSeleccionados, 1, Integer.MAX_VALUE)) {
 			error = true;
 		}
-		
+
 		if (error) {
 			return;
 		}
-		
+
 		String nombreNum = tfnombreN.getText();
 		double duracion = spnduracionN.getValue();
-		List<Artista> seleccionados = new ArrayList<>(
-				lvArtistasSeleccionados.getItems());
+		List<Artista> seleccionados = new ArrayList<>(lvArtistasSeleccionados.getItems());
 
-		if (nombreNum != null && !nombreNum.isEmpty()
-				&& !seleccionados.isEmpty()) {
+		if (nombreNum != null && !nombreNum.isEmpty() && !seleccionados.isEmpty()) {
 			Numero nuevoNumero = new Numero();
 			nuevoNumero.setNombre(nombreNum);
 			nuevoNumero.setDuracion(duracion);
@@ -1422,115 +1432,159 @@ private void finalizarCoordinador() {
 		}
 
 	}
-	
+
 	@FXML
 	private void verHistorial() {
 		ocultarTodo();
-		
+
 		tablaHistorial.getItems().clear();
 		panelHistorial.setVisible(true);
 	}
-	
+
 	@FXML
 	private void buscarHistorial() {
-		
+
 		String usuario = tfFiltroUsuario.getText().trim();
-		
-		//checkboxes
+
+		// checkboxes
 		List<String> tiposSeleccionados = new ArrayList<>();
-	    if (chbFiltroNuevo.isSelected()) {
-	        tiposSeleccionados.add("NUEVO");
-	    }
-	    if (chbFiltroActualizacion.isSelected()) {
-	        tiposSeleccionados.add("ACTUALIZACION");
-	    }
-	    if (chbFiltroBorrado.isSelected()) {
-	        tiposSeleccionados.add("BORRADO");
-	    }
-		
+		if (chbFiltroNuevo.isSelected()) {
+			tiposSeleccionados.add("NUEVO");
+		}
+		if (chbFiltroActualizacion.isSelected()) {
+			tiposSeleccionados.add("ACTUALIZACION");
+		}
+		if (chbFiltroBorrado.isSelected()) {
+			tiposSeleccionados.add("BORRADO");
+		}
+
 		LocalDateTime desde = null;
 		LocalDateTime hasta = null;
-		
+
 		if (dpFiltroDesde.getValue() != null) {
 			desde = dpFiltroDesde.getValue().atStartOfDay();
 		}
 		if (dpFiltroHasta.getValue() != null) {
-			hasta = dpFiltroHasta.getValue().atTime(23,59,59);
+			hasta = dpFiltroHasta.getValue().atTime(23, 59, 59);
 		}
-		
-		List<LogOperacion> resultado = logService.consultarHistorial(
-		        usuario.isEmpty() ? null : usuario, 
-		        tiposSeleccionados.isEmpty() ? null : tiposSeleccionados, 
-		        desde, hasta);
-		
+
+		List<LogOperacion> resultado = logService.consultarHistorial(usuario.isEmpty() ? null : usuario,
+				tiposSeleccionados.isEmpty() ? null : tiposSeleccionados, desde, hasta);
+
 		tablaHistorial.getItems().setAll(resultado);
-		
+
 	}
-	
+
 	@FXML
 	private void handleIncidencias(ActionEvent event) {
-	    try {
-	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vista/MenuIncidencias.fxml"));
-	        loader.setControllerFactory(context::getBean);
-	        Parent root = loader.load();
-	        
-	        // pasamos la pantalla de origen para el boton atras
-	        MenuIncidenciasController controller = loader.getController();
-	        controller.setPantallaOrigen("Admin"); 
-	        controller.configurarBienvenida();
-	        
-	        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-	        stage.setScene(new Scene(root));
-	        stage.show();
-	    } catch (IOException e) {
-	        System.err.println("Error al abrir incidencias: " + e.getMessage());
-	    }
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/vista/MenuIncidencias.fxml"));
+			loader.setControllerFactory(context::getBean);
+			Parent root = loader.load();
+
+			// pasamos la pantalla de origen para el boton atras
+			MenuIncidenciasController controller = loader.getController();
+			controller.setPantallaOrigen("Admin");
+			controller.configurarBienvenida();
+
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.setScene(new Scene(root));
+			stage.show();
+		} catch (IOException e) {
+			System.err.println("Error al abrir incidencias: " + e.getMessage());
+		}
 	}
-	
+
 	@FXML
 	private void mostrarDetalleCompleto(Espectaculo e) {
-	    String detalle = "*** ESPECTÁCULO ***\n" +
-	                     "Id: " + e.getId() + "\n" +
-	                     "Nombre: " + e.getNombre() + "\n" +
-	                     "Inicio: " + Validador.formatearFecha(e.getFechaini()) + "\n" +
-	                     "Fin: " + Validador.formatearFecha(e.getFechafin()) + "\n\n";
+		String detalle = "*** ESPECTÁCULO ***\n" + "Id: " + e.getId() + "\n" + "Nombre: " + e.getNombre() + "\n"
+				+ "Inicio: " + Validador.formatearFecha(e.getFechaini()) + "\n" + "Fin: "
+				+ Validador.formatearFecha(e.getFechafin()) + "\n\n";
 
-	    if (e.getEncargadoCoor() != null) {
-	        detalle += "*** COORDINADOR ***\n" +
-	                   "Nombre: " + e.getEncargadoCoor().getNombre() + "\n" +
-	                   "Email: " + e.getEncargadoCoor().getEmail() + "\n" +
-	                   "Senior: " + (e.getEncargadoCoor().isSenior() ? "Sí" : "No") + "\n\n";
-	    }
+		if (e.getEncargadoCoor() != null) {
+			detalle += "*** COORDINADOR ***\n" + "Nombre: " + e.getEncargadoCoor().getNombre() + "\n" + "Email: "
+					+ e.getEncargadoCoor().getEmail() + "\n" + "Senior: "
+					+ (e.getEncargadoCoor().isSenior() ? "Sí" : "No") + "\n\n";
+		}
 
-	    detalle += "*** NÚMEROS Y ARTISTAS ***\n";
-	    for (Numero n : e.getNumeros()) {
-	        detalle += "- Id:" + n.getId() + " '" + n.getNombre() +
-	                   "' | Duración: " + n.getDuracion() + " min\n";
-	        detalle += "  Artistas:\n";
-	        for (Artista a : n.getArtistas()) {
-	            String especialidades = "";
-	            for (Especialidad esp : a.getEspecialidades()) {
-	                if (!especialidades.isEmpty()) especialidades += ", ";
-	                especialidades += esp.getNombre();
-	            }
-	            detalle += "    · " + a.getNombre() +
-	                       " (" + a.getNacionalidad() + ")" +
-	                       " | Especialidades: " + especialidades;
-	            if (a.getApodo() != null && !a.getApodo().isBlank()) {
-	                detalle += " | Apodo: " + a.getApodo();
-	            }
-	            detalle += "\n";
-	        }
-	    }
-	    txtAreaDetalleEspectaculo.setText(detalle);
+		detalle += "*** NÚMEROS Y ARTISTAS ***\n";
+		for (Numero n : e.getNumeros()) {
+			detalle += "- Id:" + n.getId() + " '" + n.getNombre() + "' | Duración: " + n.getDuracion() + " min\n";
+			detalle += "  Artistas:\n";
+			for (Artista a : n.getArtistas()) {
+				String especialidades = "";
+				for (Especialidad esp : a.getEspecialidades()) {
+					if (!especialidades.isEmpty())
+						especialidades += ", ";
+					especialidades += esp.getNombre();
+				}
+				detalle += "    · " + a.getNombre() + " (" + a.getNacionalidad() + ")" + " | Especialidades: "
+						+ especialidades;
+				if (a.getApodo() != null && !a.getApodo().isBlank()) {
+					detalle += " | Apodo: " + a.getApodo();
+				}
+				detalle += "\n";
+			}
+		}
+		txtAreaDetalleEspectaculo.setText(detalle);
 	}
 
-    @FXML
-    private void handleExportarInforme() {
-        Espectaculo seleccionado = tablaEspectaculos.getSelectionModel().getSelectedItem();
-        if (seleccionado != null) {
-            informeService.generarYGuardarInforme(seleccionado);
-            System.out.println("Informe exportado para: " + seleccionado.getNombre()); //pruebas
-        }
-    }
+	@FXML
+	private void handleExportarInforme() {
+		Espectaculo seleccionado = tablaEspectaculos.getSelectionModel().getSelectedItem();
+		if (seleccionado != null) {
+			informeService.generarYGuardarInforme(seleccionado);
+			System.out.println("Informe exportado para: " + seleccionado.getNombre()); // pruebas
+		}
+	}
+
+	@FXML
+	private void handleBotonDossier() {
+		ocultarTodo();
+		cbArtistasDossier.setItems(FXCollections.observableArrayList(usuariosService.getArtistas()));
+		panelDossier.setVisible(true);
+	}
+
+	@FXML
+	private void handleGuardarEvaluacion() {
+		Artista artista = cbArtistasDossier.getValue();
+		if (artista == null || taComentario.getText().isBlank() || cbNivel.getValue() == null)
+			return;
+
+		Persona usuarioActual = usuariosService.getSesion().getUsuActual();
+		Evaluador evaluador = new Evaluador(usuarioActual.getId(), usuarioActual.getPerfil().toString());
+
+		Evaluacion evaluacion = new Evaluacion();
+		evaluacion.setFecha(LocalDate.now());
+		evaluacion.setRealizadaPor(evaluador);
+		evaluacion.setComentario(taComentario.getText());
+		evaluacion.setNivel(cbNivel.getValue());
+
+		dossierService.añadirEvaluacion(artista.getId(), evaluacion);
+		taComentario.clear();
+		cbNivel.setValue(null);
+	}
+
+	@FXML
+	private void handleGuardarObservacion() {
+		Artista artista = cbArtistasDossier.getValue();
+		if (artista == null || taObservacion.getText().isBlank())
+			return;
+
+		Persona usuarioActual = usuariosService.getSesion().getUsuActual();
+
+		Observacion observacion = new Observacion();
+		observacion.setFecha(LocalDate.now());
+		observacion.setTexto(taObservacion.getText());
+		String autor;
+		if (usuarioActual.getCredenciales() == null) {
+		    autor = "admin";
+		} else {
+		    autor = usuarioActual.getCredenciales().getNombre();
+		}
+		observacion.setAutor(autor);
+
+		dossierService.añadirObservacion(artista.getId(), observacion);
+		taObservacion.clear();
+	}
 }

@@ -24,6 +24,8 @@ public class Dossier {
     private List<Evaluacion> evaluaciones = new ArrayList<>();
     private List<Observacion> observaciones = new ArrayList<>();
 
+    public Dossier(){}
+
     public Dossier(Artista artista) {
         this.idArtista = artista.getId();
         this.nombre = artista.getNombre();

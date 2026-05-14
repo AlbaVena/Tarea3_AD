@@ -2,18 +2,26 @@ package principal;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.mongodb.autoconfigure.MongoAutoConfiguration;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import repository.DossierRepository;
 
-@SpringBootApplication(scanBasePackages = {"controlador", "entidades", "factorias", "repository", "servicios", "implementacion", "utils"})
+@SpringBootApplication(scanBasePackages = {"controlador", "entidades", "factorias", "repository", "servicios", "implementacion", "utils", "principal"},
+      exclude = {MongoAutoConfiguration.class}
+)
 @EnableJpaRepositories(basePackages = "repository") 
+@EnableMongoRepositories(basePackages = "repository", includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = DossierRepository.class))
 @EntityScan(basePackages = "entidades")
 public class principalAplicacion extends Application{
 

@@ -19,6 +19,9 @@ import entidades.Especialidad;
 import entidades.Espectaculo;
 import entidades.Numero;
 import entidades.Persona;
+import entidades.mongodb.Evaluacion;
+import entidades.mongodb.Evaluador;
+import entidades.mongodb.Observacion;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -49,6 +52,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import servicios.IDossierService;
 import servicios.IEspectaculosService;
 import servicios.IUsuariosService;
 import servicios.IInformeService;
@@ -138,6 +142,18 @@ public class MenuCoordinadorController implements Initializable {
     @FXML
     private ListView<String> lvResumenNumeros;
 
+    //para los dossieres
+    @FXML
+    private VBox panelDossier;
+    @FXML
+    private ComboBox<Artista> cbArtistasDossier;
+    @FXML
+    private TextArea taComentario;
+    @FXML
+    private ComboBox<String> cbNivel;
+    @FXML
+    private TextArea taObservacion;
+
     @Autowired
     private IEspectaculosService espectaculoService;
     @Autowired
@@ -146,6 +162,8 @@ public class MenuCoordinadorController implements Initializable {
     private ConfigurableApplicationContext context;
     @Autowired
     private IInformeService informeService;
+    @Autowired
+    private IDossierService dossierService;
 
     //temporales
     private Espectaculo espectaculoEnEdicion;
@@ -222,6 +240,7 @@ public class MenuCoordinadorController implements Initializable {
         //conversor igual para artistas
         conversorArtistasCombo();
         conversorArtistasSeleccionados();
+        conversorArtistasDossier();
 
         conversorNumeros();
 
@@ -254,6 +273,21 @@ public class MenuCoordinadorController implements Initializable {
 
         //estado inicial
         ocultarTodo();
+    }
+
+    private void conversorArtistasDossier() {
+        cbArtistasDossier.setConverter(new StringConverter<Artista>() {
+            @Override
+            public String toString(Artista a) {
+                return (a == null) ? "" : a.getNombre();
+            }
+
+            @Override
+            public Artista fromString(String s) {
+                return null;
+            }
+        });
+        cbNivel.setItems(FXCollections.observableArrayList("ALTO", "MEDIO", "BAJO"));
     }
 
     private void configurarTablaEspectaculos() {
@@ -290,7 +324,7 @@ public class MenuCoordinadorController implements Initializable {
         panelResumen.setVisible(false);
         panelBuscadorE.setVisible(false);
         panelEspectaculos.setVisible(false);
-
+        panelDossier.setVisible(false);
     }
 
     @FXML
@@ -767,6 +801,52 @@ public class MenuCoordinadorController implements Initializable {
             informeService.generarYGuardarInforme(seleccionado);
             System.out.println("Informe exportado para: " + seleccionado.getNombre());
         }
+    }
+
+    @FXML
+    private void handleBotonDossier() {
+        ocultarTodo();
+        cbArtistasDossier.setItems(FXCollections.observableArrayList(usuariosService.getArtistas()));
+        panelDossier.setVisible(true);
+    }
+
+    @FXML
+    private void handleGuardarEvaluacion() {
+        Artista artista = cbArtistasDossier.getValue();
+        if (artista == null || taComentario.getText().isBlank() || cbNivel.getValue() == null) {
+            return;
+        }
+
+        Persona usuarioActual = usuariosService.getSesion().getUsuActual();
+        Evaluador evaluador = new Evaluador(usuarioActual.getId(), usuarioActual.getPerfil().toString());
+
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setFecha(LocalDate.now());
+        evaluacion.setRealizadaPor(evaluador);
+        evaluacion.setComentario(taComentario.getText());
+        evaluacion.setNivel(cbNivel.getValue());
+
+        dossierService.añadirEvaluacion(artista.getId(), evaluacion);
+        taComentario.clear();
+        cbNivel.setValue(null);
+    }
+
+    @FXML
+    private void handleGuardarObservacion() {
+        Artista artista = cbArtistasDossier.getValue();
+        if (artista == null || taObservacion.getText().isBlank()) {
+            return;
+        }
+
+        Persona usuarioActual = usuariosService.getSesion().getUsuActual();
+
+        Observacion observacion = new Observacion();
+        observacion.setFecha(LocalDate.now());
+        observacion.setTexto(taObservacion.getText());
+        observacion.setAutor(usuarioActual.getCredenciales().getNombre());
+
+        dossierService.añadirObservacion(artista.getId(), observacion);
+        taObservacion.clear();
     }
 
 }

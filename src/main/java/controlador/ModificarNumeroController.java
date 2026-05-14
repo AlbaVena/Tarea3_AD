@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import entidades.Artista;
@@ -21,6 +22,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import servicios.implementacion.NumeroService;
 import utils.Validador;
 
 @Controller
@@ -35,6 +37,9 @@ public class ModificarNumeroController implements Initializable {
 	@FXML Button btnGuardarNumMod;
 	
 	private Numero numeroEnEdicion;
+
+	@Autowired
+	private NumeroService numeroService;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -82,6 +87,8 @@ public class ModificarNumeroController implements Initializable {
 	    numeroEnEdicion.setDuracion(spTiempoNumMod.getValue());
 	    numeroEnEdicion.setArtistas(new HashSet<Artista>(lvArtistasMod.getItems()));
 	    
+		numeroService.guardarNumero(numeroEnEdicion);
+
 	    Stage stage = (Stage) btnGuardarNumMod.getScene().getWindow();
 	    
 	    stage.close();
