@@ -24,5 +24,8 @@ src/*.jar
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
-/target/
+/target/*
+
+# Ficheros de las bases de datos que no queremos subir
 /existdb/*
+/mongo/*
