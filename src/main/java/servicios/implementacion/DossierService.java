@@ -51,28 +51,38 @@ public class DossierService implements IDossierService {
 
     @Override
     public void actualizarTrayectoria(Artista artista, Numero numero) {
-    Dossier dossier = dossierRepository.findByIdArtista(artista.getId()).orElse(new Dossier(artista));
+        System.out.println("=== actualizarTrayectoria para artista: " + artista.getNombre() + ", numero: " + numero.getNombre() + " (id=" + numero.getId() + ")");
 
-    Espectaculo espectaculo = numero.getEspectaculo();
-    Trayectoria t = buscarOCrearTrayectoria(dossier.getTrayectoria(), espectaculo);
+        Dossier dossier = dossierRepository.findByIdArtista(artista.getId()).orElse(new Dossier(artista));
+        System.out.println("Dossier encontrado, trayectoria actual: " + dossier.getTrayectoria().size() + " espectaculos");
 
-    NumeroResumen nr = new NumeroResumen();
-    nr.setIdNumero(numero.getId());
-    nr.setNombreNumero(numero.getNombre());
+        Espectaculo espectaculo = numero.getEspectaculo();
+        System.out.println("Espectaculo del numero: " + (espectaculo != null ? espectaculo.getNombre() + " (id=" + espectaculo.getId() + ")" : "NULL"));
 
-    boolean yaExiste = false;
-    for (NumeroResumen existing : t.getNumeros()) {
-        if (existing.getIdNumero() == nr.getIdNumero()) {
-            yaExiste = true;
-            break;
+        Trayectoria t = buscarOCrearTrayectoria(dossier.getTrayectoria(), espectaculo);
+        System.out.println("Numeros en esa trayectoria antes de añadir: " + t.getNumeros().size());
+
+        NumeroResumen nr = new NumeroResumen();
+        nr.setIdNumero(numero.getId());
+        nr.setNombreNumero(numero.getNombre());
+
+        boolean yaExiste = false;
+        for (NumeroResumen existing : t.getNumeros()) {
+            if (existing.getIdNumero() == nr.getIdNumero()) {
+                yaExiste = true;
+                break;
+            }
         }
-    }
-    if (!yaExiste) {
-        t.getNumeros().add(nr);
-    }
+        System.out.println("Ya existe en trayectoria: " + yaExiste);
 
-    dossierRepository.save(dossier);
-}
+        if (!yaExiste) {
+            t.getNumeros().add(nr);
+        }
+
+        System.out.println("Numeros en trayectoria tras añadir: " + t.getNumeros().size());
+        dossierRepository.save(dossier);
+        System.out.println("Dossier guardado.");
+    }
 
     private Trayectoria buscarOCrearTrayectoria(List<Trayectoria> trayectoria, Espectaculo espectaculo) {
         for (Trayectoria t : trayectoria) {

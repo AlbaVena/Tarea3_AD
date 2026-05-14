@@ -47,11 +47,15 @@ public class EspectaculosService implements IEspectaculosService {
         espectaculoRepository.save(aGuardar);
 
         Espectaculo guardado = espectaculoRepository.findById(aGuardar.getId()).orElse(aGuardar);
-        System.out.println("Guardamos espectaculo "+aGuardar.getNombre());
+        System.out.println("Numeros cargados desde BD: " + guardado.getNumeros().size());
+        for (Numero n : guardado.getNumeros()) {
+            System.out.println("  - " + n.getNombre() + " (id=" + n.getId() + ")");
+        }
+        System.out.println("Guardamos espectaculo " + aGuardar.getNombre());
         for (Numero numero : guardado.getNumeros()) {
-            System.out.println("\t- Guardamos el numero: "+numero.getNombre());
+            System.out.println("\t- Guardamos el numero: " + numero.getNombre());
             for (Artista artista : numero.getArtistas()) {
-                System.out.println("\t\t-- Actualizamos artista: "+artista.getNombre() + " con el numero: "+numero.getNombre());
+                System.out.println("\t\t-- Actualizamos artista: " + artista.getNombre() + " con el numero: " + numero.getNombre());
                 dossierService.actualizarTrayectoria(artista, numero);
             }
         }
