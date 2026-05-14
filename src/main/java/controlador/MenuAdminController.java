@@ -60,6 +60,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
@@ -378,6 +379,7 @@ public class MenuAdminController implements Initializable {
 	    configurarTablaEspectaculos();
 	    configurarTablaArtistas();
 	    configurarTablaHistorial();
+	    configurarModificacion();
 	    configurarSpinner();
 	    configurarConversores();
 	    configurarCombos();
@@ -416,6 +418,39 @@ public class MenuAdminController implements Initializable {
 	            }
 	        }
 	    });
+	}
+	
+	public void configurarModificacion() {
+		lvNumCreados.setOnMouseClicked(event -> {
+		    if (event.getClickCount() == 2) {
+		        Numero seleccionado = lvNumCreados.getSelectionModel().getSelectedItem();
+		        if (seleccionado != null) {
+		            abrirVentanaModificarNumero(seleccionado);
+		        }
+		    }
+		});
+	}
+
+	private void abrirVentanaModificarNumero(Numero seleccionado) {
+		 try {
+		        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vista/ModificarNumero.fxml"));
+		        loader.setControllerFactory(context::getBean);
+		        Parent root = loader.load();
+		        
+		        ModificarNumeroController controller = loader.getController();
+		        controller.setDatos(seleccionado, usuariosService.getArtistas());
+		        
+		        Stage stage = new Stage();
+		        stage.setScene(new Scene(root));
+		        stage.initModality(Modality.APPLICATION_MODAL); //bloquea ventana principal
+		        stage.showAndWait();
+		        
+		        lvNumCreados.refresh();
+		        
+		    } catch (IOException e) {
+		        System.err.println("Error al abrir ventana modificar número: " + e.getMessage());
+		    }
+		
 	}
 
 	private void configurarTablaArtistas() {
